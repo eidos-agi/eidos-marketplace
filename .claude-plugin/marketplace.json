@@ -1,0 +1,65 @@
+{
+  "name": "eidos-marketplace",
+  "owner": {
+    "name": "Eidos AGI",
+    "email": "hello@eidosagi.com"
+  },
+  "plugins": [
+    {
+      "name": "resume-resume",
+      "description": "Post-crash session recovery, dirty repos inventory, and session search across your full Claude Code history",
+      "source": "./plugins/resume-resume",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/resume-resume"
+    },
+    {
+      "name": "ike",
+      "description": "Task and project management — create tasks, track milestones, manage documents, and execute within visionlog contracts",
+      "source": "./plugins/ike",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/ike.md"
+    },
+    {
+      "name": "visionlog",
+      "description": "Vision, goals, guardrails, SOPs, and ADRs — the contracts all execution must honor",
+      "source": "./plugins/visionlog",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/visionlog.md"
+    },
+    {
+      "name": "research-md",
+      "description": "Evidence-graded, phase-gated research decisions — candidates, findings, scoring matrices, and peer review",
+      "source": "./plugins/research-md",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/research.md"
+    },
+    {
+      "name": "railguey",
+      "description": "Railway deployment management — deploy, rollback, logs, health checks, and service configuration",
+      "source": "./plugins/railguey",
+      "category": "deployment",
+      "homepage": "https://github.com/eidos-agi/railguey"
+    },
+    {
+      "name": "ojo",
+      "description": "Visual content moderation and safety scanning with multi-model consensus",
+      "source": "./plugins/ojo",
+      "category": "security",
+      "homepage": "https://github.com/eidos-agi/ojo"
+    },
+    {
+      "name": "test-forge",
+      "description": "Test generation and execution — YAML test suites, ML model validation, and automated QA",
+      "source": "./plugins/test-forge",
+      "category": "development",
+      "homepage": "https://github.com/eidos-agi/test-forge"
+    },
+    {
+      "name": "forge-forge",
+      "description": "Meta-forge for creating and managing forges — manifest validation, drift detection, and forge scaffolding",
+      "source": "./plugins/forge-forge",
+      "category": "development",
+      "homepage": "https://github.com/eidos-agi/forge-forge"
+    }
+  ]
+}
