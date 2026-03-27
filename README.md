@@ -23,11 +23,10 @@ claude plugins install visionlog
 | **resume-resume** | Post-crash session recovery, dirty repos inventory, session search across your full Claude Code history |
 | **ike** | Task and project management — tasks, milestones, documents, Definition of Done |
 | **visionlog** | Vision, goals, guardrails, SOPs, ADRs — the contracts all execution must honor |
-| **research-md** | Evidence-graded, phase-gated research decisions with peer review |
 | **railguey** | Railway deployment management — deploy, rollback, logs, health checks |
-| **ojo** | Visual content moderation and safety scanning |
-| **test-forge** | Test generation and execution — YAML test suites, ML model validation |
-| **forge-forge** | Meta-forge for creating and managing forges |
+| **clawdflare** | Cloudflare management — DNS records, Workers, Pages, KV, R2, and analytics |
+
+All plugins are tested on every change — see `tools/test_plugins.py`.
 
 ## How It Works
 

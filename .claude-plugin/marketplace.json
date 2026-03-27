@@ -27,13 +27,6 @@
       "homepage": "https://github.com/eidos-agi/visionlog.md"
     },
     {
-      "name": "research-md",
-      "description": "Evidence-graded, phase-gated research decisions — candidates, findings, scoring matrices, and peer review",
-      "source": "./plugins/research-md",
-      "category": "productivity",
-      "homepage": "https://github.com/eidos-agi/research.md"
-    },
-    {
       "name": "railguey",
       "description": "Railway deployment management — deploy, rollback, logs, health checks, and service configuration",
       "source": "./plugins/railguey",
@@ -41,25 +34,11 @@
       "homepage": "https://github.com/eidos-agi/railguey"
     },
     {
-      "name": "ojo",
-      "description": "Visual content moderation and safety scanning with multi-model consensus",
-      "source": "./plugins/ojo",
-      "category": "security",
-      "homepage": "https://github.com/eidos-agi/ojo"
-    },
-    {
-      "name": "test-forge",
-      "description": "Test generation and execution — YAML test suites, ML model validation, and automated QA",
-      "source": "./plugins/test-forge",
-      "category": "development",
-      "homepage": "https://github.com/eidos-agi/test-forge"
-    },
-    {
-      "name": "forge-forge",
-      "description": "Meta-forge for creating and managing forges — manifest validation, drift detection, and forge scaffolding",
-      "source": "./plugins/forge-forge",
-      "category": "development",
-      "homepage": "https://github.com/eidos-agi/forge-forge"
+      "name": "clawdflare",
+      "description": "Cloudflare management — DNS records, Workers, Pages, KV, R2, and analytics",
+      "source": "./plugins/clawdflare",
+      "category": "deployment",
+      "homepage": "https://github.com/eidos-agi/clawdflare"
     }
   ]
 }
