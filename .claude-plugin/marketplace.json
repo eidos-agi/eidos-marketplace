@@ -39,6 +39,27 @@
       "source": "./plugins/clawdflare",
       "category": "deployment",
       "homepage": "https://github.com/eidos-agi/clawdflare"
+    },
+    {
+      "name": "research-md",
+      "description": "Evidence-graded, phase-gated research decisions — candidates, findings, scoring matrices, and peer review",
+      "source": "./plugins/research-md",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/research.md"
+    },
+    {
+      "name": "probe-forge",
+      "description": "Agentic testing forge — point at anything, say test this. Runs THE-LOOP to investigate targets intelligently",
+      "source": "./plugins/probe-forge",
+      "category": "development",
+      "homepage": "https://github.com/eidos-agi/test-forge"
+    },
+    {
+      "name": "forge-forge",
+      "description": "Meta-forge for creating and managing forges — manifest validation, drift detection, and forge scaffolding",
+      "source": "./plugins/forge-forge",
+      "category": "development",
+      "homepage": "https://github.com/eidos-agi/forge-forge"
     }
   ]
 }
