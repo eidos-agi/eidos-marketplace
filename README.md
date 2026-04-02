@@ -25,6 +25,7 @@ claude plugins install visionlog
 | **visionlog** | Vision, goals, guardrails, SOPs, ADRs — the contracts all execution must honor |
 | **railguey** | Railway deployment management — deploy, rollback, logs, health checks |
 | **clawdflare** | Cloudflare management — DNS records, Workers, Pages, KV, R2, and analytics |
+| **eidos-mail** | Email for Claude Code — read, search, send, reply, forward, and manage your inbox |
 
 All plugins are tested on every change — see `tools/test_plugins.py`.
 
