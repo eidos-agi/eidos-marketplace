@@ -20,13 +20,12 @@ If a task is ambiguous, look at the most recent commit's message and diff for th
 
 The marketplace.json is currently missing top-level metadata. Fix that, document the standard, set discovery signals on the repo.
 
-- [ ] Add `$schema: "https://anthropic.com/claude-code/marketplace.schema.json"` to `.claude-plugin/marketplace.json` (top of file)
-- [ ] Add top-level `description` to marketplace.json: *"The plugin marketplace for Claude Code, by Eidos AGI. Curated agent-first plugins, audited to a public standard."*
-- [ ] Add top-level `version: "0.1.0"` to marketplace.json
-- [ ] Add `metadata.pluginRoot: "./plugins"` to marketplace.json so per-plugin `source` can drop the `./plugins/` prefix
-- [ ] Update existing plugin entries' `source` fields to use the shorter form (e.g., `"resume-resume"` instead of `"./plugins/resume-resume"`)
-- [ ] Rewrite `README.md` to lead with the thesis (visibility is the moat), not feature list. Reference [STANDARD.md](STANDARD.md) and [PHASES.md](PHASES.md).
-- [ ] Set GitHub topics on the marketplace repo: `claude-code`, `claude-plugin-marketplace`, `mcp`, `agent-tools`, `eidos-agi`. Use `gh repo edit eidos-agi/eidos-marketplace --add-topic ...`
+- [x] Add `$schema: "https://anthropic.com/claude-code/marketplace.schema.json"` to `.claude-plugin/marketplace.json` (top of file). Schema URL is aspirational — Anthropic doesn't publish a hosted schema yet; the field is harmless if unresolved.
+- [x] Add top-level `description` (112 chars, matches plan).
+- [x] Add top-level `version: "0.1.0"`.
+- [ ] **DEFERRED** — Add `metadata.pluginRoot: "./plugins"` and shorten `source` fields. Cannot empirically verify Claude Code accepts this shape without breaking installs; deferred until we have a test environment that round-trips. Existing `./plugins/<name>` paths work today.
+- [x] Rewrite `README.md` to lead with the thesis (already done in commit 4046388 + a373b00).
+- [x] Set GitHub topics: `agent-tools`, `claude-code`, `claude-plugin-marketplace`, `eidos-agi`, `mcp`. Verified via `gh api`.
 - [x] Archive `eidos-agi/claude-plugins`. README replaced with redirect to this repo (commit 2b5fb49); repo archived 2026-04-28. The old marketplace was a single-plugin home for slack-cc, never expanded; 0 stars, 0 forks confirmed nobody depended on it.
 
 ---

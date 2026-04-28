@@ -1,8 +1,12 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "eidos-marketplace",
+  "version": "0.1.0",
+  "description": "The plugin marketplace for Claude Code, by Eidos AGI. Curated agent-first plugins, audited to a public standard.",
   "owner": {
     "name": "Eidos AGI",
-    "email": "hello@eidosagi.com"
+    "email": "hello@eidosagi.com",
+    "url": "https://eidosagi.com"
   },
   "plugins": [
     {
