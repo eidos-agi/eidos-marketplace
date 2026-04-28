@@ -10,6 +10,30 @@
   },
   "plugins": [
     {
+      "name": "cept",
+      "description": "Proprioception for coding agents — slice recent Claude Code transcript, redact, send to a model gateway, return structured steering guidance.",
+      "source": "./plugins/cept",
+      "category": "agent-tools",
+      "homepage": "https://github.com/eidos-agi/cept",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": ["mcp", "agent", "proprioception", "steering", "openrouter"],
+      "x-eidos": {
+        "kind": {
+          "type": "tool",
+          "signals": ["single_capability", "uvx_shim", "mcp_server"]
+        },
+        "audit": {
+          "audited_by": "by-hand (foss-forge not yet onboarded)",
+          "audit_version": "STANDARD.md@2026-04-28",
+          "audit_date": "2026-04-28",
+          "grade": "A",
+          "next_audit": "2026-07-28",
+          "audit_doc": "AUDITS/cept.md"
+        }
+      }
+    },
+    {
       "name": "resume-resume",
       "description": "Post-crash session recovery, dirty repos inventory, and session search across your full Claude Code history",
       "source": "./plugins/resume-resume",

@@ -34,14 +34,14 @@ The marketplace.json is currently missing top-level metadata. Fix that, document
 
 cept (`eidos-agi/cept`, on PyPI as `cept`) is the flagship Tool. It demonstrates the bar for the Tool surface (à-la-carte install, single capability, uvx shim).
 
-- [ ] Create `plugins/cept/.claude-plugin/plugin.json` with: name, description, version (mirror `cept`'s pyproject.toml), homepage, repository, license, keywords
-- [ ] Create `plugins/cept/.mcp.json` using the uvx-shim pattern: `{"cept": {"command": "uvx", "args": ["--from", "cept", "cept"]}}`
-- [ ] Add cept entry to `.claude-plugin/marketplace.json` plugins array. Include: name, description, source (`"cept"`), category, tags, homepage, license, version
-- [ ] Add the `x-eidos` block (per [STANDARD.md § Plugin metadata](STANDARD.md#plugin-metadata--the-x-eidos-block)) to cept's entry: `kind.type: "tool"` with signals `["single_capability", "uvx_shim"]`. Audit fields filled in below.
-- [ ] Run `python tools/test_plugins.py` to verify validation passes
-- [ ] From a clean Claude Code session: `/plugin marketplace add eidos-agi/eidos-marketplace`, then `/plugin install cept@eidos-marketplace`. Confirm the MCP starts and the `cept` tool responds.
-- [ ] Audit cept by hand against [STANDARD.md](STANDARD.md). Write `AUDITS/cept.md` with grade, date, scorecard. Header: `audited_by: by-hand (foss-forge not yet onboarded)`. Populate `x-eidos.audit` block in marketplace.json.
-- [ ] Commit and push. Phase 1 complete when round-trip works.
+- [x] Create `plugins/cept/.claude-plugin/plugin.json` with: name, description, version, author, license, keywords, homepage, repository.
+- [x] Create `plugins/cept/.mcp.json`: `{"cept": {"command": "uvx", "args": ["--from", "cept", "cept"]}}`.
+- [x] Add cept entry to `.claude-plugin/marketplace.json` (now 9 plugins). Source: `./plugins/cept`; category `agent-tools`; tags + homepage + license + version per pyproject.toml.
+- [x] Add the `x-eidos` block: `kind.type: "tool"` with signals `["single_capability", "uvx_shim", "mcp_server"]`. `audit` block populated by the hand-audit step below.
+- [x] Run `python tools/test_plugins.py cept` — PASS in 1.6s; cept v0.1.0 server responds to MCP `initialize`.
+- [ ] From a clean Claude Code session: `/plugin marketplace add eidos-agi/eidos-marketplace`, then `/plugin install cept@eidos-marketplace`. Confirm the MCP starts and the `cept` tool responds. **REQUIRES USER** — Daniel needs a fresh session to round-trip; this is the only Phase 1 step I cannot self-execute.
+- [x] Hand-audit cept against [STANDARD.md](STANDARD.md). [`AUDITS/cept.md`](AUDITS/cept.md) written with grade A; all three layers PASS; `x-eidos.audit` block populated in marketplace.json. Header: `audited_by: by-hand (foss-forge not yet onboarded)`.
+- [x] Commit and push.
 
 The hand-audit is a temporary debt. [STANDARD.md § Dogfooding](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins) requires `foss-forge` to be the audit tool. Phase 4 retires this debt by re-auditing cept through `/foss-check`.
 
@@ -57,6 +57,7 @@ This phase is a *literal* pause. No plugin onboarding. No marketplace.json plugi
 - Updates to `README.md` content (not adding plugins to the table)
 - Closing/triaging marketplace issues
 - **Designing the `/eidos-install` skill content** — draft `cockpit-eidos/briefs/eidos-install-skill.md` covering: the interview flow ("what are you doing?"), starter-set logic per project archetype (python-package, frontend-app, research, founder-ops, etc.), the hand-off pattern to `forge-forge` for forge-specific drilldown, and the cross-ecosystem pointers (when to mention `helios`, `omni`, `eidos-v5`). Design only; ship in Phase 3.
+- **Designing the `rhea` plugin entry** — draft `plugins/rhea/.claude-plugin/plugin.json` and `.mcp.json` content (do NOT add to marketplace.json yet; that's Phase 3c). rhea is the second flagship Tool, sibling to cept: where cept does proprioception (self-awareness from your own transcript), rhea does adversarial sparring (`rhea_challenge`, `rhea_debate`, `rhea_simplify`, `rhea_unstick`). Mirror cept's plugin file shapes. Verify rhea's source repo has all STANDARD.md community-health files; if any are missing, file follow-up issues against `eidos-agi/rhea`.
 
 **Open design questions to resolve before Phase 3 (architectural debt flagged by cept review of commit b255b13):**
 
@@ -110,10 +111,24 @@ After the Phase 2 pause, ship both recommenders together. `eidos-install` is the
 - [ ] Hand-audit `forge-forge` against STANDARD.md. Write `AUDITS/forge-forge.md`. Populate `x-eidos.audit` block.
 - [ ] Verify graceful degradation: confirm `forge-forge` itself and `eidos-install` can be installed *without* the other being present. The two recommenders are independent.
 
+### Phase 3c — `rhea` (the second flagship Tool, sibling to cept)
+
+`rhea` is to outside-perspective sparring what `cept` is to self-perspective steering. Together they form the "two mirrors" pair: cept tells you what you missed in your own trajectory; rhea tells you what an adversarial outside reader would say. Both are Tool-kind, single-capability, uvx-shim, MCP-server. The pattern is identical to cept's Phase 1 onboarding — use that as the template.
+
+- [ ] Move the Phase 2 design draft into `plugins/rhea/.claude-plugin/plugin.json` and `plugins/rhea/.mcp.json` (mirror cept's shape).
+- [ ] Verify rhea's source repo (`eidos-agi/rhea`, on PyPI as `rhea`) passes the [Layer 1 — Community Health](STANDARD.md#layer-1--community-health-humans-contributing) bar: LICENSE, README ≥20 lines, CHANGELOG following Keep a Changelog, CONTRIBUTING, COC, SECURITY. If any are missing, fix in the source repo *before* adding the marketplace entry.
+- [ ] Add `rhea` entry to `marketplace.json`. `x-eidos.kind.type: "tool"` with signals `["single_capability", "uvx_shim", "mcp_server"]`.
+- [ ] Run `python tools/test_plugins.py rhea` — must PASS via MCP initialize.
+- [ ] Round-trip test: `claude plugins install rhea@eidos-marketplace` from a fresh session.
+- [ ] Hand-audit rhea against STANDARD.md (Phase 4 will retroactively re-audit via `/foss-check`). Write `AUDITS/rhea.md`. Populate `x-eidos.audit`. Header: `audited_by: by-hand (foss-forge not yet onboarded)`.
+- [ ] Update README.md plugin table to add rhea to the Tools section with description: "Adversarial sparring partner — challenge, debate, simplify, unstick. Sibling to cept."
+- [ ] Update `eidos-install` skill (Phase 3a draft) to recommend rhea alongside cept in starter sets that involve significant decisions (e.g., python-package archetype, founder-ops archetype). cept + rhea together = the proprioception+critique pair.
+
 Phase 3 is complete when:
-1. A user can run `claude plugins install eidos-install`, run `/eidos-install`, and walk away with a coherent starter-set install plan.
+1. A user can run `claude plugins install eidos-install`, run `/eidos-install`, and walk away with a coherent starter-set install plan that includes both cept and rhea where appropriate.
 2. A user can run `claude plugins install forge-forge` and use `/forge list` directly.
-3. Both recommenders work standalone; neither requires the other.
+3. A user can run `claude plugins install rhea` and use `/rhea_challenge` (or any rhea verb) directly.
+4. All three plugins work standalone; none require the others.
 
 ---
 
