@@ -74,19 +74,21 @@ If the calendar date passes but no friction was logged, extend the pause. The pa
 
 ---
 
-## Phase 3 — Onboard the front door: `eidos-install` (gateway) + `forge-forge` (recommender)
+## Phase 3 — Onboard the two recommenders: `eidos-install` + `forge-forge`
 
-After the Phase 2 pause, ship the two recommender plugins together. `eidos-install` is the user-visible front door (a skill that interviews and recommends starter sets); `forge-forge` is the forge-specific recommender it delegates to. Both are recommenders; neither installs. See [STANDARD.md § Tools, Forges, and Gateways](STANDARD.md#tools-forges-and-gateways--three-surfaces-one-bar).
+After the Phase 2 pause, ship both recommenders together. `eidos-install` is the user-visible front door (a progressive-reveal forge that interviews and recommends starter sets); `forge-forge` is the forge-specific recommender it delegates to. Both are forges with the recommender signals; neither installs anything. See [STANDARD.md § Tools and Forges](STANDARD.md#tools-and-forges--two-surfaces-one-bar).
 
-### Phase 3a — Source convention + `eidos-install` (gateway)
+### Phase 3a — Source convention + `eidos-install` (progressive-reveal forge, lives in this repo)
 
-- [ ] Decide source convention for skill-bearing plugins: `{"source": {"source": "github", "repo": "eidos-agi/<name>"}}`. Document the convention as a one-liner under [STANDARD.md § How submissions work](STANDARD.md#how-submissions-work-today).
-- [ ] Create `eidos-agi/eidos-install` repo (skill-only). Move the Phase 2 design draft from `cockpit-eidos/briefs/eidos-install-skill.md` into `skills/eidos-install/SKILL.md` with proper YAML frontmatter (`name: eidos-install`, `description: Progressive-reveal front door for the Eidos ecosystem`).
-- [ ] Bring `eidos-install` up to STANDARD.md community-health (LICENSE, README, CHANGELOG, CONTRIBUTING, COC, SECURITY). Hand-audit since `foss-forge` isn't onboarded yet.
-- [ ] Add `eidos-install` entry to marketplace.json. `x-eidos.kind.type: "gateway"` with signals `["progressive_reveal", "cross_ecosystem_pointers", "delegates_to_recommenders"]`. Document the delegations: `x-eidos.recommend.delegates_to: ["forge-forge"]`.
+`eidos-install` is one skill file. It does not need its own repo — it lives inside `eidos-marketplace` itself, alongside the listings it recommends.
+
+- [ ] Decide source convention for skill-bearing plugins that live in another repo: `{"source": {"source": "github", "repo": "eidos-agi/<name>"}}`. Document the convention as a one-liner under [STANDARD.md § How submissions work](STANDARD.md#how-submissions-work-today). For plugins that live in this marketplace repo, the existing local-source pattern (`source: "<plugin-dir>"`) applies.
+- [ ] Create `plugins/eidos-install/.claude-plugin/plugin.json` (`name: eidos-install`, `description: Progressive-reveal front door for the Eidos ecosystem`, version, license).
+- [ ] Move the Phase 2 design draft from `cockpit-eidos/briefs/eidos-install-skill.md` into `plugins/eidos-install/skills/eidos-install/SKILL.md` with proper YAML frontmatter (`name: eidos-install`, `description: <interview-driven recommendation skill>`).
+- [ ] Add `eidos-install` entry to `marketplace.json`. `x-eidos.kind.type: "forge"` with signals `["ships_skills", "opinionated_workflow", "progressive_reveal", "delegates_to_recommenders", "cross_ecosystem_pointers"]`. Document the delegations: `x-eidos.recommend.delegates_to: ["forge-forge"]`.
 - [ ] Round-trip test: `claude plugins install eidos-install`. Run `/eidos-install`. Confirm interview flow works and produces sensible starter-set recommendations for at least three project archetypes (python-package, frontend-app, founder-ops).
 - [ ] Verify hand-off: when the user finishes `/eidos-install`'s starter set, the skill should explicitly mention "for ongoing forge needs, use `/forge recommend-for <project>`" — pointing them at Phase 3b's `forge-forge`.
-- [ ] Hand-audit `eidos-install` against STANDARD.md. Write `AUDITS/eidos-install.md`. Populate `x-eidos.audit` block. Header: `audited_by: by-hand (foss-forge not yet onboarded)`.
+- [ ] Hand-audit `eidos-install` against STANDARD.md. Write `AUDITS/eidos-install.md`. Populate `x-eidos.audit` block. Header: `audited_by: by-hand (foss-forge not yet onboarded)`. Community-health requirements (LICENSE, CHANGELOG, etc.) are inherited from this marketplace repo since `eidos-install` lives here.
 
 ### Phase 3b — `forge-forge` (forge recommender)
 

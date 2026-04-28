@@ -4,7 +4,7 @@ The plugin marketplace for [Claude Code](https://docs.claude.com/en/docs/claude-
 
 > **A portfolio of how we ship.** Every plugin here is built or vouched for by Eidos AGI, audited against a public [standard](STANDARD.md), and removed if it falls below the bar. Visibility is the moat.
 >
-> **Three layers, one bar.** Onboarding via `/eidos-install` (a gateway skill that asks what you're doing and recommends a starter set). Discovery via `marketplace.json` and `/forge recommend-for` (a forge-specific recommender). Installation via `claude plugins install <name>` (the normal Claude Code path). Each layer can fail without breaking the others.
+> **Three layers, one bar.** Onboarding via `/eidos-install` (a progressive-reveal forge that asks what you're doing and recommends a starter set). Discovery via `marketplace.json` and `/forge recommend-for` (a forge-specific recommender). Installation via `claude plugins install <name>` (the normal Claude Code path). Each layer can fail without breaking the others.
 >
 > **The marketplace is its own first customer.** Audits run via `foss-forge`. Releases via `ship-forge`. Security checks via `security-forge`. Each is itself a plugin in this marketplace. If our own tools can't run our own operations, they don't belong here. See [Dogfooding](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins).
 
@@ -16,7 +16,7 @@ Add the marketplace once:
 claude plugins marketplace add eidos-agi/eidos-marketplace
 ```
 
-### First time? Use the gateway.
+### First time? Use the front door.
 
 ```bash
 claude plugins install eidos-install
@@ -39,12 +39,6 @@ Every plugin is directly installable. The recommenders (`eidos-install`, `forge-
 
 ## What's in here
 
-### Gateways — front door
-
-| Plugin | What it does | Quality |
-|--------|-------------|---------|
-| **eidos-install** | Progressive-reveal interview + starter-set recommendation for the Eidos ecosystem | (Phase 3) |
-
 ### Tools — discrete capabilities
 
 | Plugin | What it does | Quality |
@@ -62,6 +56,7 @@ Every plugin is directly installable. The recommenders (`eidos-install`, `forge-
 
 | Plugin | What it does | Quality |
 |--------|-------------|---------|
+| **eidos-install** | Progressive-reveal interview that recommends a starter set for the Eidos ecosystem; delegates to `forge-forge` for ongoing forge-specific drilldown | (Phase 3) |
 | **forge-forge** | Forge-specific recommender; reads the marketplace's `x-eidos.recommend` blocks | (Phase 3) |
 | **probe-forge** | Probing tools | (audit pending) |
 
@@ -92,7 +87,7 @@ The `.mcp.json` tells Claude Code how to run the server:
 
 [`uvx`](https://docs.astral.sh/uv/guides/tools/) pulls the package from PyPI on demand — no pre-install needed.
 
-**Skill-bearing plugins** (gateways and forges) ship as `github`-source entries in `marketplace.json`. The marketplace pulls the source repo's `skills/<name>/SKILL.md` directly. No PyPI package required. See [STANDARD.md](STANDARD.md) for the source-shape spec.
+**Skill-bearing plugins** (forges) ship either as `github`-source entries (when the source lives in another repo) or as local entries inside this marketplace repo (when the skill is small enough to live alongside the listings). Either way, the marketplace pulls `skills/<name>/SKILL.md` directly. No PyPI package required. See [STANDARD.md](STANDARD.md) for the source-shape spec.
 
 ## What "eidos-grade" means
 
@@ -102,7 +97,7 @@ See [STANDARD.md](STANDARD.md) for the full bar. The short version:
 - **Agentic Quality** — every tool typed, described, and built for agents to choose between
 - **Engineering** — semver, ≤5 dependencies, CI green, OIDC trusted publisher (no long-lived tokens)
 
-Each plugin is also classified as a Tool, Forge, or Gateway, with kind-specific bar additions (e.g., forges must populate `x-eidos.recommend`; gateways must be skill-only and interview-driven). See [STANDARD.md § Tools, Forges, and Gateways](STANDARD.md#tools-forges-and-gateways--three-surfaces-one-bar).
+Each plugin is also classified as a Tool or Forge, with kind-specific bar additions (e.g., forges must populate `x-eidos.recommend`; progressive-reveal forges like `eidos-install` must be interview-driven). See [STANDARD.md § Tools and Forges](STANDARD.md#tools-and-forges--two-surfaces-one-bar).
 
 Plugins that drop below the bar are pulled. Removal is a stronger signal than silent inclusion.
 
