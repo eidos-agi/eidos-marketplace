@@ -58,7 +58,7 @@ This phase is a *literal* pause. No plugin onboarding. No marketplace.json plugi
 - Closing/triaging marketplace issues
 - **Designing the `/eidos-install` skill content** — draft `cockpit-eidos/briefs/eidos-install-skill.md` covering: the interview flow ("what are you doing?"), starter-set logic per project archetype (python-package, frontend-app, research, founder-ops, etc.), the hand-off pattern to `forge-forge` for forge-specific drilldown, and the cross-ecosystem pointers (when to mention `helios`, `omni`, `eidos-v5`). Design only; ship in Phase 3.
 - **Designing the `rhea` plugin entry** — draft `plugins/rhea/.claude-plugin/plugin.json` and `.mcp.json` content (do NOT add to marketplace.json yet; that's Phase 3c). rhea is the second flagship Tool, sibling to cept: where cept does proprioception (self-awareness from your own transcript), rhea does adversarial sparring (`rhea_challenge`, `rhea_debate`, `rhea_simplify`, `rhea_unstick`). Mirror cept's plugin file shapes. Verify rhea's source repo has all STANDARD.md community-health files; if any are missing, file follow-up issues against `eidos-agi/rhea`.
-- **Designing the `tmux-mcp` plugin entry** — draft `plugins/tmux-mcp/.claude-plugin/plugin.json` and `.mcp.json` (do NOT add to marketplace.json yet; that's Phase 3d). The package is already built, public, and pushed to [eidos-agi/tmux-mcp](https://github.com/eidos-agi/tmux-mcp). It exposes 6 MCP tools for attaching to and driving existing tmux sessions: list, register, unregister, send keys, capture pane, run (send+wait+capture). Maintains a registry of named sessions at `~/.config/tmux-mcp/registry.json`. Operates on existing sessions only — never spawns or kills. Originally born from Phase 1's stale-cache friction (autonomous marketplace install round-trips), but the design is intentionally general: any tmux session can be driven, including Claude Code sessions, shells, long-running services, etc.
+- **Designing the `emux` plugin entry** — draft `plugins/emux/.claude-plugin/plugin.json` and `.mcp.json` (do NOT add to marketplace.json yet; that's Phase 3d). The package is already built, public, and pushed to [eidos-agi/emux](https://github.com/eidos-agi/emux). It exposes 6 MCP tools for attaching to and driving existing tmux sessions: list, register, unregister, send keys, capture pane, run (send+wait+capture). Maintains a registry of named sessions at `~/.config/emux/registry.json`. Operates on existing sessions only — never spawns or kills. Originally born from Phase 1's stale-cache friction (autonomous marketplace install round-trips), but the design is intentionally general: any tmux session can be driven, including Claude Code sessions, shells, long-running services, etc.
 
 **Open design questions to resolve before Phase 3 (architectural debt flagged by cept review of commit b255b13):**
 
@@ -125,13 +125,19 @@ After the Phase 2 pause, ship both recommenders together. `eidos-install` is the
 - [ ] Update README.md plugin table to add rhea to the Tools section with description: "Adversarial sparring partner — challenge, debate, simplify, unstick. Sibling to cept."
 - [ ] Update `eidos-install` skill (Phase 3a draft) to recommend rhea alongside cept in starter sets that involve significant decisions (e.g., python-package archetype, founder-ops archetype). cept + rhea together = the proprioception+critique pair.
 
-### Phase 3d — `tmux-mcp` (Tool: attach to and drive existing tmux sessions)
+### Phase 3d — `emux` (Tool: TUI picker + MCP server for tmux sessions)
 
-`tmux-mcp` is general-purpose infrastructure: an MCP server that attaches to existing tmux sessions, sends keystrokes, captures pane content, and maintains a registry of named sessions with metadata. Built originally for autonomous marketplace install round-trips, but the design is intentionally general — any tmux session can be driven, not just ones running Claude Code.
+`emux` (eidos mux) is a single tool with two front-ends over one shared registry of named tmux sessions:
 
-The package is already built ([`eidos-agi/tmux-mcp`](https://github.com/eidos-agi/tmux-mcp), public, 13/13 tests passing, live tmux smoke test verified). Phase 3d onboards it to the marketplace.
+- **`emux`** — TUI picker. Lists registered + live sessions. Pick one → `tmux attach`. Stale entries flagged.
+- **`emux mcp`** — MCP server. Six tools for agents to drive sessions: list, register, send keys, capture pane, run.
+- **`emux ls`** / **`emux register`** / **`emux unregister`** — non-interactive scripting helpers.
 
-Tool surface (6 tools):
+Built originally for autonomous marketplace install round-trips (the agent surface), but the human surface (TUI picker for "which tmux session was I in?") earned equal weight in the design. The TUI is stdlib-only — `input()` + a numbered list — so it works in any terminal including remote SSH and dumb terms.
+
+The package is already built ([`eidos-agi/emux`](https://github.com/eidos-agi/emux), public, 13/13 tests passing, live tmux smoke + CLI smoke verified). Phase 3d onboards it to the marketplace.
+
+MCP tool surface (6 tools, exposed via `emux mcp`):
 - `tmux_sessions()` — list live tmux sessions + registry (with stale flag)
 - `tmux_register(name, session, description?, tags?)` — name a session
 - `tmux_unregister(name)` — drop from registry; does not touch tmux
@@ -141,20 +147,20 @@ Tool surface (6 tools):
 
 Phase 3d tasks:
 
-- [ ] Publish `tmux-mcp` to PyPI via OIDC trusted publisher (mirror cept's `publish.yml` pattern). Tag `v0.1.0` and push.
+- [ ] Publish `emux` to PyPI via OIDC trusted publisher (mirror cept's `publish.yml` pattern). Tag `v0.1.0` and push.
 - [ ] Add CHANGELOG, CONTRIBUTING, COC, SECURITY files to bring up to STANDARD.md community-health bar (deferred during initial build; required before marketplace listing).
 - [ ] Add CI workflow (`.github/workflows/ci.yml`) running ruff + pytest on Python 3.11/3.12/3.13.
-- [ ] Move the Phase 2 design draft into `plugins/tmux-mcp/.claude-plugin/plugin.json` and `plugins/tmux-mcp/.mcp.json` in the marketplace repo. Mirror cept's pattern.
-- [ ] Add `tmux-mcp` entry to `marketplace.json`. `x-eidos.kind.type: "tool"` with signals `["single_capability", "uvx_shim", "mcp_server"]`.
-- [ ] Round-trip test: from a fresh session, install tmux-mcp via the marketplace, then use it to drive a tmux session running another Claude Code instance — including the recursive dogfood of using tmux-mcp to verify a marketplace install in an attached session.
-- [ ] Hand-audit tmux-mcp against STANDARD.md. Write `AUDITS/tmux-mcp.md`. Populate `x-eidos.audit`.
-- [ ] Update `eidos-install` skill (Phase 3a draft) to recommend tmux-mcp for project archetypes that involve marketplace operations, CI/CD work, or agent-driven session steering.
+- [ ] Move the Phase 2 design draft into `plugins/emux/.claude-plugin/plugin.json` and `plugins/emux/.mcp.json` in the marketplace repo. Mirror cept's pattern.
+- [ ] Add `emux` entry to `marketplace.json`. `x-eidos.kind.type: "tool"` with signals `["single_capability", "uvx_shim", "mcp_server"]`.
+- [ ] Round-trip test: from a fresh session, install emux via the marketplace, then use it to drive a tmux session running another Claude Code instance — including the recursive dogfood of using emux to verify a marketplace install in an attached session.
+- [ ] Hand-audit emux against STANDARD.md. Write `AUDITS/emux.md`. Populate `x-eidos.audit`.
+- [ ] Update `eidos-install` skill (Phase 3a draft) to recommend emux for project archetypes that involve marketplace operations, CI/CD work, or agent-driven session steering.
 
 Phase 3 is complete when:
-1. A user can run `claude plugins install eidos-install`, run `/eidos-install`, and walk away with a coherent starter-set install plan that includes cept, rhea, tmux-mcp, and forge-forge where appropriate.
+1. A user can run `claude plugins install eidos-install`, run `/eidos-install`, and walk away with a coherent starter-set install plan that includes cept, rhea, emux, and forge-forge where appropriate.
 2. A user can run `claude plugins install forge-forge` and use `/forge list` directly.
 3. A user can run `claude plugins install rhea` and use `/rhea_challenge` (or any rhea verb) directly.
-4. A user can run `claude plugins install tmux-mcp` and use `tmux_register` + `tmux_send` + `tmux_capture` to drive a registered tmux session.
+4. A user can run `claude plugins install emux` and use `tmux_register` + `tmux_send` + `tmux_capture` to drive a registered tmux session.
 5. All four plugins work standalone; none require the others.
 
 ---

@@ -45,7 +45,7 @@ Every plugin is directly installable. The recommenders (`eidos-install`, `forge-
 |--------|-------------|---------|
 | **cept** | Proprioception for coding agents — slice recent Claude Code transcript, redact, ask a model for steering | A *(2026-04-28, by-hand)* |
 | **rhea** | Adversarial sparring partner — challenge, debate, simplify, unstick. Sibling to cept; the outside-perspective mirror to cept's self-perspective | (Phase 3c) |
-| **tmux-mcp** | Attach to and drive existing tmux sessions — list, send keys, capture panes, run commands. Maintains a registry of named sessions with metadata. Any tmux session can be driven (Claude Code, shells, long-running services) | (Phase 3d) |
+| **emux** | Eidos mux — pick up where you left off in tmux. TUI session picker for humans (`emux`) + MCP server for agents (`emux mcp`). One shared registry of named sessions; works with any tmux session — Claude Code, shells, long-running services | (Phase 3d) |
 | **resume-resume** | Post-crash session recovery, dirty repos inventory, session search across history | (audit pending) |
 | **ike** | Task and project management — tasks, milestones, documents, Definition of Done | (audit pending) |
 | **visionlog** | Vision, goals, guardrails, SOPs, ADRs — the contracts all execution must honor | (audit pending) |
