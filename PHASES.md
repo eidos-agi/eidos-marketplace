@@ -59,6 +59,15 @@ This phase is a *literal* pause. No plugin onboarding. No marketplace.json plugi
 - Closing/triaging marketplace issues
 - **Designing the `/eidos-install` skill content** — draft `cockpit-eidos/briefs/eidos-install-skill.md` covering: the interview flow ("what are you doing?"), starter-set logic per project archetype (python-package, frontend-app, research, founder-ops, etc.), the hand-off pattern to `forge-forge` for forge-specific drilldown, and the cross-ecosystem pointers (when to mention `helios`, `omni`, `eidos-v5`). Design only; ship in Phase 3.
 
+**Open design questions to resolve before Phase 3 (architectural debt flagged by cept review of commit b255b13):**
+
+- [ ] **Rollback/downgrade workflow.** What happens when `foss-forge` audited a plugin to grade A, the user installed it, and it broke in their environment? Document the user's recourse: `claude plugins uninstall <name>` plus reporting back. Decide: do we surface a "report broken" affordance? Add a section to STANDARD.md about user-side recovery vs. marketplace-side removal.
+- [ ] **`/eidos-install` discovery chicken-and-egg.** How does a brand-new user find `/eidos-install` itself? Today: README + the marketplace listing. Sufficient? Or do we need: (a) `eidos-install` mentioned in every Eidos-maintained README, (b) `npx eidos-install` as a one-liner in launch posts, (c) a CLAUDE.md template that suggests it. Pick a strategy; document it.
+- [ ] **Versioning model — recommender vs. source-of-truth conflict.** When `forge-forge`'s cached or in-session view of a forge differs from `marketplace.json` (e.g., recommend block changed mid-session), the rule is **`marketplace.json` always wins** (recommenders are thin readers, no internal cache or pin). Make this explicit in STANDARD.md § Onboarding vs Discovery vs Installation. Add a STANDARD.md rule: "Recommenders MUST re-read `marketplace.json` per recommendation request; no caching across requests."
+- [ ] **STANDARD.md enforcement beyond Phase 7 CI.** Currently the only enforcement is the Phase 7 CI staleness check. Phase 0 also has `python tools/test_plugins.py` for marketplace.json validation. Decide: do we add (a) a pre-commit hook running `tools/test_plugins.py`, (b) a JSON Schema file checked into the repo that editors validate against in real time, (c) a `CONTRIBUTING.md` checklist that says "before submitting, run `python tools/test_plugins.py`"? Pick at least one and add it to Phase 0.
+
+These four are *design-only* during Phase 2. The fixes (STANDARD.md rule edits, README pointers, pre-commit hook) ship in Phase 3 alongside `eidos-install` and `forge-forge`. They do not gate the calendar resume condition — but they DO inform the "is the cadence sustainable?" question. If we can't resolve a blind spot in two weeks, that's signal the bar is too high and we should simplify before scaling.
+
 **Not allowed:**
 - Onboarding *any* new plugin (eidos-install, forge-forge, foss-forge, slack-cc, anything)
 - Adding entries to marketplace.json's `plugins` array
