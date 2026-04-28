@@ -39,7 +39,7 @@ cept (`eidos-agi/cept`, on PyPI as `cept`) is the flagship Tool. It demonstrates
 - [x] Add cept entry to `.claude-plugin/marketplace.json` (now 9 plugins). Source: `./plugins/cept`; category `agent-tools`; tags + homepage + license + version per pyproject.toml.
 - [x] Add the `x-eidos` block: `kind.type: "tool"` with signals `["single_capability", "uvx_shim", "mcp_server"]`. `audit` block populated by the hand-audit step below.
 - [x] Run `python tools/test_plugins.py cept` — PASS in 1.6s; cept v0.1.0 server responds to MCP `initialize`.
-- [ ] From a clean Claude Code session: `/plugin marketplace add eidos-agi/eidos-marketplace`, then `/plugin install cept@eidos-marketplace`. Confirm the MCP starts and the `cept` tool responds. **REQUIRES USER** — Daniel needs a fresh session to round-trip; this is the only Phase 1 step I cannot self-execute.
+- [x] Round-trip install verified: `claude plugins marketplace update eidos-marketplace` + `claude plugins install cept@eidos-marketplace` succeeded. `claude plugins list` confirms cept@eidos-marketplace v0.1.0 installed at user scope. The first attempt failed with "Plugin not found" due to stale marketplace cache — captured as the inaugural LEARNINGS.md entry.
 - [x] Hand-audit cept against [STANDARD.md](STANDARD.md). [`AUDITS/cept.md`](AUDITS/cept.md) written with grade A; all three layers PASS; `x-eidos.audit` block populated in marketplace.json. Header: `audited_by: by-hand (foss-forge not yet onboarded)`.
 - [x] Commit and push.
 
@@ -58,6 +58,7 @@ This phase is a *literal* pause. No plugin onboarding. No marketplace.json plugi
 - Closing/triaging marketplace issues
 - **Designing the `/eidos-install` skill content** — draft `cockpit-eidos/briefs/eidos-install-skill.md` covering: the interview flow ("what are you doing?"), starter-set logic per project archetype (python-package, frontend-app, research, founder-ops, etc.), the hand-off pattern to `forge-forge` for forge-specific drilldown, and the cross-ecosystem pointers (when to mention `helios`, `omni`, `eidos-v5`). Design only; ship in Phase 3.
 - **Designing the `rhea` plugin entry** — draft `plugins/rhea/.claude-plugin/plugin.json` and `.mcp.json` content (do NOT add to marketplace.json yet; that's Phase 3c). rhea is the second flagship Tool, sibling to cept: where cept does proprioception (self-awareness from your own transcript), rhea does adversarial sparring (`rhea_challenge`, `rhea_debate`, `rhea_simplify`, `rhea_unstick`). Mirror cept's plugin file shapes. Verify rhea's source repo has all STANDARD.md community-health files; if any are missing, file follow-up issues against `eidos-agi/rhea`.
+- **Designing the `claude-runner` plugin entry** — draft `plugins/claude-runner/.claude-plugin/plugin.json` and `.mcp.json` (do NOT add to marketplace.json yet; that's Phase 3d). The package is already built and pushed to `eidos-agi/claude-runner` (private; flip to public before Phase 3d ship). Tier 1 only (subprocess wrapper); Tier 2 (interactive driving via tmux/PTY) deferred until a use case demands it. claude-runner is infrastructure: it lets agents autonomously round-trip-test marketplace installs, which is critical for Phase 4+ when foss-forge audits start auto-running.
 
 **Open design questions to resolve before Phase 3 (architectural debt flagged by cept review of commit b255b13):**
 
@@ -124,11 +125,27 @@ After the Phase 2 pause, ship both recommenders together. `eidos-install` is the
 - [ ] Update README.md plugin table to add rhea to the Tools section with description: "Adversarial sparring partner — challenge, debate, simplify, unstick. Sibling to cept."
 - [ ] Update `eidos-install` skill (Phase 3a draft) to recommend rhea alongside cept in starter sets that involve significant decisions (e.g., python-package archetype, founder-ops archetype). cept + rhea together = the proprioception+critique pair.
 
+### Phase 3d — `claude-runner` (Tool: agent-driven Claude Code automation)
+
+`claude-runner` is infrastructure for the marketplace itself. It exposes one MCP tool, `claude_run`, that spawns the Claude Code CLI as a subprocess with optional pre-flight marketplace cache refresh. This is what makes future round-trip install tests autonomous — no human in the loop required to verify a Phase 5 audit's install path works.
+
+The package is already built (`eidos-agi/claude-runner`, private repo, 7/7 tests passing, uvx round-trip verified locally). Phase 3d just onboards it to the marketplace.
+
+- [ ] Flip `eidos-agi/claude-runner` from private to public (requires Daniel's explicit OK on the visibility flip).
+- [ ] Publish `claude-runner` to PyPI via the existing OIDC trusted-publisher pattern. Tag `v0.1.0` and push.
+- [ ] Add CHANGELOG, CONTRIBUTING, COC, SECURITY files to bring up to STANDARD.md community-health bar (deferred during initial build; required before marketplace listing).
+- [ ] Move the Phase 2 design draft into `plugins/claude-runner/.claude-plugin/plugin.json` and `plugins/claude-runner/.mcp.json` in the marketplace repo. Mirror cept's pattern.
+- [ ] Add `claude-runner` entry to `marketplace.json`. `x-eidos.kind.type: "tool"` with signals `["single_capability", "uvx_shim", "mcp_server"]`. Include a `tier` note in the description: "Tier 1 only — subprocess wrapper; Tier 2 (interactive driving) deferred."
+- [ ] Round-trip test: from a fresh session, install claude-runner via the marketplace, then USE claude-runner to install cept (recursive dogfooding — cept installs cept's siblings).
+- [ ] Hand-audit claude-runner against STANDARD.md. Write `AUDITS/claude-runner.md`. Populate `x-eidos.audit`.
+- [ ] Update `eidos-install` skill (Phase 3a draft) to recommend claude-runner for project archetypes that involve marketplace operations or CI/CD work.
+
 Phase 3 is complete when:
-1. A user can run `claude plugins install eidos-install`, run `/eidos-install`, and walk away with a coherent starter-set install plan that includes both cept and rhea where appropriate.
+1. A user can run `claude plugins install eidos-install`, run `/eidos-install`, and walk away with a coherent starter-set install plan that includes cept, rhea, claude-runner, and forge-forge where appropriate.
 2. A user can run `claude plugins install forge-forge` and use `/forge list` directly.
 3. A user can run `claude plugins install rhea` and use `/rhea_challenge` (or any rhea verb) directly.
-4. All three plugins work standalone; none require the others.
+4. A user can run `claude plugins install claude-runner` and use `claude_run` to verify any marketplace plugin install autonomously.
+5. All four plugins work standalone; none require the others.
 
 ---
 
