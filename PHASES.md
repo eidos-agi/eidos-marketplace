@@ -27,7 +27,7 @@ The marketplace.json is currently missing top-level metadata. Fix that, document
 - [ ] Update existing plugin entries' `source` fields to use the shorter form (e.g., `"resume-resume"` instead of `"./plugins/resume-resume"`)
 - [ ] Rewrite `README.md` to lead with the thesis (visibility is the moat), not feature list. Reference [STANDARD.md](STANDARD.md) and [PHASES.md](PHASES.md).
 - [ ] Set GitHub topics on the marketplace repo: `claude-code`, `claude-plugin-marketplace`, `mcp`, `agent-tools`, `eidos-agi`. Use `gh repo edit eidos-agi/eidos-marketplace --add-topic ...`
-- [ ] Decide fate of `eidos-agi/claude-plugins` (the duplicate marketplace). Recommend: archive with a README pointing here. Track decision in commit message.
+- [x] Archive `eidos-agi/claude-plugins`. README replaced with redirect to this repo (commit 2b5fb49); repo archived 2026-04-28. The old marketplace was a single-plugin home for slack-cc, never expanded; 0 stars, 0 forks confirmed nobody depended on it.
 
 ---
 
@@ -99,6 +99,7 @@ Order — smallest blast radius first:
 - [ ] clawdflare
 - [ ] railguey
 - [ ] forge-forge (the meta-forge; audit last because it depends on the others)
+- [ ] slack-cc (was in archived `eidos-agi/claude-plugins`; needs onboarding here. Source repo: `eidos-agi/slack-cc`. Note: install requires `--dangerously-load-development-channels` flag for private marketplace plugins.)
 
 ---
 
