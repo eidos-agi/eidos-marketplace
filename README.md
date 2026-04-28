@@ -4,28 +4,52 @@ The plugin marketplace for [Claude Code](https://docs.claude.com/en/docs/claude-
 
 > **A portfolio of how we ship.** Every plugin here is built or vouched for by Eidos AGI, audited against a public [standard](STANDARD.md), and removed if it falls below the bar. Visibility is the moat.
 >
-> **The marketplace is its own first customer.** Audits run via `foss-forge`. Releases via `ship-forge`. Security checks via `security-forge`. Each one is itself a plugin in this marketplace. If our own tools can't run our own operations, they don't belong here. See [Dogfooding](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins).
+> **Three layers, one bar.** Onboarding via `/eidos-install` (a gateway skill that asks what you're doing and recommends a starter set). Discovery via `marketplace.json` and `/forge recommend-for` (a forge-specific recommender). Installation via `claude plugins install <name>` (the normal Claude Code path). Each layer can fail without breaking the others.
+>
+> **The marketplace is its own first customer.** Audits run via `foss-forge`. Releases via `ship-forge`. Security checks via `security-forge`. Each is itself a plugin in this marketplace. If our own tools can't run our own operations, they don't belong here. See [Dogfooding](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins).
 
 ## Install
+
+Add the marketplace once:
 
 ```bash
 claude plugins marketplace add eidos-agi/eidos-marketplace
 ```
 
-Then install any plugin:
+### First time? Use the gateway.
+
+```bash
+claude plugins install eidos-install
+/eidos-install
+```
+
+`/eidos-install` interviews you ("what are you doing?"), recommends a coherent starter set drawn from this marketplace and the broader Eidos ecosystem, and shows the install commands. It hands off to `/forge recommend-for <project>` for ongoing forge-specific drilldown.
+
+### Already know what you want? Install directly.
 
 ```bash
 claude plugins install cept            # proprioception for coding agents
 claude plugins install resume-resume   # post-crash session recovery
 claude plugins install ike             # task and project management
 claude plugins install visionlog       # vision, goals, guardrails, ADRs
+claude plugins install forge-forge     # forge-specific recommender
 ```
+
+Every plugin is directly installable. The recommenders (`eidos-install`, `forge-forge`) are optional middleware over the flat listing — if either is broken, every plugin remains installable by name.
 
 ## What's in here
 
+### Gateways — front door
+
 | Plugin | What it does | Quality |
 |--------|-------------|---------|
-| **cept** | Proprioception for coding agents — slice recent Claude Code transcript, redact, ask a model for steering | A *(2026-04-28)* |
+| **eidos-install** | Progressive-reveal interview + starter-set recommendation for the Eidos ecosystem | (Phase 3) |
+
+### Tools — discrete capabilities
+
+| Plugin | What it does | Quality |
+|--------|-------------|---------|
+| **cept** | Proprioception for coding agents — slice recent Claude Code transcript, redact, ask a model for steering | A *(2026-04-28, by-hand)* |
 | **resume-resume** | Post-crash session recovery, dirty repos inventory, session search across history | (audit pending) |
 | **ike** | Task and project management — tasks, milestones, documents, Definition of Done | (audit pending) |
 | **visionlog** | Vision, goals, guardrails, SOPs, ADRs — the contracts all execution must honor | (audit pending) |
@@ -33,14 +57,21 @@ claude plugins install visionlog       # vision, goals, guardrails, ADRs
 | **railguey** | Railway deployment management | (audit pending) |
 | **clawdflare** | Cloudflare management — DNS, Workers, Pages, KV, R2 | (audit pending) |
 | **eidos-mail** | Email for Claude Code — read, search, send, reply, forward | (audit pending) |
-| **forge-forge** | Meta-forge — create and manage forges | (audit pending) |
+
+### Forges — opinionated workflows
+
+| Plugin | What it does | Quality |
+|--------|-------------|---------|
+| **forge-forge** | Forge-specific recommender; reads the marketplace's `x-eidos.recommend` blocks | (Phase 3) |
 | **probe-forge** | Probing tools | (audit pending) |
 
-Per-plugin scorecards live in [AUDITS/](AUDITS/).
+Per-plugin scorecards live in [AUDITS/](AUDITS/). Audit metadata is also published machine-readably under each plugin's `x-eidos.audit` block in `marketplace.json`.
 
 ## How it works
 
-This marketplace is a directory of pointers, not code. Each MCP-server plugin is two small JSON files:
+This marketplace is a directory of pointers, not code. Plugins ship in two shapes depending on what they distribute:
+
+**MCP-server plugins** (like `cept`) — two small JSON files; the actual code lives on PyPI.
 
 ```
 plugins/cept/
@@ -59,9 +90,9 @@ The `.mcp.json` tells Claude Code how to run the server:
 }
 ```
 
-The actual code lives in each plugin's own repo, published to PyPI. The marketplace just says "run this command." [`uvx`](https://docs.astral.sh/uv/guides/tools/) pulls the package from PyPI on demand — no pre-install needed.
+[`uvx`](https://docs.astral.sh/uv/guides/tools/) pulls the package from PyPI on demand — no pre-install needed.
 
-Skill-bearing plugins (forges) use a different pattern documented in [PHASES.md](PHASES.md) Phase 4 — `github` source pulling the repo's `skills/` directory directly.
+**Skill-bearing plugins** (gateways and forges) ship as `github`-source entries in `marketplace.json`. The marketplace pulls the source repo's `skills/<name>/SKILL.md` directly. No PyPI package required. See [STANDARD.md](STANDARD.md) for the source-shape spec.
 
 ## What "eidos-grade" means
 
@@ -70,6 +101,8 @@ See [STANDARD.md](STANDARD.md) for the full bar. The short version:
 - **Community Health** — LICENSE, README, CHANGELOG, CONTRIBUTING, COC, SECURITY
 - **Agentic Quality** — every tool typed, described, and built for agents to choose between
 - **Engineering** — semver, ≤5 dependencies, CI green, OIDC trusted publisher (no long-lived tokens)
+
+Each plugin is also classified as a Tool, Forge, or Gateway, with kind-specific bar additions (e.g., forges must populate `x-eidos.recommend`; gateways must be skill-only and interview-driven). See [STANDARD.md § Tools, Forges, and Gateways](STANDARD.md#tools-forges-and-gateways--three-surfaces-one-bar).
 
 Plugins that drop below the bar are pulled. Removal is a stronger signal than silent inclusion.
 

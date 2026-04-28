@@ -33,50 +33,98 @@ The marketplace.json is currently missing top-level metadata. Fix that, document
 
 ## Phase 1 — cept onboarding (target: ~30 min)
 
-cept (`eidos-agi/cept`, on PyPI as `cept`) is the flagship plugin. It demonstrates the bar.
+cept (`eidos-agi/cept`, on PyPI as `cept`) is the flagship Tool. It demonstrates the bar for the Tool surface (à-la-carte install, single capability, uvx shim).
 
 - [ ] Create `plugins/cept/.claude-plugin/plugin.json` with: name, description, version (mirror `cept`'s pyproject.toml), homepage, repository, license, keywords
 - [ ] Create `plugins/cept/.mcp.json` using the uvx-shim pattern: `{"cept": {"command": "uvx", "args": ["--from", "cept", "cept"]}}`
-- [ ] Add cept entry to `.claude-plugin/marketplace.json` plugins array. Include: name, description, source (`"cept"`), category (`"productivity"` or `"agent-tools"` — pick one and use consistently), tags, homepage, license, version
+- [ ] Add cept entry to `.claude-plugin/marketplace.json` plugins array. Include: name, description, source (`"cept"`), category, tags, homepage, license, version
+- [ ] Add the `x-eidos` block (per [STANDARD.md § Plugin metadata](STANDARD.md#plugin-metadata--the-x-eidos-block)) to cept's entry: `kind.type: "tool"` with signals `["single_capability", "uvx_shim"]`. Audit fields filled in below.
 - [ ] Run `python tools/test_plugins.py` to verify validation passes
 - [ ] From a clean Claude Code session: `/plugin marketplace add eidos-agi/eidos-marketplace`, then `/plugin install cept@eidos-marketplace`. Confirm the MCP starts and the `cept` tool responds.
-- [ ] Audit cept by hand against [STANDARD.md](STANDARD.md) for now. Write `AUDITS/cept.md` with grade, date, scorecard, and a header note: `audited_via: by-hand (foss-forge not yet onboarded)`. Add the `x-eidos-quality` block to cept's marketplace.json entry.
+- [ ] Audit cept by hand against [STANDARD.md](STANDARD.md). Write `AUDITS/cept.md` with grade, date, scorecard. Header: `audited_by: by-hand (foss-forge not yet onboarded)`. Populate `x-eidos.audit` block in marketplace.json.
 - [ ] Commit and push. Phase 1 complete when round-trip works.
 
-The hand-audit is a temporary debt: the [Dogfooding section of STANDARD.md](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins) requires `foss-forge` to be the audit tool. Phase 3 retires that debt by onboarding `foss-forge` and re-auditing cept through it.
+The hand-audit is a temporary debt. [STANDARD.md § Dogfooding](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins) requires `foss-forge` to be the audit tool. Phase 4 retires this debt by re-auditing cept through `/foss-check`.
 
 ---
 
-## Phase 2 — Live with it (target: 2 weeks, ending ~2026-05-12)
+## Phase 2 — HARD STOP. Live with cept for two weeks. (resume on or after 2026-05-12)
 
-This is a deliberate pause. The trust thesis only operates if we resist breadth.
+This phase is a *literal* pause. No plugin onboarding. No marketplace.json plugin entries added. The trust thesis only operates if we resist breadth — and cept is what we live with so we feel the friction before scaling.
 
-- [ ] Do NOT onboard new plugins until 2026-05-12.
-- [ ] Watch maintenance friction. Anything that hurts (a bad PyPI release breaking the uvx shim, a stale audit, an agent invoking cept incorrectly because the description was unclear) gets logged in `LEARNINGS.md`.
-- [ ] If the marketplace.json or any plugin shape needs to evolve based on real usage, evolve it. Don't bake in patterns that haven't been tested.
-- [ ] At end of Phase 2, decide: is the cadence sustainable? If not, simplify the standard before scaling. If yes, proceed to Phase 3.
+**Allowed during the pause:**
+- Bug fixes to cept's marketplace.json entry, plugin.json, or .mcp.json
+- Updates to `STANDARD.md`, `PHASES.md`, `LEARNINGS.md`, or `AUDITS/cept.md` reflecting what we learn
+- Updates to `README.md` content (not adding plugins to the table)
+- Closing/triaging marketplace issues
+- **Designing the `/eidos-install` skill content** — draft `cockpit-eidos/briefs/eidos-install-skill.md` covering: the interview flow ("what are you doing?"), starter-set logic per project archetype (python-package, frontend-app, research, founder-ops, etc.), the hand-off pattern to `forge-forge` for forge-specific drilldown, and the cross-ecosystem pointers (when to mention `helios`, `omni`, `eidos-v5`). Design only; ship in Phase 3.
+
+**Not allowed:**
+- Onboarding *any* new plugin (eidos-install, forge-forge, foss-forge, slack-cc, anything)
+- Adding entries to marketplace.json's `plugins` array
+- Phase 3+ tasks of any kind
+
+**Resume conditions** — both must be true to proceed to Phase 3:
+
+- [ ] Calendar: today's date is on or after **2026-05-12**
+- [ ] Friction journal exists: `LEARNINGS.md` has at least one entry from the live-with-cept period (a maintenance pain we noticed; the absence of any entries means we weren't actually using cept and the pause didn't accomplish its goal)
+- [ ] Resume answer recorded: a one-paragraph entry in `LEARNINGS.md` answering *"Is the cadence sustainable as designed, or do we simplify STANDARD.md before scaling?"* If we simplify, do that *before* Phase 3.
+
+If the calendar date passes but no friction was logged, extend the pause. The pause's purpose isn't time; it's lived experience. Time is the proxy.
 
 ---
 
-## Phase 3 — Onboard `foss-forge` first (the audit tool itself)
+## Phase 3 — Onboard the front door: `eidos-install` (gateway) + `forge-forge` (recommender)
 
-The marketplace's first job after Phase 2 is to make its own audit instrument an installable plugin. This is the dogfooding forcing function from [STANDARD.md § Dogfooding](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins): we cannot run a `foss-check` audit on any other plugin until `foss-forge` is a marketplace plugin in good standing.
+After the Phase 2 pause, ship the two recommender plugins together. `eidos-install` is the user-visible front door (a skill that interviews and recommends starter sets); `forge-forge` is the forge-specific recommender it delegates to. Both are recommenders; neither installs. See [STANDARD.md § Tools, Forges, and Gateways](STANDARD.md#tools-forges-and-gateways--three-surfaces-one-bar).
 
-Skill-bearing forges don't fit the uvx-shim pattern because they ship markdown, not Python. They need a different `source` shape — `github`-source — so the marketplace pulls the repo's `skills/` directory directly.
+### Phase 3a — Source convention + `eidos-install` (gateway)
 
-- [ ] Decide source convention for skill-bearing plugins: `{"source": {"source": "github", "repo": "eidos-agi/<name>"}}`. Document the convention as a one-liner in [STANDARD.md](STANDARD.md) under "How submissions work."
-- [ ] In `eidos-agi/foss-forge`, ensure top-level `.claude-plugin/plugin.json` exists and skills are at `skills/<name>/SKILL.md` with YAML frontmatter (`name`, `description`).
-- [ ] Bring `foss-forge` up to STANDARD.md (LICENSE, README, CHANGELOG, CONTRIBUTING, COC, SECURITY). It must pass the bar by hand because it cannot audit itself yet.
-- [ ] Add `foss-forge` entry to marketplace.json. Run `python tools/test_plugins.py`.
+- [ ] Decide source convention for skill-bearing plugins: `{"source": {"source": "github", "repo": "eidos-agi/<name>"}}`. Document the convention as a one-liner under [STANDARD.md § How submissions work](STANDARD.md#how-submissions-work-today).
+- [ ] Create `eidos-agi/eidos-install` repo (skill-only). Move the Phase 2 design draft from `cockpit-eidos/briefs/eidos-install-skill.md` into `skills/eidos-install/SKILL.md` with proper YAML frontmatter (`name: eidos-install`, `description: Progressive-reveal front door for the Eidos ecosystem`).
+- [ ] Bring `eidos-install` up to STANDARD.md community-health (LICENSE, README, CHANGELOG, CONTRIBUTING, COC, SECURITY). Hand-audit since `foss-forge` isn't onboarded yet.
+- [ ] Add `eidos-install` entry to marketplace.json. `x-eidos.kind.type: "gateway"` with signals `["progressive_reveal", "cross_ecosystem_pointers", "delegates_to_recommenders"]`. Document the delegations: `x-eidos.recommend.delegates_to: ["forge-forge"]`.
+- [ ] Round-trip test: `claude plugins install eidos-install`. Run `/eidos-install`. Confirm interview flow works and produces sensible starter-set recommendations for at least three project archetypes (python-package, frontend-app, founder-ops).
+- [ ] Verify hand-off: when the user finishes `/eidos-install`'s starter set, the skill should explicitly mention "for ongoing forge needs, use `/forge recommend-for <project>`" — pointing them at Phase 3b's `forge-forge`.
+- [ ] Hand-audit `eidos-install` against STANDARD.md. Write `AUDITS/eidos-install.md`. Populate `x-eidos.audit` block. Header: `audited_by: by-hand (foss-forge not yet onboarded)`.
+
+### Phase 3b — `forge-forge` (forge recommender)
+
+`forge-forge`'s existing MCP tools (`forge_list`, `forge_find`, `forge_for_project`, `forge_how`, `forge_info`) already match the recommender shape — they describe and recommend; they don't install. This phase makes `forge-forge` discoverable and installable from the marketplace.
+
+- [ ] In `eidos-agi/forge-forge`, ensure top-level `.claude-plugin/plugin.json` exists; skills at `skills/<name>/SKILL.md` with YAML frontmatter; MCP server entry point declared.
+- [ ] Bring `forge-forge` up to STANDARD.md community-health files. Hand-audit.
+- [ ] Add `forge-forge` entry to marketplace.json. `x-eidos.kind.type: "forge"` with signals `["ships_skills", "opinionated_workflow", "coordinates_with_other_forges"]`. Empty `x-eidos.recommend.for_projects` (no other forges yet to recommend).
+- [ ] **Wire `forge-forge` to read `x-eidos.recommend` from the marketplace's `marketplace.json`** as its primary registry. No internal registry; just a thin reader of the public source-of-truth. If `forge-forge` already has its own `registry.yaml` (it does, at `~/repos-eidos-agi/forge-forge/registry.yaml`), keep it for development convenience but make `marketplace.json` the production source for the published plugin.
+- [ ] Round-trip test: `claude plugins install forge-forge`. Confirm `/forge list` works (will show only forge-forge itself at this point — that's correct).
+- [ ] Hand-audit `forge-forge` against STANDARD.md. Write `AUDITS/forge-forge.md`. Populate `x-eidos.audit` block.
+- [ ] Verify graceful degradation: confirm `forge-forge` itself and `eidos-install` can be installed *without* the other being present. The two recommenders are independent.
+
+Phase 3 is complete when:
+1. A user can run `claude plugins install eidos-install`, run `/eidos-install`, and walk away with a coherent starter-set install plan.
+2. A user can run `claude plugins install forge-forge` and use `/forge list` directly.
+3. Both recommenders work standalone; neither requires the other.
+
+---
+
+## Phase 4 — Onboard `foss-forge` and bootstrap the audit dogfood
+
+`foss-forge` is the audit instrument. We cannot trust automated audits until `foss-forge` is itself a marketplace plugin in good standing AND has self-audited.
+
+- [ ] In `eidos-agi/foss-forge`, ensure top-level `.claude-plugin/plugin.json`, skills layout, and STANDARD.md community-health files (LICENSE, README, CHANGELOG, CONTRIBUTING, COC, SECURITY).
+- [ ] Add `foss-forge` entry to marketplace.json. `x-eidos.kind.type: "forge"` with signals. `x-eidos.recommend.for_projects: ["python-package", "github-repo", "open-source-prep"]`, `pairs_with: ["security-forge", "ship-forge"]`, `preflight_check: "/foss-check"`.
 - [ ] Round-trip test: `claude plugins install foss-forge`. Confirm `/foss-check` runs.
-- [ ] Run `/foss-check` against `eidos-agi/foss-forge` itself — the bootstrap audit. Write `AUDITS/foss-forge.md` with the result. Header of the audit: `audited_via: foss-forge@<version>` (self-referential and proud).
-- [ ] If `foss-forge` cannot self-audit to grade ≥B, fix it before continuing. Phase 4 cannot start until `foss-forge` clears its own bar.
+- [ ] **Bootstrap audit**: run `/foss-check` against `eidos-agi/foss-forge` itself. Write `AUDITS/foss-forge.md` with the foss-check output verbatim. Header: `audited_by: foss-forge@<version>` (self-referential and proud). Populate `x-eidos.audit` in marketplace.json.
+- [ ] If `foss-forge` self-audits below grade B: fix `foss-forge`'s source repo, re-tag, re-publish, re-audit. Phase 5 cannot start until `foss-forge` clears its own bar.
+- [ ] Retroactively re-audit `cept` using `/foss-check`. Update `AUDITS/cept.md` and `cept`'s `x-eidos.audit` block. Header changes from `audited_by: by-hand` to `audited_by: foss-forge@<version>`. Phase 1's hand-audit debt is now retired.
+- [ ] Retroactively re-audit `eidos-install` and `forge-forge` using `/foss-check`. Update `AUDITS/eidos-install.md`, `AUDITS/forge-forge.md`, and both `x-eidos.audit` blocks. Phase 3's hand-audit debt is now retired.
+- [ ] Verify `forge-forge` correctly surfaces the now-onboarded `foss-forge` via `/forge recommend-for python-package`. Recommendation must show `foss-forge`'s audit grade inline.
 
-Once `foss-forge` clears, retroactively re-audit `cept` using `/foss-check` and update `AUDITS/cept.md` with `audited_via: foss-forge@<version>`. The Phase 1 manual audit is replaced by the dogfooded one.
+After Phase 4, the dogfooding loop is closed: `forge-forge` recommends `foss-forge`; `foss-forge` audits everything (including itself); audits publish to both `marketplace.json` (machine-readable) and `AUDITS/` (human-readable).
 
 ---
 
-## Phase 4 — Audit the remaining plugins via `foss-forge`
+## Phase 5 — Audit remaining plugins via `foss-forge`
 
 The 9 plugins already in marketplace.json predate the standard. Now that `foss-forge` is operational, audit each one *through it*. No hand-grading. If `foss-forge` can't grade something, that is itself a `foss-forge` bug — fix the tool, not the workaround.
 
@@ -84,8 +132,8 @@ For each plugin below:
 
 1. Run `/foss-check` against the plugin's source repo.
 2. Address gaps in the source repo (LICENSE, README, CHANGELOG, etc.) until grade ≥B.
-3. Write `AUDITS/<name>.md` with the foss-check output verbatim, plus a one-paragraph summary. Header: `audited_via: foss-forge@<version>`.
-4. Add `x-eidos-quality` to the marketplace.json entry.
+3. Write `AUDITS/<name>.md` with the foss-check output verbatim, plus a one-paragraph summary. Header: `audited_by: foss-forge@<version>`.
+4. Populate `x-eidos.audit` in marketplace.json.
 5. If it can't reach grade ≥B and the gap is in the plugin (not the tool), mark it removed: delete from marketplace.json, write `AUDITS/<name>.md` with the removal explanation.
 
 Order — smallest blast radius first:
@@ -98,53 +146,52 @@ Order — smallest blast radius first:
 - [ ] eidos-mail
 - [ ] clawdflare
 - [ ] railguey
-- [ ] forge-forge (the meta-forge; audit last because it depends on the others)
 - [ ] slack-cc (was in archived `eidos-agi/claude-plugins`; needs onboarding here. Source repo: `eidos-agi/slack-cc`. Note: install requires `--dangerously-load-development-channels` flag for private marketplace plugins.)
 
 ---
 
-## Phase 5 — Onboard the rest of the operational forges
+## Phase 6 — Onboard the rest of the operational forges
 
-The marketplace's other maintenance operations — release, security audit, MCP linting, testing — also need to run via marketplace plugins, not by hand. Onboard each one and use it for its respective marketplace operation.
+The marketplace's other maintenance operations — release, security audit, MCP linting, testing — also need to run via marketplace plugins, not by hand. Onboard each one and use it for its respective marketplace operation. Each onboarded forge gets its `x-eidos.recommend` block populated so `forge-forge` can surface it for the right project context.
 
-- [ ] **security-forge** — onboard as a `github` source. Run `/secaudit` against `cept` and any plugin already in `AUDITS/`. Add a `security_audit` field to `x-eidos-quality`.
-- [ ] **ship-forge** — onboard. From now on, every change to marketplace.json that bumps a plugin version goes through `/ship` (commit message format, version bump check, release notes).
-- [ ] **mcp-forge** — onboard. Use it to lint MCP-server plugins' tool descriptions and parameter schemas (the Agentic Quality layer of STANDARD.md).
+- [ ] **security-forge** — onboard as a `github` source. Run `/secaudit` against `cept`, `forge-forge`, `foss-forge`, and any plugin already in `AUDITS/`. Extend `x-eidos.audit` schema with `security_grade` + `security_audit_date`. `x-eidos.recommend.pairs_with: ["foss-forge"]`.
+- [ ] **ship-forge** — onboard. From now on, every change to marketplace.json that bumps a plugin version goes through `/ship` (commit message format, version bump check, release notes). `recommend.for_projects: ["pypi-package", "github-release"]`.
+- [ ] **mcp-forge** — onboard. Use it to lint MCP-server plugins' tool descriptions and parameter schemas (the Agentic Quality layer of STANDARD.md). `recommend.for_projects: ["mcp-server"]`.
 - [ ] **test-forge** — onboard. Replace `tools/test_plugins.py` with a `/test` invocation that calls test-forge against `marketplace.json` schema + per-entry assertions.
-- [ ] **scribe** — onboard if it provides documentation-quality checks. Use it to verify each plugin's README meets the "≥20 lines, install + usage example" bar.
+- [ ] **scribe** — onboard if it provides documentation-quality checks. Verify each plugin's README meets the "≥20 lines, install + usage example" bar from STANDARD.md.
 - [ ] **brand-forge** — onboard. Use it to enforce visual + tone consistency on every README badge, AUDITS/ summary, and external-facing post.
 
-After this phase, the marketplace's day-to-day operations are entirely run through plugins it lists. That is the proof of dogfooding.
+After this phase, the marketplace's day-to-day operations are entirely run through plugins it lists, and `forge-forge`'s `/forge recommend-for <project>` returns useful recommendations for any of the major project archetypes (python-package, github-release, mcp-server, etc.). That is the proof of dogfooding.
 
 ---
 
-## Phase 6 — Quality bar machinery (CI runs the same plugins)
+## Phase 7 — Quality bar machinery (CI runs the same plugins)
 
 Manual invocation doesn't scale. Move the dogfooded operations into CI so they re-run on every PR and on a quarterly schedule.
 
-- [ ] `.github/workflows/audit.yml` — validates marketplace.json against the schema, lints required fields per entry, runs `python tools/test_plugins.py` (or its test-forge replacement).
-- [ ] `.github/workflows/foss-check.yml` — quarterly cron + manual dispatch. Runs `foss-forge` against each linked plugin's source repo (via `gh api`) and opens a PR updating `AUDITS/<name>.md` if scores changed.
+- [ ] `.github/workflows/audit.yml` — validates marketplace.json against the schema, lints required `x-eidos.kind` and `x-eidos.audit` fields per entry, runs `python tools/test_plugins.py` (or its test-forge replacement).
+- [ ] `.github/workflows/foss-check.yml` — quarterly cron + manual dispatch. Runs `foss-forge` against each linked plugin's source repo (via `gh api`) and opens a PR updating `AUDITS/<name>.md` and `x-eidos.audit` if scores changed.
 - [ ] `.github/workflows/security-audit.yml` — quarterly cron. Runs `security-forge` against each plugin's source repo, posts findings as issues if any are HIGH/CRITICAL.
-- [ ] Wire CI to fail if `x-eidos-quality.audited_at` is older than 95 days (forces the quarterly cadence to be enforced, not aspirational).
+- [ ] Wire CI to **fail if `x-eidos.audit.audit_date` is older than 95 days** for any plugin. This forces the quarterly cadence to be enforced, not aspirational.
 - [ ] Add a "Verified eidos-grade" badge to each plugin's README in its source repo, linking back to its audit doc here.
 
 ---
 
-## Phase 6 — External discoverability
+## Phase 8 — External discoverability
 
-Only after Phase 4 has 3+ plugins past audit.
+Only after Phase 5 has 3+ plugins past audit and Phase 7 CI is green.
 
 - [ ] Submit to [claudemarketplaces.com](https://claudemarketplaces.com).
 - [ ] Make each plugin compatible with `npx skills add eidos-agi/<name>` where applicable (cross-tool reach beyond Claude Code).
-- [ ] Write the launch post: blog on eidosagi.com, tweet, Hacker News. Tone: portfolio of how we ship, not "we built a marketplace."
+- [ ] Write the launch post: blog on eidosagi.com, tweet, Hacker News. Tone: portfolio of how we ship, not "we built a marketplace." Lead with `claude plugins install eidos-install` as the one-line front door for new users, and mention `cept` as the highlight tool that ships with every starter set.
 
 ---
 
-## Phase 7 — Ongoing
+## Phase 9 — Ongoing
 
 This is forever. The marketplace is alive.
 
-- [ ] Quarterly re-audit cadence. Next: **2026-07-28**. Update every `AUDITS/<name>.md` and bump `x-eidos-quality.audited_at` in marketplace.json.
+- [ ] Quarterly re-audit cadence. Next: **2026-07-28**. Update every `AUDITS/<name>.md` and bump `x-eidos.audit.audit_date` in marketplace.json. CI from Phase 7 enforces this.
 - [ ] Semver discipline. Every meaningful change to a plugin bumps `version` in its source repo's `pyproject.toml` *and* in marketplace.json (when we choose to pin).
 - [ ] When a plugin falls below the bar, pull it. Public removal is a stronger signal than silent exclusion. Write the removal explanation in its audit file.
 - [ ] When a plugin earns A grade and stays there for ≥6 months, mark it "core" in marketplace.json. Core plugins get prominence on the README.
