@@ -40,8 +40,10 @@ cept (`eidos-agi/cept`, on PyPI as `cept`) is the flagship plugin. It demonstrat
 - [ ] Add cept entry to `.claude-plugin/marketplace.json` plugins array. Include: name, description, source (`"cept"`), category (`"productivity"` or `"agent-tools"` — pick one and use consistently), tags, homepage, license, version
 - [ ] Run `python tools/test_plugins.py` to verify validation passes
 - [ ] From a clean Claude Code session: `/plugin marketplace add eidos-agi/eidos-marketplace`, then `/plugin install cept@eidos-marketplace`. Confirm the MCP starts and the `cept` tool responds.
-- [ ] Audit cept against [STANDARD.md](STANDARD.md). Write `AUDITS/cept.md` with grade, date, scorecard. Add the `x-eidos-quality` block to cept's marketplace.json entry.
+- [ ] Audit cept by hand against [STANDARD.md](STANDARD.md) for now. Write `AUDITS/cept.md` with grade, date, scorecard, and a header note: `audited_via: by-hand (foss-forge not yet onboarded)`. Add the `x-eidos-quality` block to cept's marketplace.json entry.
 - [ ] Commit and push. Phase 1 complete when round-trip works.
+
+The hand-audit is a temporary debt: the [Dogfooding section of STANDARD.md](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins) requires `foss-forge` to be the audit tool. Phase 3 retires that debt by onboarding `foss-forge` and re-auditing cept through it.
 
 ---
 
@@ -56,56 +58,74 @@ This is a deliberate pause. The trust thesis only operates if we resist breadth.
 
 ---
 
-## Phase 3 — Onboard remaining MCP-server plugins already in marketplace.json
+## Phase 3 — Onboard `foss-forge` first (the audit tool itself)
 
-The existing 9 plugins predate the standard. Bring each up to bar one at a time, audit, document. Order matters — start with the smallest blast radius.
+The marketplace's first job after Phase 2 is to make its own audit instrument an installable plugin. This is the dogfooding forcing function from [STANDARD.md § Dogfooding](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins): we cannot run a `foss-check` audit on any other plugin until `foss-forge` is a marketplace plugin in good standing.
+
+Skill-bearing forges don't fit the uvx-shim pattern because they ship markdown, not Python. They need a different `source` shape — `github`-source — so the marketplace pulls the repo's `skills/` directory directly.
+
+- [ ] Decide source convention for skill-bearing plugins: `{"source": {"source": "github", "repo": "eidos-agi/<name>"}}`. Document the convention as a one-liner in [STANDARD.md](STANDARD.md) under "How submissions work."
+- [ ] In `eidos-agi/foss-forge`, ensure top-level `.claude-plugin/plugin.json` exists and skills are at `skills/<name>/SKILL.md` with YAML frontmatter (`name`, `description`).
+- [ ] Bring `foss-forge` up to STANDARD.md (LICENSE, README, CHANGELOG, CONTRIBUTING, COC, SECURITY). It must pass the bar by hand because it cannot audit itself yet.
+- [ ] Add `foss-forge` entry to marketplace.json. Run `python tools/test_plugins.py`.
+- [ ] Round-trip test: `claude plugins install foss-forge`. Confirm `/foss-check` runs.
+- [ ] Run `/foss-check` against `eidos-agi/foss-forge` itself — the bootstrap audit. Write `AUDITS/foss-forge.md` with the result. Header of the audit: `audited_via: foss-forge@<version>` (self-referential and proud).
+- [ ] If `foss-forge` cannot self-audit to grade ≥B, fix it before continuing. Phase 4 cannot start until `foss-forge` clears its own bar.
+
+Once `foss-forge` clears, retroactively re-audit `cept` using `/foss-check` and update `AUDITS/cept.md` with `audited_via: foss-forge@<version>`. The Phase 1 manual audit is replaced by the dogfooded one.
+
+---
+
+## Phase 4 — Audit the remaining plugins via `foss-forge`
+
+The 9 plugins already in marketplace.json predate the standard. Now that `foss-forge` is operational, audit each one *through it*. No hand-grading. If `foss-forge` can't grade something, that is itself a `foss-forge` bug — fix the tool, not the workaround.
 
 For each plugin below:
 
-1. Verify the source repo passes [STANDARD.md](STANDARD.md). Add missing files (LICENSE, CHANGELOG.md, CONTRIBUTING.md, etc.) where needed.
-2. Audit. Write `AUDITS/<name>.md`.
-3. Add `x-eidos-quality` to the marketplace.json entry.
-4. If it can't reach grade ≥B, mark it removed: delete from marketplace.json, write `AUDITS/<name>.md` with the removal explanation.
+1. Run `/foss-check` against the plugin's source repo.
+2. Address gaps in the source repo (LICENSE, README, CHANGELOG, etc.) until grade ≥B.
+3. Write `AUDITS/<name>.md` with the foss-check output verbatim, plus a one-paragraph summary. Header: `audited_via: foss-forge@<version>`.
+4. Add `x-eidos-quality` to the marketplace.json entry.
+5. If it can't reach grade ≥B and the gap is in the plugin (not the tool), mark it removed: delete from marketplace.json, write `AUDITS/<name>.md` with the removal explanation.
 
+Order — smallest blast radius first:
+
+- [ ] probe-forge
+- [ ] research-md
 - [ ] resume-resume
 - [ ] ike
 - [ ] visionlog
-- [ ] research-md
-- [ ] railguey
-- [ ] clawdflare
 - [ ] eidos-mail
-- [ ] forge-forge
-- [ ] probe-forge
+- [ ] clawdflare
+- [ ] railguey
+- [ ] forge-forge (the meta-forge; audit last because it depends on the others)
 
 ---
 
-## Phase 4 — Onboard skill-bearing plugins (forges)
+## Phase 5 — Onboard the rest of the operational forges
 
-Skill-only forges (foss-forge, ship-forge, security-forge, mcp-forge, etc.) don't fit the uvx-shim pattern because they ship markdown, not Python. They need a different `source` type — github-source — so the marketplace pulls the repo's `skills/<name>/SKILL.md` directly.
+The marketplace's other maintenance operations — release, security audit, MCP linting, testing — also need to run via marketplace plugins, not by hand. Onboard each one and use it for its respective marketplace operation.
 
-- [ ] Decide source convention for skill-bearing plugins: `{"source": {"source": "github", "repo": "eidos-agi/<name>"}}`. Document in STANDARD.md.
-- [ ] For each skill-bearing forge: ensure source repo has `.claude-plugin/plugin.json` (top-level), restructure skills to `skills/<name>/SKILL.md` with YAML frontmatter (`name`, `description`).
-- [ ] Add to marketplace.json. Audit. Document.
+- [ ] **security-forge** — onboard as a `github` source. Run `/secaudit` against `cept` and any plugin already in `AUDITS/`. Add a `security_audit` field to `x-eidos-quality`.
+- [ ] **ship-forge** — onboard. From now on, every change to marketplace.json that bumps a plugin version goes through `/ship` (commit message format, version bump check, release notes).
+- [ ] **mcp-forge** — onboard. Use it to lint MCP-server plugins' tool descriptions and parameter schemas (the Agentic Quality layer of STANDARD.md).
+- [ ] **test-forge** — onboard. Replace `tools/test_plugins.py` with a `/test` invocation that calls test-forge against `marketplace.json` schema + per-entry assertions.
+- [ ] **scribe** — onboard if it provides documentation-quality checks. Use it to verify each plugin's README meets the "≥20 lines, install + usage example" bar.
+- [ ] **brand-forge** — onboard. Use it to enforce visual + tone consistency on every README badge, AUDITS/ summary, and external-facing post.
 
-Forges to onboard (in priority order):
-
-- [ ] foss-forge (smallest, most-used; the one we just used to ship cept)
-- [ ] security-forge (paired with foss-forge for audits)
-- [ ] mcp-forge (relevant since most plugins here are MCP servers)
-- [ ] ship-forge (release pipeline standards)
-- [ ] forge-forge (the meta-forge — last because it depends on the others)
-- [ ] (others as needed: brand-forge, cli-forge, ml-forge, marketing-forge, nightingale-forge, refactor-forge, demo-forge, test-forge, etc.)
+After this phase, the marketplace's day-to-day operations are entirely run through plugins it lists. That is the proof of dogfooding.
 
 ---
 
-## Phase 5 — Quality bar machinery
+## Phase 6 — Quality bar machinery (CI runs the same plugins)
 
-Manual audit doesn't scale. Automate.
+Manual invocation doesn't scale. Move the dogfooded operations into CI so they re-run on every PR and on a quarterly schedule.
 
-- [ ] Add CI workflow `.github/workflows/audit.yml` that validates marketplace.json against the schema and lints each entry's required fields.
-- [ ] Add CI workflow that runs `foss-forge/foss-check` against each linked plugin repo (via gh api) and updates `AUDITS/<name>.md` if scores change.
-- [ ] Write `CONTRIBUTING.md` describing the submission process for third-party plugins.
-- [ ] Add a "Verified eidos-grade" badge to each plugin's README (linking back to its audit doc).
+- [ ] `.github/workflows/audit.yml` — validates marketplace.json against the schema, lints required fields per entry, runs `python tools/test_plugins.py` (or its test-forge replacement).
+- [ ] `.github/workflows/foss-check.yml` — quarterly cron + manual dispatch. Runs `foss-forge` against each linked plugin's source repo (via `gh api`) and opens a PR updating `AUDITS/<name>.md` if scores changed.
+- [ ] `.github/workflows/security-audit.yml` — quarterly cron. Runs `security-forge` against each plugin's source repo, posts findings as issues if any are HIGH/CRITICAL.
+- [ ] Wire CI to fail if `x-eidos-quality.audited_at` is older than 95 days (forces the quarterly cadence to be enforced, not aspirational).
+- [ ] Add a "Verified eidos-grade" badge to each plugin's README in its source repo, linking back to its audit doc here.
 
 ---
 

@@ -3,6 +3,8 @@
 The plugin marketplace for [Claude Code](https://docs.claude.com/en/docs/claude-code), by [Eidos AGI](https://eidosagi.com).
 
 > **A portfolio of how we ship.** Every plugin here is built or vouched for by Eidos AGI, audited against a public [standard](STANDARD.md), and removed if it falls below the bar. Visibility is the moat.
+>
+> **The marketplace is its own first customer.** Audits run via `foss-forge`. Releases via `ship-forge`. Security checks via `security-forge`. Each one is itself a plugin in this marketplace. If our own tools can't run our own operations, they don't belong here. See [Dogfooding](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins).
 
 ## Install
 

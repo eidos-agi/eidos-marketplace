@@ -89,6 +89,31 @@ This metadata is public and machine-readable. Agents can filter on it. Humans ca
 
 ---
 
+## Dogfooding — the marketplace maintains itself with its own plugins
+
+The marketplace lists `foss-forge`, `ship-forge`, `security-forge`, `scribe`, `visionlog`, and others. Those plugins exist precisely because Eidos AGI's maintenance operations need them. So **the marketplace's own maintenance must run through them.** No bypassing, no parallel manual workflow. If a marketplace plugin is the right tool for an internal job, it is the only tool for that job.
+
+Concretely:
+
+| Operation | Tool (marketplace plugin) | Phase it activates |
+|---|---|---|
+| Score a plugin against [STANDARD.md](STANDARD.md) | `foss-forge` (`/foss-check`) | Once onboarded in Phase 4 |
+| Release a marketplace.json change | `ship-forge` (`/ship`) | Once onboarded |
+| Security-audit a plugin's source repo | `security-forge` (`/secaudit`) | Once onboarded |
+| Open and triage marketplace issues | `eidos-mail`, `ike` | Already onboarded |
+| Record a marketplace governance decision | `visionlog` (ADR) | Already onboarded |
+| Re-test marketplace.json schema validity | `test-forge` | Once onboarded |
+
+This creates a forcing function:
+
+1. **The marketplace cannot run a foss-check audit until `foss-forge` is itself a marketplace plugin in good standing.** That's why Phase 4 onboards `foss-forge` first, before continuing the Phase 3 audit backlog. If `foss-forge` can't pass its own bar, we can't trust its audits of others.
+2. **Every audit document records which version of `foss-forge` produced it.** When `foss-forge` evolves, audits become re-runnable and comparable. The header of each `AUDITS/<name>.md` carries `audited_via: foss-forge@<version>`.
+3. **A marketplace plugin that breaks in production breaks marketplace operations.** Self-interest aligns with quality. We feel our own bugs first.
+
+The marketplace is not just a directory of plugins. It is the **first customer** of every plugin it lists. Plugins that don't support the marketplace's own maintenance get pulled — not because they're bad in the abstract, but because they fail the proof: *the people who built it use it*.
+
+---
+
 ## The negative rule
 
 The thesis is "trust through visibility." The negative rule that follows: **never commit something to this marketplace that you wouldn't want a stranger to read.** Every commit, every plugin entry, every audit. The bar isn't "no embarrassments" — it's "this is what good looks like."
