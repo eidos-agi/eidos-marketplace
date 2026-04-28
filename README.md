@@ -117,6 +117,16 @@ See [PHASES.md](PHASES.md) — the runnable phased plan. Any agent or human can 
 - [`uvx`](https://docs.astral.sh/uv/) (comes with `uv`)
 - [Claude Code](https://docs.claude.com/en/docs/claude-code)
 
+### Troubleshooting
+
+**`Plugin "X" not found in marketplace "eidos-marketplace"`** — your local marketplace cache is stale. Run:
+
+```bash
+claude plugins marketplace update eidos-marketplace
+```
+
+`claude plugins marketplace add` only fetches the marketplace if it isn't already cached; it does not re-fetch when the marketplace.json on GitHub has changed. Every install of a newly-added plugin will fail with "not found" until the cache is refreshed. See [LEARNINGS.md § 2026-04-28](LEARNINGS.md#2026-04-28--stale-local-marketplace-cache-silently-breaks-new-plugin-installs).
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
