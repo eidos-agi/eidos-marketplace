@@ -88,6 +88,15 @@
       "source": "./plugins/forge-forge",
       "category": "development",
       "homepage": "https://github.com/eidos-agi/forge-forge"
+    },
+    {
+      "name": "scridos",
+      "description": "The Eidos scribe — persistent, compounding knowledge bases using the Karpathy LLM Wiki pattern. Ingest sources, query synthesized knowledge, lint for gaps. Fork of ekadetov/llm-wiki under Eidos AGI maintenance, rebrand-in-progress.",
+      "source": "./plugins/scridos",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/scridos",
+      "license": "MIT",
+      "tags": ["knowledge-base", "obsidian", "wiki", "karpathy", "rag-alternative", "memex", "scribe"]
     }
   ]
 }
