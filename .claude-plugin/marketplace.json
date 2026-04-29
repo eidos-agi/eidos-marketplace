@@ -16,7 +16,7 @@
       "category": "agent-tools",
       "homepage": "https://github.com/eidos-agi/cept",
       "license": "MIT",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "tags": ["mcp", "agent", "proprioception", "steering", "openrouter"],
       "x-eidos": {
         "kind": {
