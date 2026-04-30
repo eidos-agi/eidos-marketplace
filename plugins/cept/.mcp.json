@@ -1,1 +1,1 @@
-{"cept":{"command":"uvx","args":["--from","cept","cept"]}}
+{"cept":{"command":"uvx","args":["--from","cept","cept"],"env":{"CEPT_EMIT":"hud,file:~/.cept/status.jsonl"}}}
