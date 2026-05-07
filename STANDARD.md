@@ -29,11 +29,32 @@ For MCP servers / agent tools — the layer that makes eidos-marketplace differe
 
 | Requirement | Why it matters |
 |---|---|
+| Prefer CLI-first progressive reveal for broad surfaces; MCP shims should point to CLIs instead of exposing huge tool catalogs | CLIs can reveal thousands of affordances through help/subcommands without paying the context tax every session |
 | Every `@tool` has a description ≥20 chars that explains *when* to use it (not just *what*) | Agents pick from many tools; descriptions are how they decide |
 | Every parameter has a typed schema and description field | Agents have no UI tooltips — descriptions are all they get |
 | Error returns are actionable (what went wrong + what to try) | Bare "failed" leaves agents stuck |
-| Tool count ≤25 per server | Agent context windows are finite |
+| Tool count ≤25 per server; above that, split the surface or move the broad graph behind a CLI | Agent context windows are finite |
 | MCP entry point in `pyproject.toml` (`[project.scripts]`) | Discoverable via `uvx --from <pkg> <entry>` |
+
+### CLI-first progressive reveal
+
+Eidos should not become a pile of giant MCP servers. The preferred architecture is:
+
+```
+Agent plugin / tiny MCP shim -> CLI -> progressive reveal -> specialist command/tool graph
+```
+
+The plugin or MCP layer exists to help the agent discover and call the right executable. The CLI owns the domain logic, auth handling, status checks, dry-runs, JSON output, and deeper command tree.
+
+For agent-first CLIs:
+
+- `--help` is the schema.
+- `--json` is available for machine-readable output.
+- `status`, `doctor`, `list`, `find`, and `ask` commands are preferred progressive-reveal entrypoints.
+- Commands fail fast with actionable errors.
+- Destructive commands support `--dry-run` or require explicit confirmation outside the agent's default path.
+
+MCP remains appropriate when it is a small bridge to a live process, a bounded tool surface, or the host's only practical integration layer. It should not be the default way to expose thousands of capabilities.
 
 ### Layer 3 — Engineering (shipping)
 

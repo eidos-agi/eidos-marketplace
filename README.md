@@ -66,9 +66,11 @@ Per-plugin scorecards live in [AUDITS/](AUDITS/). Audit metadata is also publish
 
 ## How it works
 
-This marketplace is a directory of pointers, not code. Plugins ship in two shapes depending on what they distribute:
+This marketplace is a directory of pointers, not code. The preferred Eidos pattern is **CLI-first progressive reveal**: plugins and MCP shims should point agents to local CLIs, while the CLIs expose deeper capability through `--help`, `status`, `doctor`, `list`, `find`, `ask`, and domain subcommands. This avoids loading thousands of tools into every agent context while preserving discoverability.
 
-**MCP-server plugins** (like `cept`) — two small JSON files; the actual code lives on PyPI.
+Plugins ship in two shapes depending on what they distribute:
+
+**MCP-server plugins** (like `cept`) — two small JSON files; the actual code lives on PyPI. MCP should stay bounded. When a surface wants to expose many domains or a large tool graph, ship a CLI and use MCP only as a thin pointer or bridge to that CLI.
 
 ```
 plugins/cept/
