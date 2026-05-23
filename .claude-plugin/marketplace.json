@@ -45,14 +45,40 @@
     },
     {
       "name": "clawdflare",
-      "description": "Cloudflare management — DNS records, Workers, Pages, KV, R2, and analytics",
+      "description": "Opinionated Cloudflare management CLI and MCP server for auditing and fixing zones.",
       "source": "./plugins/clawdflare",
-      "category": "deployment",
-      "homepage": "https://github.com/eidos-agi/clawdflare"
+      "category": "developer-tools",
+      "homepage": "https://github.com/eidos-agi/clawdflare",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "cloudflare",
+        "mcp",
+        "dns",
+        "security",
+        "tls",
+        "cache",
+        "eidos-agi"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "tool",
+          "signals": [
+            "mcp_server"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-23",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/clawdflare.md"
+        }
+      }
     },
     {
       "name": "eidos",
-      "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then route, verify, and learn from the work.",
+      "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then verify, learn, and close out cleanly.",
       "source": "./plugins/eidos",
       "category": "productivity",
       "homepage": "https://github.com/eidos-agi/eidos-cli",
@@ -63,6 +89,7 @@
         "cli",
         "task-loop",
         "evidence",
+        "closeout",
         "praxis",
         "routing",
         "progressive-reveal"
@@ -87,6 +114,7 @@
           "for_projects": [
             "docket-task-loop",
             "evidence-verification",
+            "mission-closeout",
             "specialist-routing"
           ],
           "pairs_with": [

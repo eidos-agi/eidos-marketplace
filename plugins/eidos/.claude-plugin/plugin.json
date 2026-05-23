@@ -1,7 +1,7 @@
 {
   "name": "eidos",
   "version": "0.1.0",
-  "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then route, verify, and learn from the work.",
+  "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then verify, learn, and close out cleanly.",
   "author": {
     "name": "Eidos AGI",
     "email": "daniel@eidosagi.com",

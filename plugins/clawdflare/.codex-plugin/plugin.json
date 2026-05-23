@@ -1,0 +1,47 @@
+{
+  "name": "clawdflare",
+  "version": "0.1.0",
+  "description": "Opinionated Cloudflare management CLI and MCP server for auditing and fixing zones.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/clawdflare",
+  "repository": "https://github.com/eidos-agi/clawdflare",
+  "license": "MIT",
+  "keywords": [
+    "cloudflare",
+    "mcp",
+    "dns",
+    "security",
+    "tls",
+    "cache",
+    "eidos-agi"
+  ],
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Clawdflare",
+    "shortDescription": "Audit Cloudflare zones and authorize fixes locally.",
+    "longDescription": "Clawdflare brings the Eidos CLI-first Cloudflare workflow into Codex: inspect accounts, zones, DNS, SSL/TLS, and opinionated audit findings through the CLI or MCP tools, then require local Touch ID or PIN authorization before write operations.",
+    "developerName": "Eidos AGI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "CLI",
+      "MCP",
+      "Cloudflare",
+      "DNS",
+      "Security Audit",
+      "Human Authorization"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/clawdflare",
+    "privacyPolicyURL": "https://github.com/eidos-agi/clawdflare",
+    "termsOfServiceURL": "https://github.com/eidos-agi/clawdflare",
+    "defaultPrompt": [
+      "Use Clawdflare to audit this Cloudflare zone.",
+      "List my configured Clawdflare accounts and active account.",
+      "Dry-run Cloudflare fixes before asking me to authorize them."
+    ],
+    "brandColor": "#F38020"
+  }
+}
