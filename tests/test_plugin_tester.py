@@ -1,3 +1,4 @@
+import json
 import sys
 from pathlib import Path
 
@@ -28,3 +29,33 @@ def test_expand_plugin_root_resolves_marketplace_bundle_paths(tmp_path: Path) ->
     assert test_plugins.expand_plugin_root(
         "${CLAUDE_PLUGIN_ROOT}/scripts/mcp_server.py", plugin_dir
     ) == str(plugin_dir / "scripts" / "mcp_server.py")
+
+
+def test_research_md_marketplace_uses_mcp_serve_command() -> None:
+    mcp_config = json.loads((test_plugins.PLUGINS_DIR / "research-md" / ".mcp.json").read_text())
+
+    [(name, server)] = test_plugins.server_configs(mcp_config)
+
+    assert name == "research-md"
+    assert server["command"] == "uvx"
+    assert server["args"] == ["--from", "research-md", "research-md", "mcp", "serve"]
+
+
+def test_resume_resume_marketplace_declares_runtime_extras() -> None:
+    mcp_config = json.loads((test_plugins.PLUGINS_DIR / "resume-resume" / ".mcp.json").read_text())
+
+    [(name, server)] = test_plugins.server_configs(mcp_config)
+
+    assert name == "resume-resume"
+    assert server["command"] == "uvx"
+    assert server["args"] == [
+        "--from",
+        "resume-resume",
+        "--with",
+        "scipy",
+        "--with",
+        "scikit-learn",
+        "--with",
+        "pandas",
+        "resume-resume-mcp",
+    ]

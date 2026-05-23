@@ -1,1 +1,1 @@
-{"resume-resume":{"command":"uvx","args":["--from","resume-resume","resume-resume-mcp"]}}
+{"resume-resume":{"command":"uvx","args":["--from","resume-resume","--with","scipy","--with","scikit-learn","--with","pandas","resume-resume-mcp"]}}
