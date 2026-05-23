@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "foreman": {
+      "transport": "stdio",
+      "command": "python3",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/scripts/mcp_server.py"
+      ],
+      "tool_timeout_sec": 1800
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "foreman",
+  "version": "0.3.1",
+  "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/foreman",
+  "repository": "https://github.com/eidos-agi/foreman",
+  "license": "MIT",
+  "keywords": [
+    "foreman",
+    "claude-code",
+    "codex",
+    "gemini",
+    "aider",
+    "worktrees",
+    "delegation"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Foreman",
+    "shortDescription": "Delegate coding tasks to AI workers in isolated worktrees.",
+    "longDescription": "Run scoped Claude Code, Codex, Gemini, or Aider engineering workers in isolated git worktrees, then collect diffs back for architect review, tests, merge, PR, or discard.",
+    "developerName": "Eidos AGI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Code",
+      "Automation"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/foreman",
+    "privacyPolicyURL": "https://github.com/eidos-agi/foreman",
+    "termsOfServiceURL": "https://github.com/eidos-agi/foreman",
+    "defaultPrompt": [
+      "Split this repo task into independent worker specs and delegate them with Foreman.",
+      "Collect the Foreman worker diffs and review them before merging.",
+      "Run a Foreman smoke test in treemark."
+    ],
+    "brandColor": "#065F46",
+    "composerIcon": "./assets/foreman-rhea-icon.png",
+    "logo": "./assets/foreman-rhea-logo.png"
+  }
+}

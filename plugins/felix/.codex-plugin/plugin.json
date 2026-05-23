@@ -1,0 +1,48 @@
+{
+  "name": "felix",
+  "version": "0.1.0",
+  "description": "Use the live Felix CLI to build, assess, and maintain agent ecosystems.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "TODO@example.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/felix",
+  "repository": "https://github.com/eidos-agi/felix",
+  "license": "MIT",
+  "keywords": [
+    "felix",
+    "cli",
+    "agent-builder",
+    "agent-maintainer",
+    "scaffolding",
+    "eidos-agi",
+    "progressive-reveal"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Felix",
+    "shortDescription": "Use Felix to build and maintain agent ecosystems.",
+    "longDescription": "Felix is an Eidos AGI Codex plugin that routes agent-building, scaffold, maintainer, standards, and repo-health work to the installed Felix CLI. Felix is CLI-first: Codex should use the CLI's progressive reveal instead of duplicating the agent-building method in prompt memory.",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "CLI",
+      "Agent Building",
+      "Scaffolding",
+      "Standards",
+      "Repo Health"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/felix",
+    "privacyPolicyURL": "https://github.com/eidos-agi/felix",
+    "termsOfServiceURL": "https://github.com/eidos-agi/felix",
+    "defaultPrompt": [
+      "Use Felix to plan this new agent.",
+      "Ask Felix what standards this agent should inherit.",
+      "Use Felix to check whether this agent repo is healthy."
+    ],
+    "brandColor": "#F59E0B",
+    "composerIcon": "./assets/plugin-icon.svg",
+    "logo": "./assets/plugin-logo.svg"
+  }
+}

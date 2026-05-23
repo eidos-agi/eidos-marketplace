@@ -1,0 +1,22 @@
+{
+  "name": "felix",
+  "version": "0.1.0",
+  "description": "Use the live Felix CLI to build, assess, and maintain agent ecosystems.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "TODO@example.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/felix",
+  "repository": "https://github.com/eidos-agi/felix",
+  "license": "MIT",
+  "keywords": [
+    "felix",
+    "cli",
+    "agent-builder",
+    "agent-maintainer",
+    "scaffolding",
+    "eidos-agi",
+    "progressive-reveal"
+  ]
+}

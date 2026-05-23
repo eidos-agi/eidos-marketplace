@@ -21,6 +21,21 @@ PLUGINS_DIR = MARKETPLACE_ROOT / "plugins"
 TIMEOUT_SECONDS = 90  # uvx first-run can be slow
 
 
+def server_configs(mcp_config: dict) -> list[tuple[str, dict]]:
+    """Return MCP server configs from either marketplace-supported JSON shape."""
+    servers = mcp_config.get("mcpServers", mcp_config)
+    if not isinstance(servers, dict):
+        return []
+    return [(name, config) for name, config in servers.items() if isinstance(config, dict)]
+
+
+def expand_plugin_root(value: str, plugin_dir: Path) -> str:
+    """Resolve plugin-root placeholders for local smoke tests."""
+    return value.replace("${CLAUDE_PLUGIN_ROOT}", str(plugin_dir)).replace(
+        "${CODEX_PLUGIN_ROOT}", str(plugin_dir)
+    )
+
+
 def mcp_initialize_request() -> bytes:
     """Build an MCP initialize JSON-RPC request (raw JSON, newline-delimited)."""
     payload = json.dumps({
@@ -73,7 +88,7 @@ def read_mcp_response(proc, timeout: float) -> dict | None:
     return None
 
 
-def test_plugin(plugin_dir: Path) -> dict:
+def smoke_plugin(plugin_dir: Path) -> dict:
     """Test a single plugin. Returns result dict."""
     name = plugin_dir.name
     mcp_file = plugin_dir / ".mcp.json"
@@ -87,13 +102,13 @@ def test_plugin(plugin_dir: Path) -> dict:
         return {"name": name, "status": "fail", "reason": f"invalid .mcp.json: {e}"}
 
     # Get the first server config
-    servers = list(mcp_config.items())
+    servers = server_configs(mcp_config)
     if not servers:
         return {"name": name, "status": "skip", "reason": "empty .mcp.json"}
 
     server_name, config = servers[0]
     command = config.get("command", "")
-    args = config.get("args", [])
+    args = [expand_plugin_root(str(arg), plugin_dir) for arg in config.get("args", [])]
     full_cmd = [command] + args
 
     result = {"name": name, "command": " ".join(full_cmd), "status": "fail"}
@@ -168,7 +183,7 @@ def main():
 
         print(f"  {plugin_dir.name:20s}  ", end="", flush=True)
         start = time.time()
-        result = test_plugin(plugin_dir)
+        result = smoke_plugin(plugin_dir)
         elapsed = time.time() - start
         result["elapsed"] = round(elapsed, 1)
         results.append(result)

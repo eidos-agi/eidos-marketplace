@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Felix icon">
+  <rect width="160" height="160" rx="36" fill="#FFFBEB"/>
+  <rect x="36" y="88" width="88" height="28" rx="8" fill="#F59E0B"/>
+  <rect x="47" y="52" width="24" height="44" rx="7" fill="#111827"/>
+  <path d="M69 52h34c9 0 17 8 17 17v5H69V52Z" fill="#334155"/>
+  <path d="M49 105l-16 16M111 105l16 16" stroke="#92400E" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="62" cy="102" r="7" fill="#FEF3C7"/>
+  <circle cx="98" cy="102" r="7" fill="#FEF3C7"/>
+</svg>

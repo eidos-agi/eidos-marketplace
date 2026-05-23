@@ -33,9 +33,24 @@ claude plugins install resume-resume   # post-crash session recovery
 claude plugins install ike             # task and project management
 claude plugins install visionlog       # vision, goals, guardrails, ADRs
 claude plugins install forge-forge     # forge-specific recommender
+claude plugins install felix           # agent ecosystem builder and maintainer
+claude plugins install foreman         # scoped coding delegation to worker agents
 ```
 
 Every plugin is directly installable. The recommenders (`eidos-install`, `forge-forge`) are optional middleware over the flat listing — if either is broken, every plugin remains installable by name.
+
+## Publishing from source repos
+
+Source repos remain canonical for code, tests, package releases, skills, and MCP implementation. This marketplace owns the public store surface: plugin bundles, `marketplace.json`, audit docs, and recommendation metadata.
+
+Publish a source-owned plugin into the marketplace with:
+
+```bash
+python tools/marketplace_publish.py publish /path/to/source-repo
+python tools/marketplace_publish.py check <plugin-name>
+```
+
+The publisher copies store-facing files into `plugins/<name>/`, normalizes local MCP paths to `${CLAUDE_PLUGIN_ROOT}`, upserts `.claude-plugin/marketplace.json`, and creates a pending audit doc when one does not exist. Run the source repo's own doctor/checks first, then run the marketplace checks before shipping.
 
 ## What's in here
 
@@ -59,6 +74,8 @@ Every plugin is directly installable. The recommenders (`eidos-install`, `forge-
 | Plugin | What it does | Quality |
 |--------|-------------|---------|
 | **eidos-install** | Progressive-reveal interview that recommends a starter set for the Eidos ecosystem; delegates to `forge-forge` for ongoing forge-specific drilldown | (Phase 3) |
+| **felix** | Agent ecosystem builder and maintainer — standards, scaffolding, repo health, and plugin doctor checks | (audit pending) |
+| **foreman** | Delegation forge — scoped coding work in isolated worker worktrees with collect/finalize flows | (audit pending) |
 | **forge-forge** | Forge-specific recommender; reads the marketplace's `x-eidos.recommend` blocks | (Phase 3) |
 | **probe-forge** | Probing tools | (audit pending) |
 

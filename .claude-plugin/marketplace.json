@@ -17,11 +17,21 @@
       "homepage": "https://github.com/eidos-agi/cept",
       "license": "MIT",
       "version": "0.4.1",
-      "tags": ["mcp", "agent", "proprioception", "steering", "openrouter"],
+      "tags": [
+        "mcp",
+        "agent",
+        "proprioception",
+        "steering",
+        "openrouter"
+      ],
       "x-eidos": {
         "kind": {
           "type": "tool",
-          "signals": ["single_capability", "uvx_shim", "mcp_server"]
+          "signals": [
+            "single_capability",
+            "uvx_shim",
+            "mcp_server"
+          ]
         },
         "audit": {
           "audited_by": "by-hand (foss-forge not yet onboarded)",
@@ -34,34 +44,6 @@
       }
     },
     {
-      "name": "resume-resume",
-      "description": "Post-crash session recovery, dirty repos inventory, and session search across your full Claude Code history",
-      "source": "./plugins/resume-resume",
-      "category": "productivity",
-      "homepage": "https://github.com/eidos-agi/resume-resume"
-    },
-    {
-      "name": "ike",
-      "description": "Task and project management — create tasks, track milestones, manage documents, and execute within visionlog contracts",
-      "source": "./plugins/ike",
-      "category": "productivity",
-      "homepage": "https://github.com/eidos-agi/ike.md"
-    },
-    {
-      "name": "visionlog",
-      "description": "Vision, goals, guardrails, SOPs, and ADRs — the contracts all execution must honor",
-      "source": "./plugins/visionlog",
-      "category": "productivity",
-      "homepage": "https://github.com/eidos-agi/visionlog.md"
-    },
-    {
-      "name": "railguey",
-      "description": "Railway deployment management — deploy, rollback, logs, health checks, and service configuration",
-      "source": "./plugins/railguey",
-      "category": "deployment",
-      "homepage": "https://github.com/eidos-agi/railguey"
-    },
-    {
       "name": "clawdflare",
       "description": "Cloudflare management — DNS records, Workers, Pages, KV, R2, and analytics",
       "source": "./plugins/clawdflare",
@@ -69,18 +51,98 @@
       "homepage": "https://github.com/eidos-agi/clawdflare"
     },
     {
-      "name": "research-md",
-      "description": "Evidence-graded, phase-gated research decisions — candidates, findings, scoring matrices, and peer review",
-      "source": "./plugins/research-md",
+      "name": "felix",
+      "description": "Use the live Felix CLI to build, assess, and maintain agent ecosystems.",
+      "source": "./plugins/felix",
       "category": "productivity",
-      "homepage": "https://github.com/eidos-agi/research.md"
+      "homepage": "https://github.com/eidos-agi/felix",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "felix",
+        "cli",
+        "agent-builder",
+        "agent-maintainer",
+        "scaffolding",
+        "eidos-agi",
+        "progressive-reveal"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-23",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/felix.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/felix"
+        }
+      }
     },
     {
-      "name": "probe-forge",
-      "description": "Agentic testing forge — point at anything, say test this. Runs THE-LOOP to investigate targets intelligently",
-      "source": "./plugins/probe-forge",
+      "name": "foreman",
+      "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees.",
+      "source": "./plugins/foreman",
       "category": "development",
-      "homepage": "https://github.com/eidos-agi/test-forge"
+      "homepage": "https://github.com/eidos-agi/foreman",
+      "license": "MIT",
+      "version": "0.3.1",
+      "tags": [
+        "claude-code",
+        "codex",
+        "worktrees",
+        "delegation",
+        "parallel-agents",
+        "ai-fleet"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow",
+            "mcp_server"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-23",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/foreman.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/foreman"
+        }
+      }
     },
     {
       "name": "forge-forge",
@@ -90,13 +152,63 @@
       "homepage": "https://github.com/eidos-agi/forge-forge"
     },
     {
+      "name": "ike",
+      "description": "Task and project management — create tasks, track milestones, manage documents, and execute within visionlog contracts",
+      "source": "./plugins/ike",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/ike.md"
+    },
+    {
+      "name": "probe-forge",
+      "description": "Agentic testing forge — point at anything, say test this. Runs THE-LOOP to investigate targets intelligently",
+      "source": "./plugins/probe-forge",
+      "category": "development",
+      "homepage": "https://github.com/eidos-agi/test-forge"
+    },
+    {
+      "name": "railguey",
+      "description": "Railway deployment management — deploy, rollback, logs, health checks, and service configuration",
+      "source": "./plugins/railguey",
+      "category": "deployment",
+      "homepage": "https://github.com/eidos-agi/railguey"
+    },
+    {
+      "name": "research-md",
+      "description": "Evidence-graded, phase-gated research decisions — candidates, findings, scoring matrices, and peer review",
+      "source": "./plugins/research-md",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/research.md"
+    },
+    {
+      "name": "resume-resume",
+      "description": "Post-crash session recovery, dirty repos inventory, and session search across your full Claude Code history",
+      "source": "./plugins/resume-resume",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/resume-resume"
+    },
+    {
       "name": "scridos",
       "description": "The Eidos scribe — persistent, compounding knowledge bases using the Karpathy LLM Wiki pattern. Ingest sources, query synthesized knowledge, lint for gaps. Fork of ekadetov/llm-wiki under Eidos AGI maintenance, rebrand-in-progress.",
       "source": "./plugins/scridos",
       "category": "productivity",
       "homepage": "https://github.com/eidos-agi/scridos",
       "license": "MIT",
-      "tags": ["knowledge-base", "obsidian", "wiki", "karpathy", "rag-alternative", "memex", "scribe"]
+      "tags": [
+        "knowledge-base",
+        "obsidian",
+        "wiki",
+        "karpathy",
+        "rag-alternative",
+        "memex",
+        "scribe"
+      ]
+    },
+    {
+      "name": "visionlog",
+      "description": "Vision, goals, guardrails, SOPs, and ADRs — the contracts all execution must honor",
+      "source": "./plugins/visionlog",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/visionlog.md"
     }
   ]
 }
