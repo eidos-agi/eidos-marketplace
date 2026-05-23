@@ -146,6 +146,66 @@ def render_bundle(source: Path, marketplace: Path, manifest: dict[str, Any]) -> 
     return bundle
 
 
+def ignored_path(path: Path) -> bool:
+    return (
+        "__pycache__" in path.parts
+        or path.name.endswith(".pyc")
+        or path.name in {".DS_Store"}
+        or ".git" in path.parts
+        or ".pytest_cache" in path.parts
+        or ".ruff_cache" in path.parts
+    )
+
+
+def iter_files(root: Path) -> set[Path]:
+    if root.is_file():
+        return {Path(root.name)} if not ignored_path(root) else set()
+    if not root.exists():
+        return set()
+    return {
+        path.relative_to(root)
+        for path in root.rglob("*")
+        if path.is_file() and not ignored_path(path.relative_to(root))
+    }
+
+
+def drift_for_item(source_item: Path, bundle_item: Path, item_name: str, source_root: Path) -> list[str]:
+    if item_name == ".mcp.json" and source_item.exists() and bundle_item.exists():
+        expected = normalize_mcp_config(load_json(source_item), source_root)
+        actual = load_json(bundle_item)
+        return [] if expected == actual else [item_name]
+
+    if source_item.is_file():
+        if not bundle_item.exists():
+            return [item_name]
+        return [] if source_item.read_bytes() == bundle_item.read_bytes() else [item_name]
+
+    if source_item.is_dir():
+        source_files = iter_files(source_item)
+        bundle_files = iter_files(bundle_item)
+        drifted = sorted(source_files ^ bundle_files)
+        drifted.extend(
+            sorted(
+                path
+                for path in source_files & bundle_files
+                if (source_item / path).read_bytes() != (bundle_item / path).read_bytes()
+            )
+        )
+        return [f"{item_name}/{path.as_posix()}" for path in drifted]
+
+    return []
+
+
+def source_drift(source: Path, plugin_dir: Path) -> list[str]:
+    source = source.resolve()
+    drifted: list[str] = []
+    for item in BUNDLE_ITEMS:
+        source_item = source / item
+        if source_item.exists():
+            drifted.extend(drift_for_item(source_item, plugin_dir / item, item, source))
+    return drifted
+
+
 def classify_plugin(source: Path, manifest: dict[str, Any]) -> dict[str, Any]:
     signals: list[str] = []
     if (source / "skills").exists() or manifest.get("skills"):
@@ -252,7 +312,7 @@ def publish(source: Path, marketplace: Path = MARKETPLACE_ROOT, audit_date: str 
     return PublishReport(entry["name"], bundle, entry, audit_path)
 
 
-def check(name: str, marketplace: Path = MARKETPLACE_ROOT) -> CheckReport:
+def check(name: str, marketplace: Path = MARKETPLACE_ROOT, source: Path | None = None) -> CheckReport:
     marketplace = marketplace.resolve()
     blockers: list[str] = []
     warnings: list[str] = []
@@ -262,12 +322,12 @@ def check(name: str, marketplace: Path = MARKETPLACE_ROOT) -> CheckReport:
         return CheckReport(name=name, ok=False, blockers=[f"missing marketplace entry: {name}"])
 
     entry = entries[0]
-    source = entry.get("source")
-    if not isinstance(source, str) or not source.startswith("./plugins/"):
+    entry_source = entry.get("source")
+    if not isinstance(entry_source, str) or not entry_source.startswith("./plugins/"):
         blockers.append("marketplace entry source must point under ./plugins/")
         plugin_dir = marketplace / "plugins" / name
     else:
-        plugin_dir = marketplace / source.removeprefix("./")
+        plugin_dir = marketplace / entry_source.removeprefix("./")
 
     relative_plugin_dir = plugin_dir.relative_to(marketplace)
     if not plugin_dir.exists():
@@ -283,6 +343,10 @@ def check(name: str, marketplace: Path = MARKETPLACE_ROOT) -> CheckReport:
         blockers.append("missing x-eidos.audit.audit_doc")
     elif not (marketplace / audit_doc).exists():
         blockers.append(f"missing audit doc: {audit_doc}")
+
+    if source is not None and plugin_dir.exists():
+        for drifted in source_drift(source, plugin_dir):
+            blockers.append(f"bundle drift from source: {drifted}")
 
     return CheckReport(name=name, ok=not blockers, blockers=blockers, warnings=warnings)
 
@@ -307,6 +371,7 @@ def build_parser() -> argparse.ArgumentParser:
     check_parser = subparsers.add_parser("check", help="Check a marketplace plugin listing")
     check_parser.add_argument("name")
     check_parser.add_argument("--marketplace", type=Path, default=MARKETPLACE_ROOT)
+    check_parser.add_argument("--source", type=Path, help="Source repo to compare against the marketplace bundle")
     return parser
 
 
@@ -322,7 +387,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if check_report.ok else 1
 
     if args.command == "check":
-        report = check(args.name, args.marketplace)
+        report = check(args.name, args.marketplace, args.source)
         print_check(report)
         return 0 if report.ok else 1
 

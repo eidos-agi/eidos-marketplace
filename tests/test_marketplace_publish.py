@@ -116,3 +116,62 @@ def test_publish_normalizes_source_repo_mcp_paths_to_plugin_root(tmp_path: Path)
         "${CLAUDE_PLUGIN_ROOT}/scripts/mcp_server.py"
     ]
     assert marketplace_publish.check("foreman", marketplace).ok
+
+
+def test_check_with_source_fails_when_bundle_drifted_from_source(tmp_path: Path) -> None:
+    marketplace = tmp_path / "marketplace"
+    source = tmp_path / "source" / "felix"
+    write_json(
+        marketplace / ".claude-plugin" / "marketplace.json",
+        {"name": "eidos-marketplace", "plugins": []},
+    )
+    write_json(
+        source / ".codex-plugin" / "plugin.json",
+        {
+            "name": "felix",
+            "version": "0.1.0",
+            "description": "Use the live Felix CLI.",
+            "homepage": "https://github.com/eidos-agi/felix",
+            "license": "MIT",
+            "skills": "./skills/",
+        },
+    )
+    (source / "skills" / "use-felix-cli").mkdir(parents=True)
+    (source / "skills" / "use-felix-cli" / "SKILL.md").write_text("# Use Felix\n")
+    marketplace_publish.publish(source, marketplace, audit_date="2026-05-23")
+
+    (marketplace / "plugins" / "felix" / "skills" / "use-felix-cli" / "SKILL.md").write_text(
+        "# Stale Felix\n"
+    )
+
+    report = marketplace_publish.check("felix", marketplace, source=source)
+
+    assert not report.ok
+    assert "bundle drift from source: skills/use-felix-cli/SKILL.md" in report.blockers
+
+
+def test_check_with_source_ignores_python_cache_files(tmp_path: Path) -> None:
+    marketplace = tmp_path / "marketplace"
+    source = tmp_path / "source" / "foreman"
+    write_json(
+        marketplace / ".claude-plugin" / "marketplace.json",
+        {"name": "eidos-marketplace", "plugins": []},
+    )
+    write_json(
+        source / ".claude-plugin" / "plugin.json",
+        {
+            "name": "foreman",
+            "version": "0.3.1",
+            "description": "Delegate scoped coding work.",
+            "homepage": "https://github.com/eidos-agi/foreman",
+            "license": "MIT",
+        },
+    )
+    (source / "packages" / "foreman-mcp" / "__pycache__").mkdir(parents=True)
+    (source / "packages" / "foreman-mcp" / "__pycache__" / "noise.pyc").write_bytes(b"cache")
+    (source / "packages" / "foreman-mcp" / "README.md").write_text("# MCP\n")
+    marketplace_publish.publish(source, marketplace, audit_date="2026-05-23")
+
+    report = marketplace_publish.check("foreman", marketplace, source=source)
+
+    assert report.ok

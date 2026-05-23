@@ -47,10 +47,10 @@ Publish a source-owned plugin into the marketplace with:
 
 ```bash
 python tools/marketplace_publish.py publish /path/to/source-repo
-python tools/marketplace_publish.py check <plugin-name>
+python tools/marketplace_publish.py check <plugin-name> --source /path/to/source-repo
 ```
 
-The publisher copies store-facing files into `plugins/<name>/`, normalizes local MCP paths to `${CLAUDE_PLUGIN_ROOT}`, upserts `.claude-plugin/marketplace.json`, and creates a pending audit doc when one does not exist. Run the source repo's own doctor/checks first, then run the marketplace checks before shipping.
+The publisher copies store-facing files into `plugins/<name>/`, normalizes local MCP paths to `${CLAUDE_PLUGIN_ROOT}`, upserts `.claude-plugin/marketplace.json`, and creates a pending audit doc when one does not exist. The source-aware check compares generated bundle files back to the source repo, ignoring local cache artifacts such as `__pycache__`. Run the source repo's own doctor/checks first, then run the marketplace checks before shipping.
 
 ## What's in here
 
@@ -79,7 +79,7 @@ The publisher copies store-facing files into `plugins/<name>/`, normalizes local
 | **forge-forge** | Forge-specific recommender; reads the marketplace's `x-eidos.recommend` blocks | (Phase 3) |
 | **probe-forge** | Probing tools | (audit pending) |
 
-Per-plugin scorecards live in [AUDITS/](AUDITS/). Audit metadata is also published machine-readably under each plugin's `x-eidos.audit` block in `marketplace.json`.
+Per-plugin scorecards live in [AUDITS/](AUDITS/). Audit metadata is also published machine-readably under each plugin's `x-eidos.audit` block in `marketplace.json`. Claude Code ignores `x-eidos` at install time; Eidos tooling reads it for audits, recommendations, and source-to-store checks.
 
 ## How it works
 
