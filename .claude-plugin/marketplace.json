@@ -51,6 +51,54 @@
       "homepage": "https://github.com/eidos-agi/clawdflare"
     },
     {
+      "name": "eidos",
+      "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then route, verify, and learn from the work.",
+      "source": "./plugins/eidos",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/eidos-cli",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "eidos",
+        "cli",
+        "task-loop",
+        "evidence",
+        "praxis",
+        "routing",
+        "progressive-reveal"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow",
+            "cli_gateway"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-23",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/eidos.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "docket-task-loop",
+            "evidence-verification",
+            "specialist-routing"
+          ],
+          "pairs_with": [
+            "forge-forge",
+            "foreman",
+            "felix"
+          ],
+          "preflight_check": "eidos guide"
+        }
+      }
+    },
+    {
       "name": "felix",
       "description": "Use the live Felix CLI to build, assess, and maintain agent ecosystems.",
       "source": "./plugins/felix",

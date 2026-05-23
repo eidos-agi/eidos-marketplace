@@ -1,0 +1,22 @@
+{
+  "name": "eidos",
+  "version": "0.1.0",
+  "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then route, verify, and learn from the work.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-cli",
+  "repository": "https://github.com/eidos-agi/eidos-cli",
+  "license": "MIT",
+  "keywords": [
+    "eidos",
+    "cli",
+    "task-loop",
+    "evidence",
+    "praxis",
+    "routing",
+    "eidos-agi"
+  ]
+}

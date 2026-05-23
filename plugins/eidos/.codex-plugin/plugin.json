@@ -1,0 +1,50 @@
+{
+  "name": "eidos",
+  "version": "0.1.0",
+  "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then route, verify, and learn from the work.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-cli",
+  "repository": "https://github.com/eidos-agi/eidos-cli",
+  "license": "MIT",
+  "keywords": [
+    "eidos",
+    "cli",
+    "gateway",
+    "platform",
+    "vault",
+    "routing",
+    "eidos-agi"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Eidos",
+    "shortDescription": "Make work accountable: orient, run `eidos do`, verify evidence, and learn.",
+    "longDescription": "Eidos turns a vague or docketed task into a tracked, evidenced loop. Use it to orient with `eidos guide/status/health`, execute docket work with `eidos do <task-id>`, continue with evidence verification, capture the praxis learning, and route specialist work to Rhea, Foreman, Reeves, Surfari, Forge-Forge, or Felix only when needed. The plugin does not do the work itself; it starts and closes the loop around the work.",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "CLI",
+      "Task Loop",
+      "Evidence Verification",
+      "Learning Capture",
+      "Platform Gateway",
+      "Secret Vault",
+      "System Routing"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/eidos-cli",
+    "privacyPolicyURL": "https://github.com/eidos-agi/eidos-cli",
+    "termsOfServiceURL": "https://github.com/eidos-agi/eidos-cli",
+    "defaultPrompt": [
+      "Start the Eidos loop for TASK-1234.",
+      "Check this eidos before we work.",
+      "Route this task to the right specialist."
+    ],
+    "brandColor": "#111827",
+    "composerIcon": "./assets/plugin-icon.svg",
+    "logo": "./assets/plugin-logo.svg"
+  }
+}
