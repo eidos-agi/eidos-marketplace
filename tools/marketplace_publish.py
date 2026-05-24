@@ -23,6 +23,7 @@ BUNDLE_ITEMS = (
     "commands",
     "hooks",
     "scripts",
+    "registry",
     "packages",
     "assets",
     "src",
@@ -100,7 +101,7 @@ def copy_item(source: Path, destination: Path) -> None:
             destination.unlink()
 
     if source.is_dir():
-        ignore = shutil.ignore_patterns(
+        base_ignore = shutil.ignore_patterns(
             ".git",
             ".venv",
             "__pycache__",
@@ -111,6 +112,13 @@ def copy_item(source: Path, destination: Path) -> None:
             "*.pyc",
             ".DS_Store",
         )
+
+        def ignore(directory: str, names: list[str]) -> set[str]:
+            ignored = set(base_ignore(directory, names))
+            if Path(directory).name == "cept-proofs":
+                ignored.update(name for name in names if name.endswith(".jsonl"))
+            return ignored
+
         shutil.copytree(source, destination, ignore=ignore)
     else:
         destination.parent.mkdir(parents=True, exist_ok=True)
@@ -182,6 +190,7 @@ def ignored_path(path: Path) -> bool:
         or ".venv" in path.parts
         or ".pytest_cache" in path.parts
         or ".ruff_cache" in path.parts
+        or (path.name.endswith(".jsonl") and "cept-proofs" in path.parts)
     )
 
 
