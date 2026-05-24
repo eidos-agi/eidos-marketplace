@@ -25,8 +25,21 @@ BUNDLE_ITEMS = (
     "scripts",
     "packages",
     "assets",
+    "src",
+    "tests",
+    "hud",
+    "docs",
+    "pyproject.toml",
+    "uv.lock",
     "README.md",
     "LICENSE",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "SECURITY.md",
+    "AGENTS.md",
+    ".eidos-plugin.json",
+    "eidos-plugin",
 )
 
 
@@ -87,7 +100,17 @@ def copy_item(source: Path, destination: Path) -> None:
             destination.unlink()
 
     if source.is_dir():
-        ignore = shutil.ignore_patterns(".git", "__pycache__", ".pytest_cache", ".ruff_cache")
+        ignore = shutil.ignore_patterns(
+            ".git",
+            ".venv",
+            "__pycache__",
+            ".pytest_cache",
+            ".ruff_cache",
+            ".build",
+            ".swiftpm",
+            "*.pyc",
+            ".DS_Store",
+        )
         shutil.copytree(source, destination, ignore=ignore)
     else:
         destination.parent.mkdir(parents=True, exist_ok=True)
@@ -129,6 +152,8 @@ def normalize_mcp_config(config: dict[str, Any], source: Path) -> dict[str, Any]
 def render_bundle(source: Path, marketplace: Path, manifest: dict[str, Any]) -> Path:
     name = manifest["name"]
     bundle = marketplace / "plugins" / name
+    if bundle.exists():
+        shutil.rmtree(bundle)
     bundle.mkdir(parents=True, exist_ok=True)
 
     for item in BUNDLE_ITEMS:
@@ -149,9 +174,12 @@ def render_bundle(source: Path, marketplace: Path, manifest: dict[str, Any]) -> 
 def ignored_path(path: Path) -> bool:
     return (
         "__pycache__" in path.parts
+        or ".build" in path.parts
+        or ".swiftpm" in path.parts
         or path.name.endswith(".pyc")
         or path.name in {".DS_Store"}
         or ".git" in path.parts
+        or ".venv" in path.parts
         or ".pytest_cache" in path.parts
         or ".ruff_cache" in path.parts
     )
@@ -207,6 +235,15 @@ def source_drift(source: Path, plugin_dir: Path) -> list[str]:
 
 
 def classify_plugin(source: Path, manifest: dict[str, Any]) -> dict[str, Any]:
+    override_path = source / ".eidos-plugin.json"
+    if override_path.exists():
+        override = load_json(override_path)
+        kind = override.get("kind")
+        if isinstance(kind, dict) and kind.get("type") in {"tool", "forge"}:
+            signals = kind.get("signals")
+            if isinstance(signals, list) and all(isinstance(signal, str) for signal in signals):
+                return {"type": kind["type"], "signals": signals}
+
     signals: list[str] = []
     if (source / "skills").exists() or manifest.get("skills"):
         signals.extend(["ships_skills", "opinionated_workflow"])
@@ -232,6 +269,8 @@ def category_from_manifest(manifest: dict[str, Any], classification: dict[str, A
 def marketplace_entry(source: Path, manifest: dict[str, Any], audit_date: str) -> dict[str, Any]:
     name = manifest["name"]
     classification = classify_plugin(source, manifest)
+    override_path = source / ".eidos-plugin.json"
+    override = load_json(override_path) if override_path.exists() else {}
     entry: dict[str, Any] = {
         "name": name,
         "description": manifest.get("description", ""),
@@ -246,15 +285,20 @@ def marketplace_entry(source: Path, manifest: dict[str, Any], audit_date: str) -
     if manifest.get("keywords"):
         entry["tags"] = manifest["keywords"]
 
+    audit = {
+        "audited_by": "pending",
+        "audit_version": "STANDARD.md",
+        "audit_date": audit_date,
+        "grade": "PENDING",
+        "audit_doc": f"AUDITS/{name}.md",
+    }
+    override_audit = override.get("audit")
+    if isinstance(override_audit, dict):
+        audit.update(override_audit)
+
     x_eidos: dict[str, Any] = {
         "kind": classification,
-        "audit": {
-            "audited_by": "pending",
-            "audit_version": "STANDARD.md",
-            "audit_date": audit_date,
-            "grade": "PENDING",
-            "audit_doc": f"AUDITS/{name}.md",
-        },
+        "audit": audit,
     }
     if classification["type"] == "forge":
         x_eidos["recommend"] = {

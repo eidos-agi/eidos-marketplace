@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "cept",
-      "description": "Proprioception for coding agents — slice recent Claude Code transcript, redact, send to a model gateway, return structured steering guidance.",
+      "description": "Proprioception for coding agents: slice recent Claude Code transcript, redact it, and ask for outside-in steering.",
       "source": "./plugins/cept",
       "category": "agent-tools",
       "homepage": "https://github.com/eidos-agi/cept",
@@ -19,10 +19,11 @@
       "version": "0.4.1",
       "tags": [
         "mcp",
+        "claude-code",
         "agent",
         "proprioception",
-        "steering",
-        "openrouter"
+        "openrouter",
+        "steering"
       ],
       "x-eidos": {
         "kind": {
@@ -34,12 +35,12 @@
           ]
         },
         "audit": {
-          "audited_by": "by-hand (foss-forge not yet onboarded)",
-          "audit_version": "STANDARD.md@2026-04-28",
-          "audit_date": "2026-04-28",
+          "audited_by": "Felix plugin doctor + Codex plugin validator + marketplace MCP smoke test",
+          "audit_version": "STANDARD.md@2026-05-23",
+          "audit_date": "2026-05-23",
           "grade": "A",
-          "next_audit": "2026-07-28",
-          "audit_doc": "AUDITS/cept.md"
+          "audit_doc": "AUDITS/cept.md",
+          "next_audit": "2026-08-23"
         }
       }
     },

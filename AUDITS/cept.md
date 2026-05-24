@@ -2,6 +2,24 @@
 
 Source repo: [eidos-agi/cept](https://github.com/eidos-agi/cept) — also on PyPI as `cept` v0.1.0.
 
+## 2026-05-23 — Grade: A
+
+`audited_by: Felix plugin doctor + Codex plugin validator + marketplace MCP smoke test` · `audit_version: STANDARD.md@2026-05-23` · `next_audit: 2026-08-23`
+
+This refresh adds a source-owned Codex/Claude plugin wrapper in `eidos-agi/cept`, adds transcript adapters for non-Claude agents, adds the `--self-assess` dogfood path, and republishes the marketplace bundle from source. The plugin remains classified as `kind.type: "tool"` with signals `["single_capability", "uvx_shim", "mcp_server"]`; the new skill is a discovery/signpost layer, not a forge workflow.
+
+### Verification
+
+| Action | Result |
+|---|---|
+| `python3 /Users/dshanklinbv/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py /Users/dshanklinbv/repos-eidos-agi/cept` | PASS |
+| `cd /Users/dshanklinbv/repos-eidos-agi/felix && python -m felix.cli plugin doctor /Users/dshanklinbv/repos-eidos-agi/cept` | PASS — no blockers or warnings |
+| `uv run pytest` in `eidos-agi/cept` | PASS — 98 passed |
+| `python3 tools/marketplace_publish.py check cept --source /Users/dshanklinbv/repos-eidos-agi/cept` | PASS |
+| `python3 tools/test_plugins.py cept` | PASS — MCP initialize response received |
+| `cd /Users/dshanklinbv/repos-eidos-agi/felix && python -m felix.cli plugin doctor /Users/dshanklinbv/repos-eidos-agi/eidos-marketplace/plugins/cept` | PASS — no blockers or warnings |
+| `uv run cept-cli --self-assess --transcript <agent.jsonl> --dry-run --quiet --no-repo-state` | PASS — file adapter, architecture mode, 6 cept files included |
+
 ## 2026-04-28 — Grade: A
 
 `audited_by: by-hand (foss-forge not yet onboarded)` · `audit_version: STANDARD.md@2026-04-28` · `next_audit: 2026-07-28`

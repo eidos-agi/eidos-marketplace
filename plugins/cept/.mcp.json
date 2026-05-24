@@ -1,1 +1,18 @@
-{"cept":{"command":"uvx","args":["--from","cept","cept"],"env":{"CEPT_EMIT":"hud,file:~/.cept/status.jsonl"}}}
+{
+  "mcpServers": {
+    "cept": {
+      "transport": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/.",
+        "cept"
+      ],
+      "env": {
+        "CEPT_EMIT": "hud,file:~/.cept/status.jsonl"
+      },
+      "tool_timeout_sec": 600
+    }
+  }
+}
