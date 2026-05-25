@@ -1,0 +1,13 @@
+{
+  "name": "knox",
+  "owner": {
+    "name": "Knox"
+  },
+  "plugins": [
+    {
+      "name": "knox",
+      "source": "./",
+      "description": "Capability-based local MCP secret broker with short-lived scoped sessions and Keychain-backed credentials."
+    }
+  ]
+}

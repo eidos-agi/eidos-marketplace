@@ -1,0 +1,55 @@
+{
+  "name": "knox",
+  "version": "0.2.0",
+  "description": "Knox local MCP secret broker with capability-scoped sessions and proxy tokens.",
+  "author": {
+    "name": "Knox"
+  },
+  "homepage": "https://github.com/eidos-agi/knox",
+  "repository": "https://github.com/eidos-agi/knox",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "agent",
+    "secret-management",
+    "session-scoping",
+    "macos",
+    "biometric"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Knox",
+    "shortDescription": "Local capability-based broker for scoped MCP actions and short-lived sessions/proxy tokens.",
+    "longDescription": "Knox keeps credentials in macOS Keychain and enforces per-action scope checks with TTL and revocation. Models never see raw secrets.",
+    "developerName": "Knox",
+    "category": "Productivity",
+    "capabilities": [
+      "secret-management",
+      "tool-authorization",
+      "proxy-token",
+      "session-scoping"
+    ]
+  },
+  "security": {
+    "posture": "strict-local-first",
+    "notes": [
+      "macOS Keychain required for secret storage.",
+      "No plaintext fallback in v1.",
+      "Fail-closed when keychain is unavailable."
+    ]
+  },
+  "mcpServers": {
+    "knox": {
+      "command": "python3",
+      "args": [
+        "scripts/knox/bootstrap.py"
+      ],
+      "env": {
+        "PYTHONPATH": "${PLUGIN_DIR}",
+        "KNOX_APPROVAL_MODE": "code",
+        "KNOX_APPROVAL_TIMEOUT_SECONDS": "90",
+        "KNOX_REQUIRE_PAIRING": "1"
+      }
+    }
+  }
+}

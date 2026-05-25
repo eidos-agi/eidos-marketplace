@@ -1,4 +1,5 @@
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -31,8 +32,12 @@ def test_codex_marketplace_is_single_eidos_agi_store() -> None:
 
     for entry in marketplace["plugins"]:
         plugin_root = REPO_ROOT / entry["source"]["path"].removeprefix("./")
-        manifest = plugin_root / ".codex-plugin" / "plugin.json"
-        assert manifest.exists(), f"missing Codex manifest for {entry['name']}"
+        codex_manifest = plugin_root / ".codex-plugin" / "plugin.json"
+        claude_manifest = plugin_root / ".claude-plugin" / "plugin.json"
+        assert codex_manifest.exists() or claude_manifest.exists(), (
+            f"missing plugin manifest for {entry['name']}"
+        )
+        manifest = codex_manifest if codex_manifest.exists() else claude_manifest
         plugin_manifest = json.loads(manifest.read_text())
         assert plugin_manifest["name"] == entry["name"]
 
@@ -41,6 +46,32 @@ def test_codex_marketplace_is_single_eidos_agi_store() -> None:
     )
     assert catalog_manifest["interface"]["displayName"] == "Eidos AGI Catalog"
     assert "not a separate store" in catalog_manifest["interface"]["longDescription"]
+
+
+def test_marketplace_entries_resolve_to_bundles() -> None:
+    for marketplace_path in (
+        REPO_ROOT / ".agents" / "plugins" / "marketplace.json",
+        REPO_ROOT / ".claude-plugin" / "marketplace.json",
+    ):
+        marketplace = json.loads(marketplace_path.read_text())
+        for entry in marketplace["plugins"]:
+            source = entry["source"]["path"] if isinstance(entry["source"], dict) else entry["source"]
+            assert isinstance(source, str), f"invalid source for {entry['name']}"
+            assert source.startswith("./plugins/"), f"invalid source for {entry['name']}"
+            assert (REPO_ROOT / source.removeprefix("./")).exists(), (
+                f"missing plugin bundle for {entry['name']}"
+            )
+
+
+def test_published_bundles_do_not_include_runtime_or_proof_noise() -> None:
+    blocked_parts = {".git", ".venv", ".pytest_cache", ".ruff_cache", "__pycache__"}
+    tracked = subprocess.check_output(
+        ["git", "ls-files", "plugins"], cwd=REPO_ROOT, text=True
+    ).splitlines()
+    for tracked_path in tracked:
+        path = Path(tracked_path)
+        assert not (blocked_parts & set(path.parts)), f"runtime artifact in bundle: {path}"
+        assert not path.name.endswith(".jsonl"), f"proof log in bundle: {path}"
 
 
 def test_publish_renders_plugin_bundle_and_marketplace_entry(tmp_path: Path) -> None:

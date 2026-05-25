@@ -1,0 +1,38 @@
+{
+  "name": "canon",
+  "version": "0.1.0",
+  "description": "Canonical agent standards, verification gates, and repo contracts for durable software work.",
+  "author": {
+    "name": "Eidos AGI",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/canon",
+  "repository": "https://github.com/eidos-agi/canon",
+  "license": "MIT",
+  "keywords": [
+    "agents",
+    "standards",
+    "verification",
+    "codex"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Canon",
+    "shortDescription": "Canonical standards and proof gates for agentic software work.",
+    "longDescription": "Canon packages durable agent operating standards, repo contracts, and verification gates so Codex and other agents can work against the same definition of done.",
+    "developerName": "Eidos AGI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Code",
+      "Review",
+      "Automation"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/canon",
+    "defaultPrompt": [
+      "Check this repo against Canon standards.",
+      "Add a verification gate for this workflow.",
+      "Review this agent change for proof gaps."
+    ],
+    "brandColor": "#2F5D50"
+  }
+}

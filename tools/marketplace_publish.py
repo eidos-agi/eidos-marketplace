@@ -120,8 +120,7 @@ def copy_item(source: Path, destination: Path) -> None:
 
         def ignore(directory: str, names: list[str]) -> set[str]:
             ignored = set(base_ignore(directory, names))
-            if Path(directory).name == "cept-proofs":
-                ignored.update(name for name in names if name.endswith(".jsonl"))
+            ignored.update(name for name in names if name.endswith(".jsonl"))
             return ignored
 
         shutil.copytree(source, destination, ignore=ignore)
@@ -177,6 +176,17 @@ def render_bundle(source: Path, marketplace: Path, manifest: dict[str, Any]) -> 
             else:
                 copy_item(source_item, bundle / item)
 
+    package_candidates = {
+        manifest["name"],
+        manifest["name"].lower(),
+        manifest["name"].replace("-", "_"),
+        manifest["name"].lower().replace("-", "_"),
+    }
+    for package_name in sorted(package_candidates):
+        source_item = source / package_name
+        if source_item.is_dir() and not (bundle / package_name).exists():
+            copy_item(source_item, bundle / package_name)
+
     claude_manifest = bundle / ".claude-plugin" / "plugin.json"
     if not claude_manifest.exists():
         write_json(claude_manifest, public_plugin_manifest(manifest))
@@ -195,7 +205,7 @@ def ignored_path(path: Path) -> bool:
         or ".venv" in path.parts
         or ".pytest_cache" in path.parts
         or ".ruff_cache" in path.parts
-        or (path.name.endswith(".jsonl") and "cept-proofs" in path.parts)
+        or path.name.endswith(".jsonl")
     )
 
 

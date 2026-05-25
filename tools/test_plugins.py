@@ -11,6 +11,7 @@ Usage:
 """
 
 import json
+import os
 import subprocess
 import sys
 import time
@@ -34,6 +35,16 @@ def expand_plugin_root(value: str, plugin_dir: Path) -> str:
     return value.replace("${CLAUDE_PLUGIN_ROOT}", str(plugin_dir)).replace(
         "${CODEX_PLUGIN_ROOT}", str(plugin_dir)
     )
+
+
+def expanded_env(config: dict, plugin_dir: Path) -> dict[str, str]:
+    env = os.environ.copy()
+    for key, value in config.get("env", {}).items():
+        if isinstance(key, str) and isinstance(value, str):
+            env[key] = expand_plugin_root(value, plugin_dir).replace(
+                "${PLUGIN_DIR}", str(plugin_dir)
+            )
+    return env
 
 
 def mcp_initialize_request() -> bytes:
@@ -120,6 +131,7 @@ def smoke_plugin(plugin_dir: Path) -> dict:
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            env=expanded_env(config, plugin_dir),
         )
     except FileNotFoundError:
         result["reason"] = f"command not found: {command}"

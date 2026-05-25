@@ -1,0 +1,36 @@
+{
+  "name": "cartwright",
+  "version": "0.2.2",
+  "description": "A personal shopping assistant for finding, comparing, and recommending products.",
+  "author": {
+    "name": "Daniel Shanklin"
+  },
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "keywords": [
+    "shopping",
+    "personal-shopper",
+    "commerce",
+    "comparison",
+    "research"
+  ],
+  "interface": {
+    "displayName": "Cartwright",
+    "shortDescription": "Your personal shopping agent.",
+    "longDescription": "Cartwright helps you shop with judgment: it clarifies what you want, researches current options, compares prices and tradeoffs, watches for purchase risks, and returns concise recommendations without buying anything unless you explicitly approve the next step.",
+    "developerName": "Daniel Shanklin",
+    "category": "Productivity",
+    "capabilities": [
+      "Product research",
+      "Price comparison",
+      "Shopping recommendations",
+      "Purchase risk review"
+    ],
+    "defaultPrompt": [
+      "Find the best version of this thing for me.",
+      "Compare these products and pick one.",
+      "Build me a cart under this budget."
+    ],
+    "brandColor": "#25635A"
+  }
+}

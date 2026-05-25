@@ -1,0 +1,35 @@
+{
+  "name": "knox",
+  "version": "0.1.0",
+  "description": "Knox local MCP secret broker with capability-scoped, short-lived sessions.",
+  "author": {
+    "name": "Knox"
+  },
+  "homepage": "https://github.com/eidos-agi/knox",
+  "repository": "https://github.com/eidos-agi/knox",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Knox",
+    "shortDescription": "Capability-based local MCP secret broker.",
+    "longDescription": "Knox keeps credentials in macOS Keychain and enforces short-lived, policy-scoped action tokens. The model only gets tool outputs, never raw secrets.",
+    "developerName": "Knox",
+    "category": "Productivity",
+    "capabilities": [
+      "secret-management",
+      "tool-authorization",
+      "session-scoping",
+      "audit-trail"
+    ],
+    "defaultPrompt": "Issue a short-lived Knox session and invoke allowed provider operations with scoped sessions."
+  },
+  "security": {
+    "posture": "strict-local-first",
+    "notes": [
+      "macOS Keychain required for secret storage.",
+      "No plaintext fallback for v1.",
+      "Fail-closed when Keychain is unavailable."
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}

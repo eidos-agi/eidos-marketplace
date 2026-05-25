@@ -1,0 +1,1 @@
+Create an original mascot or identity image for an open-source CLI named Canon. Include the exact readable wordmark "Canon" prominently. Do not resemble existing characters, brands, mascots, logos, or protected designs.

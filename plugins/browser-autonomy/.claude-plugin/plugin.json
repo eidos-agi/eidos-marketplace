@@ -1,0 +1,8 @@
+{
+  "name": "browser-autonomy",
+  "version": "0.1.0",
+  "description": "Makes Codex more self-reliant for browser work, including safe use of existing sessions, autofill, and login flows.",
+  "author": {
+    "name": "Local developer"
+  }
+}

@@ -1,1 +1,22 @@
-{"name":"forge-forge","description":"Meta-forge for creating and managing forges — manifest validation, drift detection, and forge scaffolding","author":{"name":"Eidos AGI"}}
+{
+  "name": "forge-forge",
+  "version": "0.2.0",
+  "description": "Route agents to the right Eidos forge and use forge-forge as the source of truth for forge discovery.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/forge-forge",
+  "repository": "https://github.com/eidos-agi/forge-forge",
+  "license": "MIT",
+  "keywords": [
+    "forge-forge",
+    "forges",
+    "registry",
+    "skills",
+    "templates",
+    "routing",
+    "mcp"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "cartwright": {
+      "transport": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/.",
+        "cartwright-mcp"
+      ],
+      "tool_timeout_sec": 1200
+    }
+  }
+}

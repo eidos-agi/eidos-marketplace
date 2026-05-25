@@ -1,0 +1,22 @@
+{
+  "name": "eidos-plugin-store",
+  "version": "0.1.0",
+  "description": "Discover and bootstrap Eidos Codex plugins from the Eidos AGI catalog.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://eidosagi.com/plugins",
+  "repository": "https://github.com/eidos-agi/eidos-plugin-store",
+  "license": "MIT",
+  "keywords": [
+    "eidos",
+    "plugin-store",
+    "codex",
+    "plugins",
+    "discovery",
+    "bootstrap",
+    "eidos-agi"
+  ]
+}

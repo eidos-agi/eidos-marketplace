@@ -1,0 +1,22 @@
+{
+  "name": "rhea",
+  "version": "0.1.0",
+  "description": "Rhea MCP tools for sovereign model routing, Socratic debate, sessions, pairing, and image generation.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "TODO@example.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/rhea",
+  "repository": "https://github.com/eidos-agi/rhea",
+  "license": "CC-BY-NC-SA-4.0",
+  "keywords": [
+    "rhea",
+    "mcp",
+    "debate",
+    "reasoning",
+    "socratic",
+    "orchestration",
+    "model-routing"
+  ]
+}

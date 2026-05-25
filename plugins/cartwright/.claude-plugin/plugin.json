@@ -1,0 +1,15 @@
+{
+  "name": "cartwright",
+  "version": "0.2.2",
+  "description": "A personal shopping assistant for finding, comparing, and recommending products.",
+  "author": {
+    "name": "Daniel Shanklin"
+  },
+  "keywords": [
+    "shopping",
+    "personal-shopper",
+    "commerce",
+    "comparison",
+    "research"
+  ]
+}

@@ -10,6 +10,132 @@
   },
   "plugins": [
     {
+      "name": "browser-autonomy",
+      "description": "Makes Codex more self-reliant for browser work, including safe use of existing sessions, autofill, and login flows.",
+      "source": "./plugins/browser-autonomy",
+      "category": "productivity",
+      "homepage": "",
+      "version": "0.1.0",
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-25",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/browser-autonomy.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/browser-autonomy"
+        }
+      }
+    },
+    {
+      "name": "canon",
+      "description": "Canonical agent standards, verification gates, and repo contracts for durable software work.",
+      "source": "./plugins/canon",
+      "category": "developer-tools",
+      "homepage": "https://github.com/eidos-agi/canon",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "agents",
+        "standards",
+        "verification",
+        "codex"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-25",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/canon.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/canon"
+        }
+      }
+    },
+    {
+      "name": "cartwright",
+      "description": "A personal shopping assistant for finding, comparing, and recommending products.",
+      "source": "./plugins/cartwright",
+      "category": "productivity",
+      "homepage": "",
+      "version": "0.2.2",
+      "tags": [
+        "shopping",
+        "personal-shopper",
+        "commerce",
+        "comparison",
+        "research"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow",
+            "mcp_server"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-25",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/cartwright.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/cartwright"
+        }
+      }
+    },
+    {
       "name": "cept",
       "description": "Proprioception for coding agents: slice recent Claude Code transcript, redact it, and ask for outside-in steering.",
       "source": "./plugins/cept",
@@ -163,6 +289,75 @@
       }
     },
     {
+      "name": "eidos-mail",
+      "description": "Email for Claude Code - read, search, send, reply, forward, and manage your inbox.",
+      "source": "./plugins/eidos-mail",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/eidos-mail",
+      "x-eidos": {
+        "kind": {
+          "type": "tool",
+          "signals": [
+            "mcp_server"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-25",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/eidos-mail.md"
+        }
+      }
+    },
+    {
+      "name": "eidos-plugin-store",
+      "description": "Discover and bootstrap Eidos Codex plugins from the Eidos AGI catalog.",
+      "source": "./plugins/eidos-plugin-store",
+      "category": "developer-tools",
+      "homepage": "https://eidosagi.com/plugins",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "eidos",
+        "plugin-store",
+        "codex",
+        "plugins",
+        "discovery",
+        "bootstrap",
+        "eidos-agi"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-25",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/eidos-plugin-store.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/eidos-plugin-store"
+        }
+      }
+    },
+    {
       "name": "felix",
       "description": "Use the live Felix CLI to build, assess, and maintain agent ecosystems.",
       "source": "./plugins/felix",
@@ -258,10 +453,51 @@
     },
     {
       "name": "forge-forge",
-      "description": "Meta-forge for creating and managing forges \u2014 manifest validation, drift detection, and forge scaffolding",
+      "description": "Route agents to the right Eidos forge and use forge-forge as the source of truth for forge discovery.",
       "source": "./plugins/forge-forge",
-      "category": "development",
-      "homepage": "https://github.com/eidos-agi/forge-forge"
+      "category": "developer-tools",
+      "homepage": "https://github.com/eidos-agi/forge-forge",
+      "license": "MIT",
+      "version": "0.2.0",
+      "tags": [
+        "forge-forge",
+        "forges",
+        "registry",
+        "skills",
+        "templates",
+        "routing",
+        "mcp"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow",
+            "mcp_server"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-25",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/forge-forge.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/forge-forge"
+        }
+      }
     },
     {
       "name": "ike",
@@ -271,18 +507,58 @@
       "homepage": "https://github.com/eidos-agi/ike.md"
     },
     {
+      "name": "knox",
+      "description": "Knox local MCP secret broker with capability-scoped sessions and proxy tokens.",
+      "source": "./plugins/knox",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/knox",
+      "license": "MIT",
+      "version": "0.2.0",
+      "tags": [
+        "mcp",
+        "agent",
+        "secret-management",
+        "session-scoping",
+        "macos",
+        "biometric"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow",
+            "mcp_server"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-25",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/knox.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/knox"
+        }
+      }
+    },
+    {
       "name": "probe-forge",
       "description": "Agentic testing forge \u2014 point at anything, say test this. Runs THE-LOOP to investigate targets intelligently",
       "source": "./plugins/probe-forge",
       "category": "development",
       "homepage": "https://github.com/eidos-agi/test-forge"
-    },
-    {
-      "name": "railguey",
-      "description": "Railway deployment management \u2014 deploy, rollback, logs, health checks, and service configuration",
-      "source": "./plugins/railguey",
-      "category": "deployment",
-      "homepage": "https://github.com/eidos-agi/railguey"
     },
     {
       "name": "research-md",
@@ -297,6 +573,53 @@
       "source": "./plugins/resume-resume",
       "category": "productivity",
       "homepage": "https://github.com/eidos-agi/resume-resume"
+    },
+    {
+      "name": "rhea",
+      "description": "Rhea workflow guidance for sovereign model routing, Socratic debate, sessions, pairing, and image generation.",
+      "source": "./plugins/rhea",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/rhea",
+      "license": "CC-BY-NC-SA-4.0",
+      "version": "0.1.0",
+      "tags": [
+        "rhea",
+        "mcp",
+        "debate",
+        "reasoning",
+        "socratic",
+        "orchestration",
+        "model-routing"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-25",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/rhea.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/rhea"
+        }
+      }
     },
     {
       "name": "scridos",

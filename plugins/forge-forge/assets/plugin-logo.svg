@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" role="img" aria-label="Forge-Forge logo">
+  <rect width="520" height="160" rx="32" fill="#F5F3FF"/>
+  <path d="M42 93h76l-12 25H54L42 93Z" fill="#7C3AED"/>
+  <path d="M51 73h58c10 0 18 8 18 18v2H33v-2c0-10 8-18 18-18Z" fill="#4C1D95"/>
+  <path d="M80 37c14 14 20 26 18 37H62c-2-11 4-23 18-37Z" fill="#F59E0B"/>
+  <path d="M80 52c6 7 9 13 8 19H72c-1-6 2-12 8-19Z" fill="#FDE68A"/>
+  <path d="M57 123h46" stroke="#4C1D95" stroke-width="8" stroke-linecap="round"/>
+  <text x="166" y="93" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="48" font-weight="750" fill="#4C1D95">Forge-Forge</text>
+  <text x="168" y="120" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="650" fill="#7C3AED">Pattern registry</text>
+</svg>

@@ -5,6 +5,42 @@
   },
   "plugins": [
     {
+      "name": "browser-autonomy",
+      "source": {
+        "source": "local",
+        "path": "./plugins/browser-autonomy"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "canon",
+      "source": {
+        "source": "local",
+        "path": "./plugins/canon"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "cartwright",
+      "source": {
+        "source": "local",
+        "path": "./plugins/cartwright"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
       "name": "cept",
       "source": {
         "source": "local",
@@ -53,6 +89,18 @@
       "category": "Productivity"
     },
     {
+      "name": "eidos-mail",
+      "source": {
+        "source": "local",
+        "path": "./plugins/eidos-mail"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
       "name": "eidos-plugin-store",
       "source": {
         "source": "local",
@@ -62,7 +110,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Developer Tools"
+      "category": "Productivity"
     },
     {
       "name": "felix",
@@ -87,6 +135,114 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Developer Tools"
+    },
+    {
+      "name": "forge-forge",
+      "source": {
+        "source": "local",
+        "path": "./plugins/forge-forge"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "ike",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ike"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "knox",
+      "source": {
+        "source": "local",
+        "path": "./plugins/knox"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "probe-forge",
+      "source": {
+        "source": "local",
+        "path": "./plugins/probe-forge"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "research-md",
+      "source": {
+        "source": "local",
+        "path": "./plugins/research-md"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "resume-resume",
+      "source": {
+        "source": "local",
+        "path": "./plugins/resume-resume"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "rhea",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rhea"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "scridos",
+      "source": {
+        "source": "local",
+        "path": "./plugins/scridos"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "visionlog",
+      "source": {
+        "source": "local",
+        "path": "./plugins/visionlog"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     }
   ]
 }

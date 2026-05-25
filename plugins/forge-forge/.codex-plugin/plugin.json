@@ -1,0 +1,47 @@
+{
+  "name": "forge-forge",
+  "version": "0.2.0",
+  "description": "Route agents to the right Eidos forge and use forge-forge as the source of truth for forge discovery.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/forge-forge",
+  "repository": "https://github.com/eidos-agi/forge-forge",
+  "license": "MIT",
+  "keywords": [
+    "forge-forge",
+    "forges",
+    "registry",
+    "skills",
+    "templates",
+    "routing",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Forge-Forge",
+    "shortDescription": "Find and use the right Eidos forge.",
+    "longDescription": "Forge-Forge is an Eidos AGI Codex plugin that routes forge-shaped work to the canonical forge registry, forge CLI, and forge MCP tools instead of inventing new structures.",
+    "developerName": "Eidos AGI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "MCP",
+      "CLI",
+      "Knowledge Routing"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/forge-forge",
+    "privacyPolicyURL": "https://github.com/eidos-agi/forge-forge",
+    "termsOfServiceURL": "https://github.com/eidos-agi/forge-forge",
+    "defaultPrompt": [
+      "Use Forge-Forge to find the right forge for this task.",
+      "List the current Eidos forges.",
+      "Show how to use company-forge or another domain forge."
+    ],
+    "brandColor": "#7C3AED",
+    "composerIcon": "./assets/plugin-icon.svg",
+    "logo": "./assets/plugin-logo.svg"
+  }
+}
