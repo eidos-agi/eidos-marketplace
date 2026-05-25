@@ -1,0 +1,23 @@
+{
+  "name": "probe-forge",
+  "version": "0.1.0",
+  "description": "Agentic testing forge \u2014 point at anything, say test this",
+  "author": {
+    "name": "Eidos AGI"
+  },
+  "homepage": "https://github.com/eidos-agi/probe-forge",
+  "license": "MIT",
+  "interface": {
+    "displayName": "Probe Forge",
+    "shortDescription": "Agentic testing forge \u2014 point at anything, say test this",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "MCP"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/probe-forge",
+    "privacyPolicyURL": "https://github.com/eidos-agi/probe-forge",
+    "termsOfServiceURL": "https://github.com/eidos-agi/probe-forge"
+  },
+  "mcpServers": "./.mcp.json"
+}

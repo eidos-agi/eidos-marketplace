@@ -1,0 +1,23 @@
+{
+  "name": "resume-resume",
+  "version": "0.1.0",
+  "description": "Post-crash session recovery, dirty repos inventory, and session search across your full Claude Code history",
+  "author": {
+    "name": "Eidos AGI"
+  },
+  "homepage": "https://github.com/eidos-agi/resume-resume",
+  "license": "MIT",
+  "interface": {
+    "displayName": "Resume Resume",
+    "shortDescription": "Post-crash session recovery, dirty repos inventory, and session search across your full Claude Code history",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "MCP"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/resume-resume",
+    "privacyPolicyURL": "https://github.com/eidos-agi/resume-resume",
+    "termsOfServiceURL": "https://github.com/eidos-agi/resume-resume"
+  },
+  "mcpServers": "./.mcp.json"
+}

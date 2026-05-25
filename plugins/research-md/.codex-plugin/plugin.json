@@ -1,0 +1,23 @@
+{
+  "name": "research-md",
+  "version": "0.1.0",
+  "description": "Evidence-graded, phase-gated research decisions \u2014 candidates, findings, scoring matrices, and peer review",
+  "author": {
+    "name": "Eidos AGI"
+  },
+  "homepage": "https://github.com/eidos-agi/research-md",
+  "license": "MIT",
+  "interface": {
+    "displayName": "Research Md",
+    "shortDescription": "Evidence-graded, phase-gated research decisions \u2014 candidates, findings, scoring matrices, and peer review",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "MCP"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/research-md",
+    "privacyPolicyURL": "https://github.com/eidos-agi/research-md",
+    "termsOfServiceURL": "https://github.com/eidos-agi/research-md"
+  },
+  "mcpServers": "./.mcp.json"
+}

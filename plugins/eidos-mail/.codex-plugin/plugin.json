@@ -1,0 +1,23 @@
+{
+  "name": "eidos-mail",
+  "version": "0.1.0",
+  "description": "Email for Claude Code \u2014 read, search, send, reply, forward, and manage your inbox",
+  "author": {
+    "name": "Eidos AGI"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-mail",
+  "license": "MIT",
+  "interface": {
+    "displayName": "Eidos Mail",
+    "shortDescription": "Email for Claude Code \u2014 read, search, send, reply, forward, and manage your inbox",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "MCP"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/eidos-mail",
+    "privacyPolicyURL": "https://github.com/eidos-agi/eidos-mail",
+    "termsOfServiceURL": "https://github.com/eidos-agi/eidos-mail"
+  },
+  "mcpServers": "./.mcp.json"
+}

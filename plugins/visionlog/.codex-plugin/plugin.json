@@ -1,0 +1,23 @@
+{
+  "name": "visionlog",
+  "version": "0.1.0",
+  "description": "Vision, goals, guardrails, SOPs, and ADRs \u2014 the contracts all execution must honor",
+  "author": {
+    "name": "Eidos AGI"
+  },
+  "homepage": "https://github.com/eidos-agi/visionlog",
+  "license": "MIT",
+  "interface": {
+    "displayName": "Visionlog",
+    "shortDescription": "Vision, goals, guardrails, SOPs, and ADRs \u2014 the contracts all execution must honor",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "MCP"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/visionlog",
+    "privacyPolicyURL": "https://github.com/eidos-agi/visionlog",
+    "termsOfServiceURL": "https://github.com/eidos-agi/visionlog"
+  },
+  "mcpServers": "./.mcp.json"
+}
