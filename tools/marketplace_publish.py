@@ -26,10 +26,15 @@ BUNDLE_ITEMS = (
     "registry",
     "packages",
     "assets",
+    "adapters",
+    "schemas",
     "src",
     "tests",
     "hud",
     "docs",
+    "playbook.md",
+    "plugin.yaml",
+    "verify.py",
     "pyproject.toml",
     "uv.lock",
     "README.md",
@@ -66,7 +71,7 @@ def load_json(path: Path) -> dict[str, Any]:
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n")
+    path.write_text(json.dumps(payload, indent=2) + "\n")
 
 
 def source_manifest_path(source: Path) -> Path:

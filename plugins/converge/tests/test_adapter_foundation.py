@@ -176,5 +176,69 @@ def test_aggregator_preserves_conflicts():
     assert summary["repair_rows"][0]["target_id"] == "shared"
 
 
+def test_aggregator_keeps_bypassed_passes_out_of_full_green():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = Path(tmpdir) / "rows.json"
+        path.write_text(
+            json.dumps([
+                {
+                    "target_id": "real-surface",
+                    "target": "production behavior",
+                    "probe": "production behavior",
+                    "delta": "",
+                    "class": "pass_real_surface",
+                    "evidence": "prod proof",
+                    "next_action": "",
+                    "weight": 1,
+                },
+                {
+                    "target_id": "controlled-loop",
+                    "target": "production behavior",
+                    "probe": "localhost with bypass",
+                    "delta": "production bot control not tested",
+                    "class": "pass_with_bypass",
+                    "evidence": "danger-room proof",
+                    "next_action": "Run production bot-control proof.",
+                    "weight": 1,
+                    "proof_envelope": {
+                        "environment": "localhost",
+                        "bypassed_controls": ["Supabase Auth CAPTCHA disabled"],
+                        "fails_to_test": ["production Turnstile"],
+                        "side_effects": ["test fixture reset"],
+                    },
+                },
+            ]),
+            encoding="utf-8",
+        )
+        summary = run_json(str(ROOT / "adapters" / "aggregate_rows.py"), str(path))
+
+    assert summary["score"] == 0.5
+    assert summary["qualified_score"] == 1.0
+    assert summary["weighted_totals"]["qualified_pass"] == 1
+    assert summary["class_counts"]["pass_with_bypass"] == 1
+    assert summary["proof_surface_counts"]["with_bypass"] == 1
+    assert summary["bypass_rows"][0]["target_id"] == "controlled-loop"
+    assert summary["negative_space_rows"][0]["fails_to_test"] == ["production Turnstile"]
+    assert summary["side_effect_rows"][0]["side_effects"] == ["test fixture reset"]
+    assert summary["generated_gap_rows"] == [
+        {
+            "target_id": "controlled-loop:gap:production-turnstile",
+            "class": "missing",
+            "target": "Prove untested surface: production Turnstile",
+            "probe": "No proof row supplied.",
+            "delta": "Generated from controlled-loop proof envelope.",
+            "evidence": "danger-room proof",
+            "next_action": "Run production bot-control proof.",
+            "adapter": "converge:proof-envelope",
+            "source_file": str(path),
+            "weight": 1.0,
+            "generated_from": "controlled-loop",
+            "gap": "production Turnstile",
+        }
+    ]
+    assert any(row["target_id"] == "controlled-loop" for row in summary["repair_rows"])
+    assert any(row["target_id"] == "controlled-loop:gap:production-turnstile" for row in summary["repair_rows"])
+
+
 if __name__ == "__main__":
     raise SystemExit(subprocess.call([PYTHON, "-m", "pytest", __file__]))

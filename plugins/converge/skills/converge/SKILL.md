@@ -42,6 +42,21 @@ The durable row contract is:
 | `evidence` | Literal proof or path to proof. |
 | `next_action` | Smallest repair, refresh, escalation, or retirement move. |
 
+For any row that claims a pass, add a proof envelope when the proof depends on
+an environment, fixture, external provider, browser surface, or harness control.
+The envelope should make bounded truth explicit:
+
+| Field | Meaning |
+|---|---|
+| `proof_envelope.environment` | Local, staging, production, hosted dependency mix, or other runtime boundary. |
+| `proof_envelope.surface` | Browser/API/domain/CLI surface actually exercised. |
+| `proof_envelope.proof_id` | Stable proof artifact id or run id. |
+| `proof_envelope.captured_at` | Timestamp for freshness and drift. |
+| `proof_envelope.external_dependencies` | Providers/services touched by the proof. |
+| `proof_envelope.bypassed_controls` | Controls disabled, mocked, skipped, auto-satisfied, or otherwise not real. |
+| `proof_envelope.side_effects` | Control-plane, data-plane, fixture, account, or provider mutations caused by the run. |
+| `proof_envelope.fails_to_test` | Negative-space claims this proof does not establish. |
+
 Adapters produce rows. Aggregators summarize rows. Codex repairs rows. Eidos
 preserves the outer evidence loop. The Python helpers in this plugin are local
 reference utilities and adapters, not the Converge engine.
@@ -231,10 +246,34 @@ Use a small display vocabulary for humans:
 If a repo already has richer states, keep them internally but collapse to these
 four in summaries.
 
+Use proof-surface classes when a row passes only under a bounded proof envelope:
+
+| Class | Meaning |
+|---|---|
+| `pass_real_surface` | Proof exercised the real target surface with required controls enabled. |
+| `pass_controlled_harness` | Proof passed in a fixture, mock, local harness, or controlled environment. |
+| `pass_with_bypass` | Proof passed only because one or more controls were disabled, skipped, or auto-satisfied. |
+
+`pass_controlled_harness` and `pass_with_bypass` are qualified passes. They may
+be useful progress, but they must not silently count as full green for a real
+production target. Add explicit gap rows or next actions for every bypass and
+for every `fails_to_test` item. The reference aggregator emits
+`generated_gap_rows` from `proof_envelope.fails_to_test`; treat those generated
+rows as the next proof queue unless a more specific repo-owned row already
+exists.
+
 ## Operating Rules
 
 - Never claim 100% from prose alone.
 - Never let the LLM be the only judge of pass/fail.
+- Never let a controlled harness pass masquerade as real-surface proof.
+- Whenever a pass uses a bypass, fixture, local-only route, disabled provider
+  control, or generated credential, record it in `proof_envelope` and create or
+  retain a gap row for what remains unproved.
+- After every green proof, ask "what did this fail to test?" and preserve the
+  answer as rows, not just commentary.
+- Treat control-plane side effects, such as changing provider auth settings, as
+  evidence and risk.
 - Prefer cheap checks for every row, and use LLM reasoning only for rows where
   the deterministic signal is incomplete.
 - Treat false green as worse than false red.

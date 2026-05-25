@@ -9,7 +9,7 @@
   "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/converge",
   "repository": "https://github.com/eidos-agi/eidos-marketplace",
   "license": "MIT",
-  "category": "development",
+  "category": "agent-tools",
   "keywords": [
     "convergence",
     "agent",

@@ -81,48 +81,34 @@
       "name": "converge",
       "description": "Target tables, drift monitors, regression memory, and repair loops that help AI agents converge on software goals.",
       "source": "./plugins/converge",
-      "category": "development",
+      "category": "agent-tools",
       "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/converge",
       "license": "MIT",
       "version": "0.1.0",
       "tags": [
-        "plugin",
-        "eidos",
-        "forge",
         "convergence",
+        "agent",
         "testing",
+        "scoreboard",
         "drift",
         "regression",
-        "repair-loop"
+        "eidos"
       ],
       "x-eidos": {
         "kind": {
-          "type": "forge",
+          "type": "tool",
           "signals": [
-            "ships_skills",
-            "opinionated_workflow"
+            "single_capability",
+            "evidence_row_aggregator",
+            "repair_queue"
           ]
         },
         "audit": {
-          "audited_by": "Felix plugin doctor + Codex plugin validator + Converge verify hook",
-          "audit_version": "STANDARD.md@2026-05-24",
-          "audit_date": "2026-05-24",
+          "audited_by": "Converge verify hook + adapter tests + Eidos marketplace check",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-25",
           "grade": "PENDING",
           "audit_doc": "AUDITS/converge.md"
-        },
-        "recommend": {
-          "for_projects": [
-            "software-completion",
-            "adapter-row-aggregation",
-            "test-repair-loop",
-            "drift-regression-control"
-          ],
-          "pairs_with": [
-            "eidos",
-            "felix",
-            "foreman"
-          ],
-          "preflight_check": "python3 adapters/aggregate_rows.py --help"
         }
       }
     },

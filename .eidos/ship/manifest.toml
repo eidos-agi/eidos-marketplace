@@ -1,0 +1,12 @@
+[repo]
+skip_tests = true
+skip_build = true
+skip_live = true
+
+[gates]
+builtin = ["git-clean-pushed", "agentic-first-doctrine"]
+
+[agentic_first]
+code_justification = "thin CLI/plugin shim"
+agentic_capability = "Turns the Converge doctrine into an installed Eidos-AGI tool with verified source, marketplace, global plugin, and Codex cache surfaces."
+non_code_paths_considered = ["instruction", "routing", "proof", "Converge"]

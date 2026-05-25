@@ -3,14 +3,27 @@
   "version": "0.1.0",
   "description": "Target tables, drift monitors, regression memory, and repair loops that help AI agents converge on software goals.",
   "author": {
-    "name": "Daniel Shanklin / Codex"
+    "name": "Eidos AGI",
+    "url": "https://github.com/eidos-agi"
   },
+  "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/converge",
+  "repository": "https://github.com/eidos-agi/eidos-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "convergence",
+    "agent",
+    "testing",
+    "scoreboard",
+    "drift",
+    "regression",
+    "eidos"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Converge",
     "shortDescription": "Give AI agents targets, checks, drift sensors, and repair loops.",
     "longDescription": "Converge gives Codex a table-driven operating loop for complex software: define the north star, map target rows, monitor drift, remember regressions, score deterministic checks, audit gaps, repair the smallest failing layer, and repeat until required targets are met or explicitly blocked.",
-    "developerName": "Daniel Shanklin / Codex",
+    "developerName": "Eidos AGI",
     "category": "Developer Tools",
     "capabilities": [
       "AI target tables",

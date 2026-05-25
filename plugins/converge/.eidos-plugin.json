@@ -1,15 +1,16 @@
 {
   "kind": {
-    "type": "forge",
+    "type": "tool",
     "signals": [
-      "ships_skills",
-      "opinionated_workflow"
+      "single_capability",
+      "evidence_row_aggregator",
+      "repair_queue"
     ]
   },
   "audit": {
-    "audited_by": "pending",
+    "audited_by": "Converge verify hook + adapter tests + Eidos marketplace check",
     "audit_version": "STANDARD.md",
-    "audit_date": "2026-05-24",
+    "audit_date": "2026-05-25",
     "grade": "PENDING",
     "audit_doc": "AUDITS/converge.md"
   },

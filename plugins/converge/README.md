@@ -1,7 +1,7 @@
 # Converge
 
-Converge is a Codex plugin for giving AI agents explicit software targets and
-then driving the work through score, audit, repair, and re-score loops. It turns
+Converge is an Eidos-AGI tool for giving AI agents explicit software targets
+and then driving the work through score, audit, repair, and re-score loops. It turns
 "done" into a table-backed contract: north stars, artifacts, layers, invariants,
 tests, evidence, drift monitors, regression memory, and repair rows.
 
@@ -20,6 +20,38 @@ The core idea comes from the Greenmark v4 scoreboard pattern:
 - drift and regression treated as first-class signals
 - iteration treated as a control loop, not busywork
 - convergence style chosen per problem instead of one generic definition of done
+
+## Proof Envelopes
+
+Converge distinguishes a real-surface pass from a controlled-harness pass. A
+passing test can still fail to prove the production claim if it ran on
+localhost, used fixtures, disabled provider controls, skipped rate limits, or
+mutated a control plane to make the proof possible.
+
+Rows can therefore use proof-surface classes:
+
+- `pass_real_surface` - the target surface passed with required controls enabled
+- `pass_controlled_harness` - a controlled fixture or harness passed
+- `pass_with_bypass` - the proof passed only with disabled, skipped, or
+  auto-satisfied controls
+
+Adapters should attach a `proof_envelope` whenever those boundaries matter:
+
+- `environment`
+- `surface`
+- `proof_id`
+- `captured_at`
+- `external_dependencies`
+- `bypassed_controls`
+- `side_effects`
+- `fails_to_test`
+
+The aggregator reports both `score` and `qualified_score`. `score` counts only
+real/full pass classes. `qualified_score` also includes controlled and bypassed
+passes. This keeps progress visible without letting a bypassed harness become
+false green. It also emits `generated_gap_rows` from
+`proof_envelope.fails_to_test` so each unproved surface becomes an explicit
+repair target.
 
 ## Biological Inspirations
 

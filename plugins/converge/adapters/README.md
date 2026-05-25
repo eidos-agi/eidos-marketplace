@@ -26,6 +26,32 @@ Minimal row:
 }
 ```
 
+If a row passes under a bounded proof surface, use the more precise classes
+`pass_real_surface`, `pass_controlled_harness`, or `pass_with_bypass`, and add a
+`proof_envelope`. `pass_controlled_harness` and `pass_with_bypass` are not full
+green in the reference aggregator; they contribute to `qualified_score`, appear
+in repair rows, and should leave explicit gap rows for the unproved surface.
+
+```json
+{
+  "target_id": "auth-recovery:full-loop",
+  "target": "Recovery works on the deployed production browser surface.",
+  "probe": "Recovery worked on localhost with hosted providers and CAPTCHA disabled.",
+  "delta": "happy path proven; production bot control and deployed browser unproved",
+  "class": "pass_with_bypass",
+  "evidence": "security/danger-room-professorx-recovery-full-loop-proof.json",
+  "next_action": "Run production-domain proof with bot controls enabled.",
+  "proof_envelope": {
+    "environment": "local app with hosted providers",
+    "surface": "http://127.0.0.1:3107",
+    "proof_id": "DR-AUTH-FULL-PROFESSORX-example",
+    "bypassed_controls": ["Supabase Auth CAPTCHA disabled"],
+    "side_effects": ["test fixture password reset"],
+    "fails_to_test": ["production Turnstile", "deployed browser redirects"]
+  }
+}
+```
+
 ## Adapter Families
 
 | Adapter Family | Typical Target | Typical Probe |
@@ -69,7 +95,14 @@ python3 /Users/dshanklinbv/plugins/converge/adapters/aggregate_rows.py \
 ```
 
 The output includes `score`, `weighted_totals`, `class_counts`, `conflicts`,
+`qualified_score`, `proof_surface_counts`, `bypass_rows`,
+`negative_space_rows`, `side_effect_rows`, `generated_gap_rows`,
 `repair_rows`, and `source_files`.
+
+`generated_gap_rows` turns every `proof_envelope.fails_to_test` item into a
+synthetic `missing` repair row. These rows do not change the weighted score by
+themselves; they make the next proof target explicit so agents cannot lose
+negative-space claims between handoffs.
 
 ## Pytest Adapter
 

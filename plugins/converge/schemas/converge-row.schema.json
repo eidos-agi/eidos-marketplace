@@ -31,6 +31,9 @@
         "match",
         "rounding",
         "pass",
+        "pass_real_surface",
+        "pass_controlled_harness",
+        "pass_with_bypass",
         "miss_small",
         "miss_large",
         "fail",
@@ -73,6 +76,60 @@
     },
     "evidence_as_of": {
       "type": "string"
+    },
+    "proof_envelope": {
+      "description": "Context that bounds what a passing proof actually proves.",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "environment": {
+          "type": "string"
+        },
+        "surface": {
+          "type": "string"
+        },
+        "proof_id": {
+          "type": "string"
+        },
+        "captured_at": {
+          "type": "string"
+        },
+        "freshness_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "external_dependencies": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "bypassed_controls": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "side_effects": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "fails_to_test": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "bypassed_controls": {
+      "description": "Shortcut for controls disabled, mocked, skipped, or auto-satisfied for this proof.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "fails_to_test": {
+      "description": "Negative-space claims this proof does not establish.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "side_effects": {
+      "description": "Control-plane, data-plane, or fixture mutations caused by the proof run.",
+      "type": "array",
+      "items": { "type": "string" }
     }
   }
 }

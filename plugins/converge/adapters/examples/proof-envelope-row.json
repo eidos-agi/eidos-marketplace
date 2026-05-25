@@ -1,0 +1,38 @@
+{
+  "target_id": "auth-recovery:professor-x-full-loop",
+  "target": "Professor X completes recovery on the production browser surface with all production bot controls enabled.",
+  "probe": "Professor X completed recovery on localhost with hosted Supabase, SES, S3, local Turnstile auto-complete, and Supabase Auth CAPTCHA disabled.",
+  "delta": "happy path proven under controlled harness; production bot defense and deployed browser surface remain unproven",
+  "class": "pass_with_bypass",
+  "evidence": "security/danger-room-professorx-recovery-full-loop-proof.json",
+  "next_action": "Run the same loop on the deployed domain with production bot controls enabled, or add explicit gap rows for each bypass.",
+  "adapter": "playwright",
+  "convergence_style": "consensus_evidence",
+  "required": true,
+  "weight": 5,
+  "proof_envelope": {
+    "environment": "local app with hosted auth/mail dependencies",
+    "surface": "http://127.0.0.1:3107",
+    "proof_id": "DR-AUTH-FULL-PROFESSORX-example",
+    "captured_at": "2026-05-25T05:37:46Z",
+    "freshness_days": 1,
+    "external_dependencies": [
+      "Supabase Auth",
+      "AWS SES receiving",
+      "S3 mailbox"
+    ],
+    "bypassed_controls": [
+      "Supabase Auth CAPTCHA disabled",
+      "localhost Turnstile auto-complete"
+    ],
+    "side_effects": [
+      "test fixture password reset",
+      "TOTP factor reset"
+    ],
+    "fails_to_test": [
+      "production Turnstile challenge",
+      "deployed browser cookies and redirects",
+      "abuse-rate limiting under provider-send guardrails"
+    ]
+  }
+}

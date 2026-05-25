@@ -1,7 +1,8 @@
 # Converge Playbook
 
-Use Converge when an Eidos loop needs measurable software completion rather
-than a prose checklist.
+Use Converge when an Eidos loop needs the measurable software-completion tool:
+target rows, evidence envelopes, repair queues, and re-score loops rather than
+a prose checklist.
 
 ## Use When
 
