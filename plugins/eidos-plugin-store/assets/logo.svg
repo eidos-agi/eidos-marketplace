@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 96" role="img" aria-label="Eidos AGI Catalog logo">
+  <rect width="320" height="96" rx="18" fill="#15120f"/>
+  <rect x="24" y="24" width="48" height="12" fill="#D99B5F"/>
+  <rect x="24" y="43" width="21" height="29" fill="#F4E6D5"/>
+  <rect x="51" y="43" width="21" height="29" fill="#C9D7C1"/>
+  <text x="92" y="44" fill="#F4E6D5" font-family="Arial, sans-serif" font-size="24" font-weight="700">Eidos</text>
+  <text x="92" y="68" fill="#D99B5F" font-family="Arial, sans-serif" font-size="18">AGI Catalog</text>
+</svg>

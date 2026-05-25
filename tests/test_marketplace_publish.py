@@ -6,10 +6,41 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 
 import marketplace_publish
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
 
 def write_json(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2) + "\n")
+
+
+def test_codex_marketplace_is_single_eidos_agi_store() -> None:
+    marketplace_path = REPO_ROOT / ".agents" / "plugins" / "marketplace.json"
+    marketplace = json.loads(marketplace_path.read_text())
+
+    assert marketplace["name"] == "eidos-agi"
+    assert marketplace["interface"]["displayName"] == "Eidos AGI"
+    assert all(entry["source"]["source"] == "local" for entry in marketplace["plugins"])
+    assert all(
+        entry["source"]["path"].startswith("./plugins/") for entry in marketplace["plugins"]
+    )
+
+    plugin_names = [entry["name"] for entry in marketplace["plugins"]]
+    assert plugin_names == sorted(plugin_names)
+    assert "eidos-plugin-store" in plugin_names
+
+    for entry in marketplace["plugins"]:
+        plugin_root = REPO_ROOT / entry["source"]["path"].removeprefix("./")
+        manifest = plugin_root / ".codex-plugin" / "plugin.json"
+        assert manifest.exists(), f"missing Codex manifest for {entry['name']}"
+        plugin_manifest = json.loads(manifest.read_text())
+        assert plugin_manifest["name"] == entry["name"]
+
+    catalog_manifest = json.loads(
+        (REPO_ROOT / "plugins" / "eidos-plugin-store" / ".codex-plugin" / "plugin.json").read_text()
+    )
+    assert catalog_manifest["interface"]["displayName"] == "Eidos AGI Catalog"
+    assert "not a separate store" in catalog_manifest["interface"]["longDescription"]
 
 
 def test_publish_renders_plugin_bundle_and_marketplace_entry(tmp_path: Path) -> None:

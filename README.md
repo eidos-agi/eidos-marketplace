@@ -10,6 +10,27 @@ The plugin marketplace for [Claude Code](https://docs.claude.com/en/docs/claude-
 
 ## Install
 
+### Codex
+
+Add the Eidos AGI marketplace once:
+
+```bash
+codex plugin marketplace add eidos-agi/eidos-marketplace
+```
+
+Then install plugins from the single public Codex marketplace identity:
+
+```bash
+codex plugin add eidos@eidos-agi
+codex plugin add felix@eidos-agi
+codex plugin add foreman@eidos-agi
+```
+
+Codex users should see one Eidos marketplace: **Eidos AGI**. Bootstrap and
+catalog helpers are plugins inside that marketplace, not separate stores.
+
+### Claude Code
+
 Add the marketplace once:
 
 ```bash

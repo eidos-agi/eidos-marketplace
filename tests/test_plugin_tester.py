@@ -41,6 +41,16 @@ def test_research_md_marketplace_uses_mcp_serve_command() -> None:
     assert server["args"] == ["--from", "research-md", "research-md", "mcp", "serve"]
 
 
+def test_clawdflare_marketplace_uses_uvx_runtime() -> None:
+    mcp_config = json.loads((test_plugins.PLUGINS_DIR / "clawdflare" / ".mcp.json").read_text())
+
+    [(name, server)] = test_plugins.server_configs(mcp_config)
+
+    assert name == "clawdflare"
+    assert server["command"] == "uvx"
+    assert server["args"] == ["--from", "clawdflare", "clawdflare", "serve"]
+
+
 def test_resume_resume_marketplace_declares_runtime_extras() -> None:
     mcp_config = json.loads((test_plugins.PLUGINS_DIR / "resume-resume" / ".mcp.json").read_text())
 

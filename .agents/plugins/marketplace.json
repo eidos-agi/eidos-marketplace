@@ -1,0 +1,92 @@
+{
+  "name": "eidos-agi",
+  "interface": {
+    "displayName": "Eidos AGI"
+  },
+  "plugins": [
+    {
+      "name": "cept",
+      "source": {
+        "source": "local",
+        "path": "./plugins/cept"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "clawdflare",
+      "source": {
+        "source": "local",
+        "path": "./plugins/clawdflare"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "converge",
+      "source": {
+        "source": "local",
+        "path": "./plugins/converge"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "eidos",
+      "source": {
+        "source": "local",
+        "path": "./plugins/eidos"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "eidos-plugin-store",
+      "source": {
+        "source": "local",
+        "path": "./plugins/eidos-plugin-store"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "felix",
+      "source": {
+        "source": "local",
+        "path": "./plugins/felix"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "foreman",
+      "source": {
+        "source": "local",
+        "path": "./plugins/foreman"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

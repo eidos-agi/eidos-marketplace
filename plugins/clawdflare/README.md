@@ -73,8 +73,8 @@ Add to Claude Code settings:
 {
   "mcpServers": {
     "clawdflare": {
-      "command": "clawdflare",
-      "args": ["serve"],
+      "command": "uvx",
+      "args": ["--from", "clawdflare", "clawdflare", "serve"],
       "env": {
         "CLOUDFLARE_API_TOKEN": "your-read-only-token"
       }

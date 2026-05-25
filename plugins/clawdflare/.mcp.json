@@ -2,8 +2,11 @@
   "mcpServers": {
     "clawdflare": {
       "transport": "stdio",
-      "command": "clawdflare",
+      "command": "uvx",
       "args": [
+        "--from",
+        "clawdflare",
+        "clawdflare",
         "serve"
       ],
       "tool_timeout_sec": 600
