@@ -1,0 +1,27 @@
+{
+  "name": "converge",
+  "version": "0.1.0",
+  "description": "Target tables, drift monitors, regression memory, and repair loops that help AI agents converge on software goals.",
+  "author": {
+    "name": "Daniel Shanklin / Codex"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Converge",
+    "shortDescription": "Give AI agents targets, checks, drift sensors, and repair loops.",
+    "longDescription": "Converge gives Codex a table-driven operating loop for complex software: define the north star, map target rows, monitor drift, remember regressions, score deterministic checks, audit gaps, repair the smallest failing layer, and repeat until required targets are met or explicitly blocked.",
+    "developerName": "Daniel Shanklin / Codex",
+    "category": "Developer Tools",
+    "capabilities": [
+      "AI target tables",
+      "drift monitoring",
+      "regression memory",
+      "iteration loops",
+      "convergence styles",
+      "deterministic scoreboards",
+      "audit evidence",
+      "repair loops"
+    ],
+    "defaultPrompt": "Use Converge to build or refresh a table-backed target scoreboard for this repo, then identify the smallest failing rows to repair."
+  }
+}

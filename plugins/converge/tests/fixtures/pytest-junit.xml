@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+  <testsuite name="pytest" tests="5" failures="1" errors="1" skipped="1">
+    <testcase classname="tests.test_api" name="test_health_passes" file="tests/test_api.py" time="0.01" />
+    <testcase classname="tests.test_api" name="test_returns_200" file="tests/test_api.py" time="0.02">
+      <failure message="assert 500 == 200">AssertionError: expected HTTP 200, got HTTP 500</failure>
+    </testcase>
+    <testcase classname="tests.test_worker" name="test_job_runs" file="tests/test_worker.py" time="0.03">
+      <error message="RuntimeError: worker unavailable">RuntimeError: worker unavailable</error>
+    </testcase>
+    <testcase classname="tests.test_slow" name="test_external_service" file="tests/test_slow.py" time="0.00">
+      <skipped message="external service disabled">external service disabled</skipped>
+    </testcase>
+    <testcase classname="tests.test_api" name="test_returns_200" file="tests/test_api.py" time="0.04" />
+  </testsuite>
+</testsuites>

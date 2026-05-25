@@ -1,0 +1,30 @@
+{
+  "kind": {
+    "type": "forge",
+    "signals": [
+      "ships_skills",
+      "opinionated_workflow"
+    ]
+  },
+  "audit": {
+    "audited_by": "pending",
+    "audit_version": "STANDARD.md",
+    "audit_date": "2026-05-24",
+    "grade": "PENDING",
+    "audit_doc": "AUDITS/converge.md"
+  },
+  "recommend": {
+    "for_projects": [
+      "software-completion",
+      "adapter-row-aggregation",
+      "test-repair-loop",
+      "drift-regression-control"
+    ],
+    "pairs_with": [
+      "eidos",
+      "felix",
+      "foreman"
+    ],
+    "preflight_check": "python3 adapters/aggregate_rows.py --help"
+  }
+}

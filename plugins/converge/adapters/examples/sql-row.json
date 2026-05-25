@@ -1,0 +1,14 @@
+{
+  "target_id": "sql:active_customers_count",
+  "target": 1200,
+  "probe": 1197,
+  "delta": -3,
+  "class": "miss_small",
+  "evidence": "select count(*) from customers where active = true;",
+  "next_action": "Compare the three missing customer IDs against the source extract.",
+  "adapter": "sql",
+  "convergence_style": "tolerance_band",
+  "required": true,
+  "weight": 1,
+  "tolerance": 0
+}

@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/converge/schemas/converge-row.schema.json",
+  "title": "Converge Row",
+  "description": "Portable target/probe/evidence/repair row emitted by any Converge adapter.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "target_id",
+    "class",
+    "evidence",
+    "next_action"
+  ],
+  "properties": {
+    "target_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target": {
+      "description": "Expected value, state, threshold, maturity stage, or behavior."
+    },
+    "probe": {
+      "description": "Observed value from implementation, test, query, UI, API, or evidence."
+    },
+    "delta": {
+      "description": "Difference, transition, gap, or mismatch between probe and target."
+    },
+    "class": {
+      "type": "string",
+      "enum": [
+        "match",
+        "rounding",
+        "pass",
+        "miss_small",
+        "miss_large",
+        "fail",
+        "missing",
+        "blocked",
+        "drift",
+        "regression",
+        "skip"
+      ]
+    },
+    "evidence": {
+      "description": "Literal proof, command output, artifact path, URL, or reviewed note.",
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      ]
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "adapter": {
+      "type": "string"
+    },
+    "convergence_style": {
+      "type": "string"
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "weight": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "tolerance": {
+      "type": "number",
+      "minimum": 0
+    },
+    "evidence_as_of": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.codex/converge/schemas/converge-spec.schema.json",
+  "title": "Converge Spec",
+  "description": "Validated starter target lattice for Converge. Adapter outputs use converge-row.schema.json instead.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "north_star",
+    "convergence_style",
+    "scoreboard",
+    "target_probe_grids",
+    "drift_monitors",
+    "regression_history",
+    "iteration_ledger"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "north_star": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["statement"],
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit": {
+          "type": "string"
+        },
+        "target_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "score_formula": {
+          "type": "string"
+        },
+        "evaluator_version": {
+          "type": "string"
+        },
+        "evidence_freshness_days": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "convergence_style": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["primary"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "secondary": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "why": {
+          "type": "string"
+        },
+        "available_styles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "iteration_policy": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "state_aliases": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "scoreboard": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/status_row"
+      }
+    },
+    "decision_tables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/status_row"
+      }
+    },
+    "target_probe_grids": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["name", "rows"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "tolerances": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": ["id", "target"],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "weight": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "cause": {
+                  "type": "string"
+                },
+                "next_action": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "drift_monitors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["id", "type", "assumption"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string"
+          },
+          "assumption": {
+            "type": "string"
+          },
+          "freshness_days": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "last_checked": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "trigger": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "regression_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["row_id", "from", "to"],
+        "properties": {
+          "row_id": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string"
+          },
+          "intentional": {
+            "type": "boolean"
+          },
+          "cause": {
+            "type": "string"
+          },
+          "next_action": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "iteration_ledger": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["loop"],
+        "properties": {
+          "loop": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "score_before": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "score_after": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "repair_target": {
+            "type": "string"
+          },
+          "hypothesis": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "next_move": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "biology_patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "repair_ledger": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  },
+  "$defs": {
+    "status_row": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "state"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact": {
+          "type": "string"
+        },
+        "layer": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "state": {
+          "type": "string"
+        },
+        "evidence": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "evidence_as_of": {
+          "type": "string"
+        },
+        "evaluator": {
+          "type": "string"
+        },
+        "next_action": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

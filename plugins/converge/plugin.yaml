@@ -1,0 +1,12 @@
+slug: converge
+alias: converge
+version: 0.1.0
+description: Target tables, drift monitors, regression memory, and repair loops that help AI agents converge on software goals.
+kind: forge
+entrypoint: playbook.md
+tags:
+  - eidos
+  - forge
+  - convergence
+  - testing
+  - repair-loop

@@ -1,0 +1,13 @@
+{
+  "target_id": "human-review:pricing-copy-approved",
+  "target": "Pricing page copy approved by owner",
+  "probe": "Owner requested changes to cancellation language",
+  "delta": "approval withheld",
+  "class": "blocked",
+  "evidence": "docs/reviews/2026-05-23-pricing-copy.md",
+  "next_action": "Revise cancellation language and request another review.",
+  "adapter": "human_review",
+  "convergence_style": "consensus_evidence",
+  "required": true,
+  "weight": 1
+}

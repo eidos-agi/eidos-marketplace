@@ -1,0 +1,13 @@
+{
+  "target_id": "playwright:checkout-submit-visible",
+  "target": "Submit button visible and enabled",
+  "probe": "Submit button hidden on mobile viewport",
+  "delta": "mobile layout regression",
+  "class": "regression",
+  "evidence": "playwright-report/checkout-mobile/index.html",
+  "next_action": "Fix the mobile checkout action bar and rerun the viewport test.",
+  "adapter": "playwright",
+  "convergence_style": "graceful_degradation",
+  "required": true,
+  "weight": 3
+}

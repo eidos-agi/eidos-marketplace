@@ -1,0 +1,214 @@
+{
+  "name": "example-converge-spec",
+  "north_star": {
+    "statement": "Users can rely on the feature in production without hidden correctness gaps.",
+    "unit": "feature",
+    "target_score": 1.0,
+    "score_formula": "weighted required passing target rows / weighted required target rows",
+    "evaluator_version": "v0.1",
+    "evidence_freshness_days": 14
+  },
+  "convergence_style": {
+    "primary": "tolerance_band",
+    "secondary": ["regression_hardening", "drift_homeostasis"],
+    "why": "This example behaves like the Greenmark PDF-to-warehouse comparison: exact values matter, but small rounding variance is acceptable.",
+    "available_styles": {
+      "exact_match": "Probe must equal target or match a strict expected output.",
+      "tolerance_band": "Probe must stay inside an explicit acceptable band.",
+      "staged_maturity": "Targets move through maturity stages before being considered done.",
+      "regression_hardening": "Previously passing rows must not fall back without an intentional target change.",
+      "drift_homeostasis": "Freshness and environment monitors must stay healthy.",
+      "exploratory_narrowing": "Each iteration must eliminate hypotheses or reduce uncertainty.",
+      "consensus_evidence": "Multiple independent evidence paths must agree.",
+      "graceful_degradation": "Critical behavior must survive partial failures with explicit degraded modes."
+    }
+  },
+  "iteration_policy": {
+    "loop": "target -> attempt -> score -> audit -> repair -> re-score",
+    "stall_threshold_loops": 3,
+    "repair_selection": "smallest failing row that moves the north star",
+    "stop_condition": "all required target rows pass, or every non-pass row is blocked with owner, evidence, and next action"
+  },
+  "state_aliases": {
+    "pass": ["pass", "passed", "complete", "good", "green", "verified", "ratified", "shipped"],
+    "fail": ["fail", "failed", "not_yet", "broken", "red", "missing"],
+    "blocked": ["blocked", "stuck", "waiting", "needs_human", "external"],
+    "skip": ["skip", "skipped", "not_applicable", "optional"]
+  },
+  "scoreboard": [
+    {
+      "id": "route-declared",
+      "artifact": "app/routes/example",
+      "layer": "declared",
+      "required": true,
+      "weight": 1,
+      "state": "pass",
+      "evidence": "Route exists and is linked from navigation.",
+      "evidence_as_of": "2026-05-23",
+      "evaluator": "manual-file-check",
+      "next_action": ""
+    },
+    {
+      "id": "route-tested",
+      "artifact": "app/routes/example",
+      "layer": "tested",
+      "required": true,
+      "weight": 2,
+      "state": "fail",
+      "evidence": "",
+      "evidence_as_of": "",
+      "evaluator": "npm test",
+      "next_action": "Add a deterministic test for the main happy path and one error path."
+    },
+    {
+      "id": "analytics-documented",
+      "artifact": "analytics/events",
+      "layer": "documented",
+      "required": false,
+      "weight": 1,
+      "state": "skip",
+      "evidence": "Not required for current north star.",
+      "evidence_as_of": "2026-05-23",
+      "evaluator": "scope-review",
+      "next_action": ""
+    }
+  ],
+  "decision_tables": [
+    {
+      "name": "eligibility-example",
+      "rows": [
+        {
+          "conditions": {
+            "user_signed_in": true,
+            "account_active": true
+          },
+          "expected": "allow",
+          "test": "npm test -- eligibility",
+          "status": "fail",
+          "weight": 2
+        }
+      ]
+    }
+  ],
+  "invariants": [
+    {
+      "id": "no-silent-success",
+      "statement": "Failed writes must return an explicit error path.",
+      "check": "npm test -- error-paths",
+      "required": true,
+      "weight": 3,
+      "state": "fail",
+      "evidence": ""
+    }
+  ],
+  "target_probe_grids": [
+    {
+      "name": "pdf-to-warehouse-style-example",
+      "unit": "tuple",
+      "tolerances": {
+        "match": 0.1,
+        "rounding": 1.0,
+        "miss_small": 1000.0
+      },
+      "rows": [
+        {
+          "id": "revenue-jan",
+          "target": 897679.1,
+          "probe": 897679.09,
+          "required": true,
+          "weight": 1,
+          "cause": "",
+          "next_action": ""
+        },
+        {
+          "id": "revenue-apr",
+          "target": 147025.0,
+          "probe": 147016.41,
+          "required": true,
+          "weight": 2,
+          "cause": "Example small miss: warehouse probe under target by more than tolerance.",
+          "next_action": "Investigate missing April source rows or filtering differences."
+        },
+        {
+          "id": "warehouse-row-present",
+          "target": 1,
+          "probe": null,
+          "required": true,
+          "weight": 1,
+          "cause": "Example missing probe value.",
+          "next_action": "Confirm whether the probe command reached the target environment."
+        }
+      ]
+    }
+  ],
+  "drift_monitors": [
+    {
+      "id": "route-contract-drift",
+      "type": "spec",
+      "assumption": "The example route remains part of the production navigation contract.",
+      "freshness_days": 14,
+      "last_checked": "2026-05-23",
+      "state": "pass",
+      "trigger": "Navigation or routing changes."
+    },
+    {
+      "id": "eligibility-evaluator-drift",
+      "type": "evaluator",
+      "assumption": "The eligibility test still covers the real allow/deny rule.",
+      "freshness_days": 7,
+      "last_checked": "",
+      "state": "fail",
+      "trigger": "Eligibility requirements or auth model changes."
+    }
+  ],
+  "regression_history": [
+    {
+      "row_id": "route-tested",
+      "from": "pass",
+      "to": "fail",
+      "at": "2026-05-23",
+      "intentional": false,
+      "cause": "Example regression entry showing how Converge remembers pass-to-fail transitions.",
+      "next_action": "Restore deterministic route tests and keep them in the target lattice."
+    }
+  ],
+  "iteration_ledger": [
+    {
+      "loop": 1,
+      "started_at": "2026-05-23",
+      "score_before": 0.0,
+      "score_after": 0.25,
+      "repair_target": "route-declared",
+      "hypothesis": "Declaring the route and linking it from navigation creates the first stable target row.",
+      "result": "pass",
+      "next_move": "Repair route-tested."
+    }
+  ],
+  "biology_patterns": [
+    {
+      "pattern": "homeostasis",
+      "converge_rule": "Track acceptable target bands and correct deviations."
+    },
+    {
+      "pattern": "immune_memory",
+      "converge_rule": "Promote recurring failures into durable invariants."
+    },
+    {
+      "pattern": "mutation_and_selection",
+      "converge_rule": "AI proposes repair hypotheses; checks decide what survives."
+    },
+    {
+      "pattern": "apoptosis",
+      "converge_rule": "Retire obsolete or harmful targets instead of patching forever."
+    }
+  ],
+  "repair_ledger": [
+    {
+      "id": "repair-route-tested",
+      "failing_row": "route-tested",
+      "smallest_next_repair": "Write the missing tests before changing implementation.",
+      "owner": "Codex",
+      "state": "open"
+    }
+  ]
+}

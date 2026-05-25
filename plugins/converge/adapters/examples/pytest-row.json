@@ -1,0 +1,13 @@
+{
+  "target_id": "pytest:tests/test_api.py::test_health_endpoint",
+  "target": "pass",
+  "probe": "fail",
+  "delta": "AssertionError: expected HTTP 200, got HTTP 500",
+  "class": "fail",
+  "evidence": "pytest -q tests/test_api.py::test_health_endpoint",
+  "next_action": "Fix the health endpoint or update the target if the contract changed.",
+  "adapter": "pytest",
+  "convergence_style": "regression_hardening",
+  "required": true,
+  "weight": 2
+}
