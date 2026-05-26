@@ -1,0 +1,35 @@
+{
+  "name": "meeting2action",
+  "version": "0.1.0",
+  "description": "Company-safe Google Meet recording router for Eidos founder calls.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "hello@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/meeting2action",
+  "repository": "https://github.com/eidos-agi/eidos-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "meeting2action",
+    "google-meet",
+    "drive",
+    "apps-script",
+    "recordings",
+    "eidos"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Meeting2Action",
+    "shortDescription": "Install and operate Eidos Meet recording routing.",
+    "longDescription": "Meeting2Action helps Codex install a company-owned Apps Script that copies new Google Meet recording/transcript artifacts from the organizer's Meet Recordings folder into the shared Eidos Founders Recordings folder.",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "Google Apps Script deployment guidance",
+      "Drive recording routing",
+      "Company identity safety checks"
+    ],
+    "defaultPrompt": "Help me install or audit the Eidos Meeting2Action."
+  }
+}
