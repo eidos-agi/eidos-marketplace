@@ -1,34 +1,34 @@
 # Meeting2Action
 
-Codex plugin for installing and operating the Eidos Google Meet recordings
-router.
+Codex plugin for turning messy meeting evidence into grounded company action.
 
-The router is intentionally small: it copies recent matching files from the
-meeting organizer's `Meet Recordings` folder into a shared Eidos company
-`Founders Recordings` folder.
+Meeting2Action is intentionally source-agnostic. A meeting may arrive as a
+Google Meet recording, Zoom export, iOS phone-call note, Signal recap, calendar
+event, Drive transcript, email thread, local audio file, handwritten summary, or
+raw chat paste. The plugin's job is to adapt to the source shape that exists,
+extract what can be proven from it, and produce the next useful company actions.
 
-It does not move originals, mutate Calendar events, write HubSpot, or process
-transcripts automatically.
+It is not a background recorder, Drive router, or one-off Apps Script
+automation.
+
+## Outputs
+
+- Evidence inventory: what artifacts exist and where they came from.
+- Meeting brief: attendees, context, agenda, decisions, open questions, risks.
+- Action register: owner, task, destination, due date if known, source evidence.
+- Destination plan: Linear issues, HubSpot notes, Google Docs/Drive records, or
+  repo docs that should be created or updated.
+- Stop conditions: missing consent, wrong account, wrong company Drive, uncertain
+  source provenance, or sensitive content that needs human approval.
 
 ## Safety
 
-- Install only while authenticated as an `@eidosagi.com` Google account.
-- Use a shared Eidos company Drive folder as the destination.
-- Copy files; do not move them.
-- Keep the original Meet/Calendar/email links intact.
-- Treat transcript processing and HubSpot writes as later, reviewed steps.
-
-## Install
-
-Prerequisites:
-
-- `npx` available.
-- `npx -y @google/clasp show-authorized-user` reports an `@eidosagi.com` account.
-- Apps Script API enabled for that account: `https://script.google.com/home/usersettings`.
-- Destination folder ID for the Eidos company `Founders Recordings` folder.
-
-```bash
-plugins/meeting2action/scripts/install.sh <DEST_FOLDER_ID>
-```
-
-The installer checks `clasp login --status` and refuses non-Eidos accounts.
+- Do not assume the meeting source. Inspect the artifact and state confidence.
+- Do not write into personal, Boone Voyage, or unverified destinations for Eidos
+  company records.
+- Prefer links and summaries over duplicating sensitive raw recordings.
+- Keep source evidence attached to every decision and action.
+- Do not create HubSpot records, send messages, or publish transcripts without a
+  specific user instruction and the right authenticated account.
+- If consent, ownership, or destination identity is unclear, stop and report the
+  blocker.

@@ -240,18 +240,18 @@
     },
     {
       "name": "meeting2action",
-      "description": "Company-safe Google Meet recording router for Eidos founder calls.",
+      "description": "Turn meeting artifacts from many sources into grounded company actions.",
       "source": "./plugins/meeting2action",
       "category": "productivity",
       "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/meeting2action",
       "license": "MIT",
       "version": "0.1.0",
       "tags": [
-        "google-meet",
-        "google-drive",
-        "apps-script",
+        "meetings",
+        "transcripts",
+        "crm",
         "recordings",
-        "founder-calls",
+        "action-items",
         "eidos"
       ],
       "x-eidos": {
@@ -259,12 +259,13 @@
           "type": "tool",
           "signals": [
             "ships_skills",
-            "apps_script_installer",
-            "company_drive_guardrail"
+            "source_shape_detection",
+            "action_extraction",
+            "company_destination_guardrail"
           ]
         },
         "audit": {
-          "audited_by": "Codex plugin validator + manual install guard review",
+          "audited_by": "Codex plugin validator + source-agnostic workflow review",
           "audit_version": "STANDARD.md",
           "audit_date": "2026-05-26",
           "grade": "PENDING",

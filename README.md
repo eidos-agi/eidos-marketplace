@@ -85,7 +85,7 @@ The publisher copies store-facing files into `plugins/<name>/`, normalizes local
 | **resume-resume** | Post-crash session recovery, dirty repos inventory, session search across history | (audit pending) |
 | **ike** | Task and project management — tasks, milestones, documents, Definition of Done | (audit pending) |
 | **visionlog** | Vision, goals, guardrails, SOPs, ADRs — the contracts all execution must honor | (audit pending) |
-| **meeting2action** | Google Meet recording routing into the Eidos company Drive for founder calls | (audit pending) |
+| **meeting2action** | Turns meeting artifacts from many sources into grounded decisions, tasks, docs, and CRM updates | (audit pending) |
 | **research-md** | Evidence-graded, phase-gated research decisions | (audit pending) |
 | **railguey** | Railway deployment management | (audit pending) |
 | **clawdflare** | Cloudflare management — DNS, Workers, Pages, KV, R2 | (audit pending) |

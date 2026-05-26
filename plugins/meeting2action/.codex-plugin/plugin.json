@@ -1,7 +1,7 @@
 {
   "name": "meeting2action",
   "version": "0.1.0",
-  "description": "Company-safe Google Meet recording router for Eidos founder calls.",
+  "description": "Turn meeting artifacts from many sources into grounded company actions.",
   "author": {
     "name": "Eidos AGI",
     "email": "hello@eidosagi.com",
@@ -13,23 +13,29 @@
   "keywords": [
     "meeting2action",
     "google-meet",
+    "zoom",
+    "signal",
+    "phone-calls",
     "drive",
-    "apps-script",
+    "transcripts",
     "recordings",
+    "action-items",
     "eidos"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Meeting2Action",
-    "shortDescription": "Install and operate Eidos Meet recording routing.",
-    "longDescription": "Meeting2Action helps Codex install a company-owned Apps Script that copies new Google Meet recording/transcript artifacts from the organizer's Meet Recordings folder into the shared Eidos Founders Recordings folder.",
+    "shortDescription": "Convert meeting artifacts into grounded decisions, tasks, and CRM/doc updates.",
+    "longDescription": "Meeting2Action helps Codex adapt to whatever evidence exists after a meeting: Google Meet recordings, Zoom exports, iOS call notes, Signal summaries, transcripts, calendar events, chat recaps, or raw notes. It extracts source-grounded decisions, open questions, follow-ups, owners, and destination updates without assuming one capture pipeline.",
     "developerName": "Eidos AGI",
     "category": "Productivity",
     "capabilities": [
-      "Google Apps Script deployment guidance",
-      "Drive recording routing",
-      "Company identity safety checks"
+      "meeting artifact intake",
+      "source-shape detection",
+      "decision and action extraction",
+      "CRM and Linear handoff planning",
+      "company identity safety checks"
     ],
-    "defaultPrompt": "Help me install or audit the Eidos Meeting2Action."
+    "defaultPrompt": "Use Meeting2Action on the meeting we just had and tell me the decisions, follow-ups, and destination updates."
   }
 }
