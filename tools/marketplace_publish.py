@@ -28,6 +28,7 @@ BUNDLE_ITEMS = (
     "assets",
     "adapters",
     "schemas",
+    "bin",
     "src",
     "tests",
     "hud",

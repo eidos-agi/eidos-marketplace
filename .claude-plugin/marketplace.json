@@ -239,41 +239,6 @@
       }
     },
     {
-      "name": "meeting2action",
-      "description": "Turn meeting artifacts from many sources into grounded company actions.",
-      "source": "./plugins/meeting2action",
-      "category": "productivity",
-      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/meeting2action",
-      "license": "MIT",
-      "version": "0.1.0",
-      "tags": [
-        "meetings",
-        "transcripts",
-        "crm",
-        "recordings",
-        "action-items",
-        "eidos"
-      ],
-      "x-eidos": {
-        "kind": {
-          "type": "tool",
-          "signals": [
-            "ships_skills",
-            "source_shape_detection",
-            "action_extraction",
-            "company_destination_guardrail"
-          ]
-        },
-        "audit": {
-          "audited_by": "Codex plugin validator + source-agnostic workflow review",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-26",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/meeting2action.md"
-        }
-      }
-    },
-    {
       "name": "eidos",
       "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then verify, learn, and close out cleanly.",
       "source": "./plugins/eidos",
@@ -585,6 +550,75 @@
             "mcp-forge"
           ],
           "preflight_check": "/knox"
+        }
+      }
+    },
+    {
+      "name": "linearplus",
+      "description": "Use the LinearPlus CLI for Linear GraphQL initiative workflows missing from connector surfaces.",
+      "source": "./plugins/linearplus",
+      "category": "agent-tools",
+      "homepage": "https://github.com/eidos-agi/linearplus",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "linear",
+        "graphql",
+        "initiatives",
+        "projects",
+        "cli",
+        "eidos-agi"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "tool",
+          "signals": [
+            "single_capability",
+            "cli_first",
+            "api_adapter"
+          ]
+        },
+        "audit": {
+          "audited_by": "codex",
+          "audit_version": "0.1.0",
+          "audit_date": "2026-05-29",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/linearplus.md"
+        }
+      }
+    },
+    {
+      "name": "meeting2action",
+      "description": "Turn meeting artifacts from many sources into grounded company actions.",
+      "source": "./plugins/meeting2action",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/meeting2action",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "meetings",
+        "transcripts",
+        "crm",
+        "recordings",
+        "action-items",
+        "eidos"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "tool",
+          "signals": [
+            "ships_skills",
+            "source_shape_detection",
+            "action_extraction",
+            "company_destination_guardrail"
+          ]
+        },
+        "audit": {
+          "audited_by": "Codex plugin validator + source-agnostic workflow review",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-26",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/meeting2action.md"
         }
       }
     },
