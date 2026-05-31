@@ -20,6 +20,9 @@ from pathlib import Path
 MARKETPLACE_ROOT = Path(__file__).parent.parent
 PLUGINS_DIR = MARKETPLACE_ROOT / "plugins"
 TIMEOUT_SECONDS = 90  # uvx first-run can be slow
+SKIPPABLE_PLATFORM_ERRORS = (
+    "Knox keychain backend unavailable",
+)
 
 
 def server_configs(mcp_config: dict) -> list[tuple[str, dict]]:
@@ -150,6 +153,13 @@ def smoke_plugin(plugin_dir: Path) -> dict:
 
         if response is None:
             stderr = proc.stderr.read(2000).decode(errors="replace").strip()
+            if any(message in stderr for message in SKIPPABLE_PLATFORM_ERRORS):
+                return {
+                    "name": name,
+                    "status": "skip",
+                    "reason": "platform dependency unavailable",
+                    "stderr": stderr[:500],
+                }
             result["reason"] = f"no MCP response"
             if stderr:
                 result["stderr"] = stderr[:500]
