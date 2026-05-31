@@ -69,3 +69,7 @@ def test_resume_resume_marketplace_declares_runtime_extras() -> None:
         "pandas",
         "resume-resume-mcp",
     ]
+
+
+def test_knox_keychain_unavailable_is_skippable_platform_error() -> None:
+    assert "Knox keychain backend unavailable" in test_plugins.SKIPPABLE_PLATFORM_ERRORS

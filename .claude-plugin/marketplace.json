@@ -358,6 +358,56 @@
       }
     },
     {
+      "name": "eidos-storemetheus",
+      "description": "Build governed Codex plugin stores for companies that need trusted AI operating layers.",
+      "source": "./plugins/eidos-storemetheus",
+      "category": "developer-tools",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/eidos-storemetheus",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "eidos",
+        "plugin-store",
+        "codex",
+        "marketplace",
+        "governance",
+        "enterprise",
+        "private-plugins"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow",
+            "coordinates_with_other_forges"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-31",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/eidos-storemetheus.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "plugin-store",
+            "marketplace-entry",
+            "company-distribution",
+            "enterprise-ai-governance"
+          ],
+          "pairs_with": [
+            "felix",
+            "canon",
+            "forge-forge"
+          ],
+          "preflight_check": "/eidos-storemetheus"
+        }
+      }
+    },
+    {
       "name": "felix",
       "description": "Use the live Felix CLI to build, assess, and maintain agent ecosystems.",
       "source": "./plugins/felix",

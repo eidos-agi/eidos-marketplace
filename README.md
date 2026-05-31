@@ -96,6 +96,7 @@ The publisher copies store-facing files into `plugins/<name>/`, normalizes local
 | Plugin | What it does | Quality |
 |--------|-------------|---------|
 | **eidos-install** | Progressive-reveal interview that recommends a starter set for the Eidos ecosystem; delegates to `forge-forge` for ongoing forge-specific drilldown | (Phase 3) |
+| **eidos-storemetheus** | Builds governed company plugin stores: scope, manifests, review gates, install proof, and operating cadence | (audit pending) |
 | **felix** | Agent ecosystem builder and maintainer — standards, scaffolding, repo health, and plugin doctor checks | (audit pending) |
 | **foreman** | Delegation forge — scoped coding work in isolated worker worktrees with collect/finalize flows | (audit pending) |
 | **forge-forge** | Forge-specific recommender; reads the marketplace's `x-eidos.recommend` blocks | (Phase 3) |
