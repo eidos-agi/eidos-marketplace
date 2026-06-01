@@ -17,7 +17,7 @@ Use Foreman when the user explicitly wants Codex to parallelize coding work thro
 ## Tool Flow
 
 1. Split work into independent specs with acceptance criteria.
-2. Choose the worker engine: `claude-emux` when the user may need to watch, paste into, or interrupt Claude Code through Emux, or when Foreman should use the normal interactive Claude Code surface; `claude` only when the headless metered `claude -p` path is intentional; `codex` for hard reasoning/QA; `gemini` for broad alternate passes; `aider` for narrow patch tasks; `opencode` for alternate agent/model runs; `gemma4` for throttled local Gemma-family runs; and `smoke` only for plumbing tests.
+2. Choose the worker engine: `claude-emux` when the user may need to watch or interrupt Claude Code through Emux, or when Foreman should use the normal interactive Claude Code surface; `claude` only when the headless metered `claude -p` path is intentional; `codex` for hard reasoning/QA; `gemini` for broad alternate passes; `aider` for narrow patch tasks; `opencode` for alternate agent/model runs; `gemma4` for throttled local Gemma-family runs; and `smoke` only for plumbing tests.
 3. Call `foreman_delegate` once per independent task.
 4. Treat `foreman_delegate` as fire-and-return: record the returned `worker_id`, `run_id`, worktree path, and log path.
    For `claude-emux`, also record the returned `emux.head_command`, `emux.capture_command`, and `emux.interrupt_command`.

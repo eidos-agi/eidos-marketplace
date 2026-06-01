@@ -101,7 +101,7 @@ Supported engines:
 Default engine commands:
 
 - `claude -p <prompt>` for the headless Claude engine.
-- `claude-emux`: `tmux new-session` + `emux register` + `emux send <worker> <interactive claude runner>` + tmux paste of the Foreman prompt.
+- `claude-emux`: `tmux new-session` + `emux register` + `emux send <worker> <interactive claude runner>`; the runner launches `claude --permission-mode acceptEdits <prompt>` inside the tmux TTY.
 - `codex exec --sandbox workspace-write <prompt>`
 - `gemini --skip-trust --approval-mode yolo -p <prompt>`
 - `aider --yes-always --message <prompt>`
@@ -301,7 +301,7 @@ The daemon is a lightweight multiplexer over the same durable Foreman state: wor
 
 The browser cockpit has an intervention bar. `Add note` appends a timestamped operator note to the worker log without changing the worker. `Stop worker` sends a hard interrupt to the worker process group, marks the worker `interrupted`, writes an interrupt result file, and preserves the log and worktree for later collection.
 
-For live mid-run Claude Code steering, use the `claude-emux` engine. Foreman still creates the isolated worker worktree, but it starts a tmux session named and registered as `foreman-<worker_id>`, sends an interactive Claude Code runner through Emux, pastes the Foreman prompt into that live terminal, and includes these commands in the delegate response:
+For live mid-run Claude Code steering, use the `claude-emux` engine. Foreman still creates the isolated worker worktree, but it starts a tmux session named and registered as `foreman-<worker_id>`, sends an interactive Claude Code runner through Emux, passes the Foreman prompt as Claude's initial interactive prompt, and includes these commands in the delegate response:
 
 ```bash
 emux head foreman-<worker_id>
@@ -332,7 +332,7 @@ claude -p "<prompt>" --output-format stream-json --include-partial-messages --in
 
 On current Claude Code builds, Foreman also passes `--verbose` because Claude requires it with `--print` and `--output-format stream-json`. That headless path can be billed differently from the interactive Claude Code app, so prefer `claude-emux` for operator-watched Claude Code sessions. Foreman writes stdout directly to the worker log as it arrives. The browser monitor polls byte offsets from that log, updates the URL when you select a different worker, and shows the last successful poll time so a stale stream is visible.
 
-`claude-emux` workers run plain interactive `claude` inside a tmux session, paste the prompt into that terminal, and tee the session output back into the Foreman log. The worker stays visible through Emux even while the parent Foreman process is only polling for completion. `FOREMAN_ENGINE_CLAUDE_EMUX_CMD` is an explicit test/override escape hatch; include `{prompt}` in that command only when you intentionally want a non-interactive prompt argument.
+`claude-emux` workers run interactive `claude --permission-mode acceptEdits <prompt>` inside a tmux session. This is not the metered `claude -p` print path. Foreman accepts Claude's worktree trust prompt for the Foreman-created worktree, watches the pane through Emux, and sends `/exit` after it detects Claude's completion summary so the worker can finish cleanly. `FOREMAN_ENGINE_CLAUDE_EMUX_CMD` is an explicit test/override escape hatch; include `{prompt}` in that command only when you intentionally want a prompt argument.
 
 Worker logs include the data Foreman sent in. At worker start Foreman writes an `input_prompt_begin` / `input_prompt_end` block before engine output, so the monitor shows both the prompt/spec and the worker's response stream. Set `FOREMAN_LOG_INPUT=0` only for an unusually sensitive local run.
 
