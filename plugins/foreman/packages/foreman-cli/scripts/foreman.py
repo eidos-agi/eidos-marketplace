@@ -2461,19 +2461,8 @@ def claude_emux_command_line() -> str:
     override = os.environ.get("FOREMAN_ENGINE_CLAUDE_EMUX_CMD")
     if override:
         parts = shlex.split(override)
-        if "{prompt}" not in parts:
-            parts = [*parts, "-p", "{prompt}"]
     else:
-        parts = [
-            "claude",
-            "-p",
-            "{prompt}",
-            "--verbose",
-            "--output-format",
-            "stream-json",
-            "--include-partial-messages",
-            "--include-hook-events",
-        ]
+        parts = ["claude"]
     rendered = []
     for part in parts:
         if part == "{prompt}":
@@ -2483,11 +2472,26 @@ def claude_emux_command_line() -> str:
     return " ".join(rendered)
 
 
+def claude_emux_uses_prompt_argument() -> bool:
+    override = os.environ.get("FOREMAN_ENGINE_CLAUDE_EMUX_CMD")
+    return bool(override and "{prompt}" in shlex.split(override))
+
+
+def claude_emux_display_command() -> str:
+    override = os.environ.get("FOREMAN_ENGINE_CLAUDE_EMUX_CMD")
+    if not override:
+        return "claude"
+    parts = shlex.split(override)
+    display_parts = ["<prompt>" if part == "{prompt}" else part for part in parts]
+    return display_command(display_parts)
+
+
 def write_claude_emux_script(row: sqlite3.Row, prompt_path: Path, emux_output_path: Path, exit_path: Path) -> Path:
     worktree = Path(row["worktree_path"])
     script_path = worktree / ".foreman" / "run-claude-emux.sh"
     script_path.parent.mkdir(parents=True, exist_ok=True)
     command_line = claude_emux_command_line()
+    prompt_mode = "argument" if claude_emux_uses_prompt_argument() else "interactive-paste"
     script_path.write_text(
         textwrap.dedent(
             f"""\
@@ -2499,7 +2503,9 @@ def write_claude_emux_script(row: sqlite3.Row, prompt_path: Path, emux_output_pa
             {{
               echo "[foreman-emux] worker_id={row['id']}"
               echo "[foreman-emux] cwd={row['worktree_path']}"
-              echo "[foreman-emux] command={display_command(shlex.split(os.environ.get('FOREMAN_ENGINE_CLAUDE_EMUX_CMD', 'claude -p {prompt}')))}"
+              echo "[foreman-emux] mode={prompt_mode}"
+              echo "[foreman-emux] prompt_file=$PROMPT_FILE"
+              echo "[foreman-emux] command={claude_emux_display_command()}"
               {command_line}
               exit_code=$?
               echo "[foreman-emux] claude exit_code=$exit_code"
@@ -2513,6 +2519,19 @@ def write_claude_emux_script(row: sqlite3.Row, prompt_path: Path, emux_output_pa
     )
     script_path.chmod(0o700)
     return script_path
+
+
+def paste_prompt_into_claude_emux(registry_name: str, session_name: str, prompt_path: Path, worker_id: str) -> None:
+    delay = float(os.environ.get("FOREMAN_ENGINE_CLAUDE_EMUX_PROMPT_DELAY_SEC", "2.0"))
+    if delay > 0:
+        time.sleep(delay)
+    buffer_name = f"foreman-{safe_id(worker_id)}-prompt"
+    run_checked(["tmux", "load-buffer", "-b", buffer_name, str(prompt_path)])
+    try:
+        run_checked(["tmux", "paste-buffer", "-t", session_name, "-b", buffer_name])
+        run_checked(["emux", "send", "--no-enter", registry_name, "Enter"])
+    finally:
+        subprocess.run(["tmux", "delete-buffer", "-b", buffer_name], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
 
 
 def run_claude_emux_worker(row: sqlite3.Row, prompt: str) -> tuple[int, bool]:
@@ -2533,6 +2552,9 @@ def run_claude_emux_worker(row: sqlite3.Row, prompt: str) -> tuple[int, bool]:
     print(f"[foreman-emux] capture_command=emux capture {registry_name} --lines 120", flush=True)
     print(f"[foreman-emux] interrupt_command=emux interrupt {registry_name}", flush=True)
     run_checked(["emux", "send", registry_name, shlex.quote(str(script_path))])
+    if not claude_emux_uses_prompt_argument():
+        print(f"[foreman-emux] prompt_delivery=tmux paste-buffer + emux send Enter", flush=True)
+        paste_prompt_into_claude_emux(registry_name, session_name, prompt_path, worker_id)
 
     deadline = time.time() + int(row["timeout_sec"])
     timed_out = False

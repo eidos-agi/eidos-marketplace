@@ -63,6 +63,7 @@ def test_emux_worker_name_is_stable() -> None:
 def test_claude_emux_worker_returns_exit_code_and_capture(tmp_path, monkeypatch, capsys) -> None:
     foreman = load_foreman_cli()
 
+    monkeypatch.setenv("FOREMAN_ENGINE_CLAUDE_EMUX_PROMPT_DELAY_SEC", "0")
     worktree = tmp_path / "worktree"
     worktree.mkdir()
     prompt_path = tmp_path / "worker.prompt.md"
@@ -119,13 +120,17 @@ def test_claude_emux_worker_returns_exit_code_and_capture(tmp_path, monkeypatch,
     assert timed_out is False
     assert calls[0] == ("ensure", "foreman-worker-1", "foreman-worker-1", str(worktree), "worker-1")
     assert any(call[0] == "run_checked" and call[1][0:3] == ["emux", "send", "foreman-worker-1"] for call in calls)
+    assert any(call[0] == "run_checked" and call[1][0:4] == ["tmux", "load-buffer", "-b", "foreman-worker-1-prompt"] for call in calls)
+    assert any(call[0] == "run_checked" and call[1][0:3] == ["tmux", "paste-buffer", "-t"] for call in calls)
+    assert any(call[0] == "run_checked" and call[1] == ["emux", "send", "--no-enter", "foreman-worker-1", "Enter"] for call in calls)
     output = capsys.readouterr().out
     assert "head_command=emux head foreman-worker-1" in output
+    assert "prompt_delivery=tmux paste-buffer + emux send Enter" in output
     assert "CLAUDE_EMUX_OUTPUT" in output
     assert "TMUX_CAPTURE" in output
 
 
-def test_claude_emux_script_uses_non_reserved_exit_variable(tmp_path, monkeypatch) -> None:
+def test_claude_emux_script_defaults_to_interactive_claude(tmp_path, monkeypatch) -> None:
     foreman = load_foreman_cli()
 
     worktree = tmp_path / "worktree"
@@ -137,11 +142,34 @@ def test_claude_emux_script_uses_non_reserved_exit_variable(tmp_path, monkeypatc
         "id": "worker-1",
         "worktree_path": str(worktree),
     }
-    monkeypatch.setenv("FOREMAN_ENGINE_CLAUDE_EMUX_CMD", "python3 /tmp/smoke_engineer.py")
 
     script_path = foreman.write_claude_emux_script(row, prompt_path, output_path, exit_path)
     body = script_path.read_text(encoding="utf-8")
 
     assert "exit_code=$?" in body
     assert "status=$?" not in body
-    assert "python3 /tmp/smoke_engineer.py -p" in body
+    assert "[foreman-emux] mode=interactive-paste" in body
+    assert "[foreman-emux] command=claude" in body
+    assert "\n  claude\n" in body
+    assert "claude -p" not in body
+
+
+def test_claude_emux_override_prompt_argument_is_explicit(tmp_path, monkeypatch) -> None:
+    foreman = load_foreman_cli()
+
+    worktree = tmp_path / "worktree"
+    worktree.mkdir()
+    prompt_path = tmp_path / "worker.prompt.md"
+    output_path = tmp_path / "worker.emux.log"
+    exit_path = worktree / ".foreman" / "claude-emux.exit"
+    row = {
+        "id": "worker-1",
+        "worktree_path": str(worktree),
+    }
+    monkeypatch.setenv("FOREMAN_ENGINE_CLAUDE_EMUX_CMD", "python3 /tmp/smoke_engineer.py -p {prompt}")
+
+    script_path = foreman.write_claude_emux_script(row, prompt_path, output_path, exit_path)
+    body = script_path.read_text(encoding="utf-8")
+
+    assert "[foreman-emux] mode=argument" in body
+    assert "python3 /tmp/smoke_engineer.py -p \"$(cat \"$PROMPT_FILE\")\"" in body

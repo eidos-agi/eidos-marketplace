@@ -1,7 +1,7 @@
 {
   "name": "foreman",
   "version": "0.3.1",
-  "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees, including Emux-headed Claude Code workers.",
+  "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees, including Emux-headed interactive Claude Code workers.",
   "author": {
     "name": "Eidos AGI",
     "email": "daniel@eidosagi.com",
@@ -25,7 +25,7 @@
   "interface": {
     "displayName": "Foreman",
     "shortDescription": "Delegate coding tasks to AI workers in isolated worktrees.",
-    "longDescription": "Run scoped Claude Code, Emux-headed Claude Code, Codex, Gemini, or Aider engineering workers in isolated git worktrees, then collect diffs back for architect review, tests, merge, PR, or discard.",
+    "longDescription": "Run scoped Claude Code, Emux-headed interactive Claude Code, Codex, Gemini, or Aider engineering workers in isolated git worktrees, then collect diffs back for architect review, tests, merge, PR, or discard.",
     "developerName": "Eidos AGI",
     "category": "Developer Tools",
     "capabilities": [

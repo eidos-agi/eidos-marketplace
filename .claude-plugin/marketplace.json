@@ -490,7 +490,7 @@
     },
     {
       "name": "foreman",
-      "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees, including Emux-headed Claude Code workers.",
+      "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees, including Emux-headed interactive Claude Code workers.",
       "source": "./plugins/foreman",
       "category": "development",
       "homepage": "https://github.com/eidos-agi/foreman",
