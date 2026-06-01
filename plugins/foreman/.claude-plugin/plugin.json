@@ -1,7 +1,7 @@
 {
   "name": "foreman",
   "version": "0.3.1",
-  "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees.",
+  "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees, including Emux-headed Claude Code workers.",
   "author": {
     "name": "Eidos AGI",
     "url": "https://github.com/eidos-agi"
@@ -12,6 +12,7 @@
   "logo": "./assets/foreman-rhea-logo.png",
   "keywords": [
     "claude-code",
+    "emux",
     "codex",
     "worktrees",
     "delegation",

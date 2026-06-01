@@ -37,7 +37,7 @@ DAEMON_LOG_PATH = LOGS_HOME / "daemon.log"
 CONTROL_PLANE_PATH = STATE_HOME / "control-plane.json"
 CONTROL_PLANE_LOG_PATH = LOGS_HOME / "control-plane.log"
 MAX_TAIL_BYTES = 2_000_000
-ENGINES = ("claude", "codex", "gemini", "aider", "opencode", "gemma4", "smoke")
+ENGINES = ("claude", "claude-emux", "codex", "gemini", "aider", "opencode", "gemma4", "smoke")
 LOCAL_ENGINE_RESOURCE_GROUPS = {"opencode": "local-agent", "gemma4": "local-agent"}
 DEFAULT_TIMEOUT_SEC = 900
 DEFAULT_DAEMON_PORT = 53631
@@ -719,12 +719,7 @@ def preflight(repo: Path, base_ref: str, engine: str, allow_dirty: bool) -> None
         dirty = run_git(repo, ["status", "--porcelain"], check=False).stdout.strip()
         if dirty:
             failures.append("repo has uncommitted changes; commit/stash them or pass --allow-dirty")
-    try:
-        argv = engine_command(engine, "preflight")
-    except SystemExit as exc:
-        failures.append(str(exc))
-    else:
-        exe = argv[0]
+    for exe in engine_required_executables(engine):
         if Path(exe).is_absolute():
             if not Path(exe).exists():
                 failures.append(f"engine executable not found: {exe}")
@@ -830,6 +825,16 @@ def low_impact_command(engine: str, argv: list[str]) -> list[str]:
     if nice_value <= 0 or shutil.which("nice") is None:
         return argv
     return ["nice", "-n", str(nice_value), *argv]
+
+
+def engine_required_executables(engine: str) -> list[str]:
+    override = os.environ.get(f"FOREMAN_ENGINE_{engine.upper().replace('-', '_')}_CMD")
+    if override:
+        parts = shlex.split(override)
+        return [parts[0]] if parts else []
+    if engine == "claude-emux":
+        return ["emux", "tmux", "claude"]
+    return [engine_command(engine, "preflight")[0]]
 
 
 def safe_id(value: str) -> str:
@@ -1018,7 +1023,7 @@ def delegate(args: argparse.Namespace) -> dict[str, Any]:
         start_new_session=True,
     )
     update_worker(worker_id, pid=proc.pid)
-    return {
+    payload = {
         "worker_id": worker_id,
         "engine": engine,
         "status": "running",
@@ -1039,6 +1044,16 @@ def delegate(args: argparse.Namespace) -> dict[str, Any]:
         "log_path": str(log_path),
         "timeout_sec": args.timeout_sec,
     }
+    if engine == "claude-emux":
+        registry_name = emux_worker_name(worker_id)
+        payload["emux"] = {
+            "registry_name": registry_name,
+            "head_command": f"emux head {registry_name}",
+            "watch_command": f"emux watch --filter {registry_name}",
+            "capture_command": f"emux capture {registry_name} --lines 120",
+            "interrupt_command": f"emux interrupt {registry_name}",
+        }
+    return payload
 
 
 def caller_label(args: argparse.Namespace) -> str:
@@ -2403,12 +2418,165 @@ def remote_repo_slug(repo: Path) -> str:
     raise SystemExit(f"cannot infer GitHub repo slug from origin: {remote}")
 
 
+def emux_worker_name(worker_id: str) -> str:
+    return f"foreman-{worker_id}"
+
+
+def run_checked(cmd: list[str], cwd: Path | str | None = None) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        cmd,
+        cwd=cwd,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True,
+    )
+
+
+def ensure_emux_tmux_session(registry_name: str, session_name: str, worktree: Path, worker_id: str) -> None:
+    live = subprocess.run(
+        ["tmux", "has-session", "-t", session_name],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if live.returncode != 0:
+        run_checked(["tmux", "new-session", "-d", "-s", session_name, "-c", str(worktree), "zsh"])
+    run_checked([
+        "emux",
+        "register",
+        registry_name,
+        session_name,
+        "-d",
+        f"Foreman Claude Code worker {worker_id}",
+        "-t",
+        "foreman",
+        "claude",
+        "worker",
+    ])
+
+
+def claude_emux_command_line() -> str:
+    override = os.environ.get("FOREMAN_ENGINE_CLAUDE_EMUX_CMD")
+    if override:
+        parts = shlex.split(override)
+        if "{prompt}" not in parts:
+            parts = [*parts, "-p", "{prompt}"]
+    else:
+        parts = [
+            "claude",
+            "-p",
+            "{prompt}",
+            "--verbose",
+            "--output-format",
+            "stream-json",
+            "--include-partial-messages",
+            "--include-hook-events",
+        ]
+    rendered = []
+    for part in parts:
+        if part == "{prompt}":
+            rendered.append('"$(cat "$PROMPT_FILE")"')
+        else:
+            rendered.append(shlex.quote(part))
+    return " ".join(rendered)
+
+
+def write_claude_emux_script(row: sqlite3.Row, prompt_path: Path, emux_output_path: Path, exit_path: Path) -> Path:
+    worktree = Path(row["worktree_path"])
+    script_path = worktree / ".foreman" / "run-claude-emux.sh"
+    script_path.parent.mkdir(parents=True, exist_ok=True)
+    command_line = claude_emux_command_line()
+    script_path.write_text(
+        textwrap.dedent(
+            f"""\
+            #!/bin/zsh
+            cd {shlex.quote(str(worktree))}
+            PROMPT_FILE={shlex.quote(str(prompt_path))}
+            OUTPUT_FILE={shlex.quote(str(emux_output_path))}
+            EXIT_FILE={shlex.quote(str(exit_path))}
+            {{
+              echo "[foreman-emux] worker_id={row['id']}"
+              echo "[foreman-emux] cwd={row['worktree_path']}"
+              echo "[foreman-emux] command={display_command(shlex.split(os.environ.get('FOREMAN_ENGINE_CLAUDE_EMUX_CMD', 'claude -p {prompt}')))}"
+              {command_line}
+              exit_code=$?
+              echo "[foreman-emux] claude exit_code=$exit_code"
+              echo "$exit_code" > "$EXIT_FILE"
+              exit "$exit_code"
+            }} 2>&1 | tee -a "$OUTPUT_FILE"
+            exit ${{pipestatus[1]}}
+            """
+        ),
+        encoding="utf-8",
+    )
+    script_path.chmod(0o700)
+    return script_path
+
+
+def run_claude_emux_worker(row: sqlite3.Row, prompt: str) -> tuple[int, bool]:
+    worker_id = row["id"]
+    registry_name = emux_worker_name(worker_id)
+    session_name = registry_name
+    worktree = Path(row["worktree_path"])
+    prompt_path = Path(row["prompt_path"])
+    emux_output_path = Path(row["log_path"]).with_suffix(".emux.log")
+    exit_path = worktree / ".foreman" / "claude-emux.exit"
+    exit_path.unlink(missing_ok=True)
+
+    ensure_emux_tmux_session(registry_name, session_name, worktree, worker_id)
+    script_path = write_claude_emux_script(row, prompt_path, emux_output_path, exit_path)
+
+    print(f"[foreman-emux] registry_name={registry_name}", flush=True)
+    print(f"[foreman-emux] head_command=emux head {registry_name}", flush=True)
+    print(f"[foreman-emux] capture_command=emux capture {registry_name} --lines 120", flush=True)
+    print(f"[foreman-emux] interrupt_command=emux interrupt {registry_name}", flush=True)
+    run_checked(["emux", "send", registry_name, shlex.quote(str(script_path))])
+
+    deadline = time.time() + int(row["timeout_sec"])
+    timed_out = False
+    while not exit_path.exists():
+        if time.time() >= deadline:
+            timed_out = True
+            print(f"[foreman-emux] worker timed out after {row['timeout_sec']} seconds; interrupting {registry_name}", flush=True)
+            subprocess.run(["emux", "interrupt", registry_name], text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
+            break
+        time.sleep(1)
+
+    if emux_output_path.exists():
+        print("[foreman-emux] captured_output_begin", flush=True)
+        print(emux_output_path.read_text(encoding="utf-8", errors="replace"), end="", flush=True)
+        print("[foreman-emux] captured_output_end", flush=True)
+    capture = subprocess.run(
+        ["emux", "capture", registry_name, "--lines", "120"],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        check=False,
+    )
+    print("[foreman-emux] tmux_capture_begin", flush=True)
+    print(capture.stdout, end="" if capture.stdout.endswith("\n") else "\n", flush=True)
+    print("[foreman-emux] tmux_capture_end", flush=True)
+
+    if timed_out:
+        return 124, True
+    try:
+        return int(exit_path.read_text(encoding="utf-8").strip()), False
+    except (OSError, ValueError):
+        return 1, False
+
+
 def run_worker(args: argparse.Namespace) -> None:
     row = db_row(args.worker_id)
     prompt = Path(row["prompt_path"]).read_text(encoding="utf-8")
     started = now()
-    argv = engine_command(row["engine"], prompt)
-    run_argv = low_impact_command(row["engine"], argv)
+    if row["engine"] == "claude-emux":
+        argv = ["emux", "send", emux_worker_name(args.worker_id), "<claude prompt runner>"]
+        run_argv = argv
+    else:
+        argv = engine_command(row["engine"], prompt)
+        run_argv = low_impact_command(row["engine"], argv)
     print(f"[foreman] worker_id={args.worker_id}", flush=True)
     print(f"[foreman] engine={row['engine']}", flush=True)
     print(f"[foreman] cwd={row['worktree_path']}", flush=True)
@@ -2419,16 +2587,19 @@ def run_worker(args: argparse.Namespace) -> None:
         print(prompt, flush=True)
         print("[foreman] input_prompt_end", flush=True)
     try:
-        with engine_resource_slot(row["engine"]):
-            proc = subprocess.run(
-                run_argv,
-                cwd=row["worktree_path"],
-                text=True,
-                timeout=row["timeout_sec"],
-                env=engine_env(row["engine"]),
-            )
-            exit_code = proc.returncode
-            timed_out = False
+        if row["engine"] == "claude-emux":
+            exit_code, timed_out = run_claude_emux_worker(row, prompt)
+        else:
+            with engine_resource_slot(row["engine"]):
+                proc = subprocess.run(
+                    run_argv,
+                    cwd=row["worktree_path"],
+                    text=True,
+                    timeout=row["timeout_sec"],
+                    env=engine_env(row["engine"]),
+                )
+                exit_code = proc.returncode
+                timed_out = False
     except subprocess.TimeoutExpired:
         print(f"[foreman] worker timed out after {row['timeout_sec']} seconds", flush=True)
         exit_code = 124
@@ -2445,7 +2616,7 @@ def run_worker(args: argparse.Namespace) -> None:
 
 
 def engine_command(engine: str, prompt: str) -> list[str]:
-    override = os.environ.get(f"FOREMAN_ENGINE_{engine.upper()}_CMD")
+    override = os.environ.get(f"FOREMAN_ENGINE_{engine.upper().replace('-', '_')}_CMD")
     if override:
         parts = shlex.split(override)
         if "{prompt}" in parts:

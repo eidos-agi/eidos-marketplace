@@ -34,7 +34,7 @@ TOOLS = [
                 "spec": {"type": "string", "description": "Concrete implementation spec with acceptance criteria and scope."},
                 "engine": {
                     "type": "string",
-                    "enum": ["claude", "codex", "gemini", "aider", "opencode", "gemma4", "smoke"],
+                    "enum": ["claude", "claude-emux", "codex", "gemini", "aider", "opencode", "gemma4", "smoke"],
                     "description": "Worker engine. Defaults to claude. Local engines opencode/gemma4 are throttled by Foreman.",
                 },
                 "repo_path": {"type": "string", "description": "Repository path. Defaults to MCP server cwd if omitted."},
@@ -62,7 +62,7 @@ TOOLS = [
             "type": "object",
             "properties": {
                 "spec": {"type": "string"},
-                "engine": {"type": "string", "enum": ["claude", "codex", "gemini", "aider", "opencode", "gemma4", "smoke"]},
+                "engine": {"type": "string", "enum": ["claude", "claude-emux", "codex", "gemini", "aider", "opencode", "gemma4", "smoke"]},
                 "repo_path": {"type": "string"},
                 "base_ref": {"type": "string"},
                 "test_command": {"type": "string"},

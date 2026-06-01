@@ -7,7 +7,7 @@ Foreman is an Eidos AGI Codex plugin/runtime for delegating implementation work 
 It is part of the Eidos AGI plugin family alongside Rhea:
 
 - `rhea@eidos-agi`: sovereign model routing, debate, pairing, and image tools.
-- `foreman@eidos-agi`: multi-agent coding delegation and git worktree execution.
+- `foreman@eidos-marketplace`: multi-agent coding delegation and git worktree execution.
 
 The plugin exposes MCP tools:
 
@@ -90,6 +90,7 @@ The control-plane tables are intentionally generic: jobs, leases, events, worker
 Supported engines:
 
 - `claude`: Claude Code, default implementation worker.
+- `claude-emux`: Claude Code launched inside an Emux-registered tmux session so the operator can run `emux head`, `emux capture`, or `emux interrupt` against the live worker.
 - `codex`: Codex CLI, stronger reasoning fallback or QA worker.
 - `gemini`: Gemini CLI, broad-context alternate worker/reviewer.
 - `aider`: Aider, narrow git-oriented patch worker.
@@ -100,6 +101,7 @@ Supported engines:
 Default engine commands:
 
 - `claude -p <prompt>`
+- `claude-emux`: `tmux new-session` + `emux register` + `emux send <worker> <claude runner>`
 - `codex exec --sandbox workspace-write <prompt>`
 - `gemini --skip-trust --approval-mode yolo -p <prompt>`
 - `aider --yes-always --message <prompt>`
@@ -118,10 +120,11 @@ git clone git@github.com:eidos-agi/foreman.git ~/repos-eidos-agi/foreman
 claude --plugin-dir ~/repos-eidos-agi/foreman    # single-session use
 ```
 
-**2. Once published to a marketplace:**
+**2. Eidos Marketplace install:**
 
 ```bash
-claude plugin install foreman@eidos-agi
+claude plugins marketplace add eidos-agi/eidos-marketplace
+claude plugins install foreman@eidos-marketplace
 ```
 
 The plugin exposes:
@@ -148,11 +151,21 @@ that makes parallel agent fleets legible.
 If you want one-shot delegation without the daemon, foreman supports a
 no-daemon mode for the simplest cases — but you lose the web terminal.
 
-## Install From PyPI
+## PyPI Package
 
 Foreman is packaged for PyPI as `eidos-foreman` because the plain `foreman`
 package name is already owned by another project. The installed command remains
 `foreman`.
+
+Until the first PyPI release is published, install from the source repo:
+
+```bash
+pip install git+https://github.com/eidos-agi/foreman.git
+foreman --help
+foreman-mcp
+```
+
+After `eidos-foreman` is live on PyPI, the public install path will be:
 
 ```bash
 pip install eidos-foreman
@@ -211,7 +224,7 @@ Add Foreman to the Eidos AGI marketplace at `~/.agents/plugins/marketplace.json`
 Enable the plugin and MCP server in `~/.codex/config.toml`:
 
 ```toml
-[plugins."foreman@eidos-agi"]
+[plugins."foreman@eidos-marketplace"]
 enabled = true
 
 [mcp_servers.foreman]
@@ -286,7 +299,18 @@ python3 /Users/dshanklinbv/repos-eidos-agi/foreman/scripts/foreman.py web <worke
 
 The daemon is a lightweight multiplexer over the same durable Foreman state: worker metadata in `~/.foreman/foreman.sqlite3`, logs in `~/.foreman/logs`, and worktrees in `~/.foreman/worktrees`. Multiple browser tabs and MCP calls can attach to the same daemon. Workers keep running if the page closes or the daemon idles out.
 
-The browser cockpit has an intervention bar. `Add note` appends a timestamped operator note to the worker log without changing the worker. `Stop worker` sends a hard interrupt to the worker process group, marks the worker `interrupted`, writes an interrupt result file, and preserves the log and worktree for later collection. This is reliable cancellation, not soft in-process steering; live mid-run conversation with Claude requires a future managed session runner rather than `subprocess.run`.
+The browser cockpit has an intervention bar. `Add note` appends a timestamped operator note to the worker log without changing the worker. `Stop worker` sends a hard interrupt to the worker process group, marks the worker `interrupted`, writes an interrupt result file, and preserves the log and worktree for later collection.
+
+For live mid-run Claude Code steering, use the `claude-emux` engine. Foreman still creates the isolated worker worktree, but it starts a tmux session named and registered as `foreman-<worker_id>`, sends the Claude runner through Emux, and includes these commands in the delegate response:
+
+```bash
+emux head foreman-<worker_id>
+emux capture foreman-<worker_id> --lines 120
+emux interrupt foreman-<worker_id>
+emux watch --filter foreman-<worker_id>
+```
+
+This keeps Foreman as the worktree/delegation control plane and Emux as the terminal control plane. Use `claude-emux` when a human may need to watch, paste, or interrupt a Claude worker while it is running.
 
 The daemon shuts itself down after 10 minutes without HTTP activity by default:
 
@@ -307,6 +331,8 @@ claude -p "<prompt>" --output-format stream-json --include-partial-messages --in
 ```
 
 On current Claude Code builds, Foreman also passes `--verbose` because Claude requires it with `--print` and `--output-format stream-json`. Foreman writes that stdout directly to the worker log as it arrives. The browser monitor polls byte offsets from that log, updates the URL when you select a different worker, and shows the last successful poll time so a stale stream is visible.
+
+`claude-emux` workers run the same Claude Code command inside a tmux session and tee the session output back into the Foreman log. The worker stays visible through Emux even while the parent Foreman process is only polling for completion.
 
 Worker logs include the data Foreman sent in. At worker start Foreman writes an `input_prompt_begin` / `input_prompt_end` block before engine output, so the monitor shows both the prompt/spec and the worker's response stream. Set `FOREMAN_LOG_INPUT=0` only for an unusually sensitive local run.
 
