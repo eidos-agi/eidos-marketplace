@@ -673,6 +673,51 @@
       }
     },
     {
+      "name": "pavo",
+      "description": "Manifest Anything: capture Plaud recordings, preserve real audio, and route transcription through Eidos tooling.",
+      "source": "./plugins/pavo",
+      "category": "development",
+      "homepage": "https://github.com/eidos-agi/pavo",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "audio",
+        "codex",
+        "eidos",
+        "plaud",
+        "transcription"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-06-08",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/pavo.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/pavo"
+        }
+      }
+    },
+    {
       "name": "probe-forge",
       "description": "Agentic testing forge \u2014 point at anything, say test this. Runs THE-LOOP to investigate targets intelligently",
       "source": "./plugins/probe-forge",
