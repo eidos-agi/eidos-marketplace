@@ -803,6 +803,59 @@
       ]
     },
     {
+      "name": "shipr",
+      "description": "Persistent Eidos shipping operator that learns how each product ships.",
+      "source": "./plugins/shipr",
+      "category": "development",
+      "homepage": "https://github.com/eidos-agi/shipr",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "shipping",
+        "release",
+        "proof",
+        "learning",
+        "eidos",
+        "claude-code"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow",
+            "coordinates_with_other_forges"
+          ]
+        },
+        "audit": {
+          "audited_by": "Shipr self-release packet + Eidos marketplace checks",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-06-13",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/shipr.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "release",
+            "shipping",
+            "deployment",
+            "marketplace-entry",
+            "package-publish",
+            "product-release-memory"
+          ],
+          "pairs_with": [
+            "forge-forge",
+            "ship-forge",
+            "security-forge",
+            "foss-forge",
+            "learning-forge",
+            "loss-forge"
+          ],
+          "preflight_check": "shipr frontier --json"
+        }
+      }
+    },
+    {
       "name": "visionlog",
       "description": "Vision, goals, guardrails, SOPs, and ADRs \u2014 the contracts all execution must honor",
       "source": "./plugins/visionlog",

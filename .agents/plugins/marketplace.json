@@ -245,6 +245,18 @@
       "category": "Productivity"
     },
     {
+      "name": "shipr",
+      "source": {
+        "source": "local",
+        "path": "./plugins/shipr"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
       "name": "visionlog",
       "source": {
         "source": "local",

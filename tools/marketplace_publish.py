@@ -326,11 +326,15 @@ def marketplace_entry(source: Path, manifest: dict[str, Any], audit_date: str) -
         "audit": audit,
     }
     if classification["type"] == "forge":
-        x_eidos["recommend"] = {
-            "for_projects": ["plugin", "marketplace-entry", "company-distribution"],
-            "pairs_with": ["foss-forge", "ship-forge", "mcp-forge"],
-            "preflight_check": f"/{name}",
-        }
+        override_recommend = override.get("recommend")
+        if isinstance(override_recommend, dict):
+            x_eidos["recommend"] = override_recommend
+        else:
+            x_eidos["recommend"] = {
+                "for_projects": ["plugin", "marketplace-entry", "company-distribution"],
+                "pairs_with": ["foss-forge", "ship-forge", "mcp-forge"],
+                "preflight_check": f"/{name}",
+            }
     entry["x-eidos"] = x_eidos
     return entry
 
