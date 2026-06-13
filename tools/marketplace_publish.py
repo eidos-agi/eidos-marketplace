@@ -15,6 +15,7 @@ from typing import Any
 
 MARKETPLACE_ROOT = Path(__file__).resolve().parents[1]
 MARKETPLACE_JSON = Path(".claude-plugin/marketplace.json")
+CODEX_MARKETPLACE_JSON = Path(".agents/plugins/marketplace.json")
 BUNDLE_ITEMS = (
     ".claude-plugin",
     ".codex-plugin",
@@ -349,6 +350,40 @@ def upsert_marketplace_entry(marketplace: Path, entry: dict[str, Any]) -> None:
     write_json(path, data)
 
 
+def upsert_codex_marketplace_entry(
+    source: Path,
+    marketplace: Path,
+    manifest: dict[str, Any],
+    entry: dict[str, Any],
+) -> None:
+    path = marketplace / CODEX_MARKETPLACE_JSON
+    if not path.exists():
+        return
+
+    codex_manifest_path = source / ".codex-plugin" / "plugin.json"
+    codex_manifest = load_json(codex_manifest_path) if codex_manifest_path.exists() else {}
+    interface = codex_manifest.get("interface", {}) or manifest.get("interface", {})
+    category = interface.get("category") or entry.get("category", "Developer Tools")
+    codex_entry = {
+        "name": entry["name"],
+        "source": {
+            "source": "local",
+            "path": entry["source"],
+        },
+        "policy": {
+            "installation": "AVAILABLE",
+            "authentication": "ON_INSTALL",
+        },
+        "category": category,
+    }
+    data = load_json(path)
+    plugins = data.setdefault("plugins", [])
+    plugins[:] = [plugin for plugin in plugins if plugin.get("name") != entry["name"]]
+    plugins.append(codex_entry)
+    plugins.sort(key=lambda plugin: plugin.get("name", ""))
+    write_json(path, data)
+
+
 def ensure_audit(marketplace: Path, entry: dict[str, Any], audit_date: str) -> Path:
     audit_path = marketplace / entry["x-eidos"]["audit"]["audit_doc"]
     if audit_path.exists():
@@ -381,6 +416,7 @@ def publish(source: Path, marketplace: Path = MARKETPLACE_ROOT, audit_date: str 
     entry = marketplace_entry(source, manifest, audit_date)
     bundle = render_bundle(source, marketplace, manifest)
     upsert_marketplace_entry(marketplace, entry)
+    upsert_codex_marketplace_entry(source, marketplace, manifest, entry)
     audit_path = ensure_audit(marketplace, entry, audit_date)
     return PublishReport(entry["name"], bundle, entry, audit_path)
 

@@ -162,6 +162,50 @@ def test_publish_uses_eidos_plugin_recommend_override(tmp_path: Path) -> None:
     assert entry["x-eidos"]["recommend"]["preflight_check"] == "shipr frontier --json"
 
 
+def test_publish_updates_codex_marketplace_when_present(tmp_path: Path) -> None:
+    marketplace = tmp_path / "marketplace"
+    source = tmp_path / "source" / "shipr"
+    write_json(
+        marketplace / ".claude-plugin" / "marketplace.json",
+        {"name": "eidos-marketplace", "plugins": []},
+    )
+    write_json(
+        marketplace / ".agents" / "plugins" / "marketplace.json",
+        {
+            "name": "eidos-agi",
+            "interface": {"displayName": "Eidos AGI"},
+            "plugins": [],
+        },
+    )
+    write_json(
+        source / ".codex-plugin" / "plugin.json",
+        {
+            "name": "shipr",
+            "version": "0.1.0",
+            "description": "Persistent Eidos shipping operator.",
+            "homepage": "https://github.com/eidos-agi/shipr",
+            "license": "MIT",
+            "skills": "./skills/",
+            "interface": {"category": "Developer Tools"},
+        },
+    )
+    (source / "skills" / "use-shipr").mkdir(parents=True)
+    (source / "skills" / "use-shipr" / "SKILL.md").write_text("# Use Shipr\n")
+
+    marketplace_publish.publish(source, marketplace, audit_date="2026-06-13")
+
+    codex_marketplace = json.loads(
+        (marketplace / ".agents" / "plugins" / "marketplace.json").read_text()
+    )
+    [entry] = codex_marketplace["plugins"]
+    assert entry == {
+        "name": "shipr",
+        "source": {"source": "local", "path": "./plugins/shipr"},
+        "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+        "category": "Developer Tools",
+    }
+
+
 def test_check_fails_when_marketplace_entry_points_to_missing_bundle(tmp_path: Path) -> None:
     marketplace = tmp_path / "marketplace"
     write_json(
