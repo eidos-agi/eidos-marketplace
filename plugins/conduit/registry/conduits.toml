@@ -1,0 +1,38 @@
+[[conduits]]
+id = "ssh-mac-mini-01"
+machine_id = "mac-mini-01"
+kind = "ssh"
+direction = "local_or_lan"
+status = "verified_when_ssh_succeeds"
+primary = true
+endpoint_default = "Daniels-Mac-mini.local"
+endpoint_env = "REEVES_MAC_MINI_01_HOST"
+user_default = "dshanklin"
+user_env = "REEVES_MAC_MINI_01_USER"
+notes = "SSH conduit to the owned apartment Mac mini. Defaults to the local Bonjour hostname and can be overridden with REEVES_MAC_MINI_01_HOST."
+
+[[conduits]]
+id = "ssh-daniel-laptop-01"
+machine_id = "daniel-laptop-01"
+kind = "ssh"
+direction = "outbound"
+status = "verified_when_ssh_succeeds"
+primary = true
+endpoint_default = "daniels-macbook-pro.tail0ffb4a.ts.net"
+endpoint_env = "REEVES_LAPTOP_01_HOST"
+user_default = "dshanklinbv"
+user_env = "REEVES_LAPTOP_01_USER"
+notes = "SSH conduit to Daniel's personal laptop source machine. Defaults to the proven Tailscale hostname and can be overridden with REEVES_LAPTOP_01_HOST."
+
+[[conduits]]
+id = "ssh-rentamac-cyprus-01"
+machine_id = "rentamac-cyprus-01"
+kind = "ssh"
+direction = "outbound"
+status = "verified_when_ssh_succeeds"
+primary = true
+endpoint_default = "rentamac-1"
+endpoint_env = "REEVES_RENTAMAC_HOST"
+user_default = "rentamac"
+user_env = "REEVES_RENTAMAC_USER"
+notes = "SSH conduit to the rented Cyprus Mac mini using the live Tailscale node name. Override with REEVES_RENTAMAC_HOST if Rent a Mac rotates the device."

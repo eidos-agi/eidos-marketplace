@@ -326,6 +326,12 @@ def marketplace_entry(source: Path, manifest: dict[str, Any], audit_date: str) -
         "kind": classification,
         "audit": audit,
     }
+    manifest_x = manifest.get("x-eidos")
+    if isinstance(manifest_x, dict) and isinstance(manifest_x.get("site"), dict):
+        # Site-facing metadata (tagline, hosts, status, install) is single-sourced
+        # in the plugin's manifest and carried verbatim into the listing so the
+        # website can derive tool pages without a second hand-maintained copy.
+        x_eidos["site"] = manifest_x["site"]
     if classification["type"] == "forge":
         override_recommend = override.get("recommend")
         if isinstance(override_recommend, dict):

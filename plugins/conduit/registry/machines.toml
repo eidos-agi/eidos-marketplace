@@ -1,0 +1,33 @@
+[[machines]]
+id = "mac-mini-01"
+label = "Apartment Mac mini 01"
+kind = "owned_mac_mini"
+owner = "daniel"
+physical_location = "220 E Broadway Ave Apt 1229"
+purchase_provenance = "Bought in Charlotte"
+trust_tier = "personal_local"
+primary = true
+roles = ["personal_substrate", "plugin_host", "local_first_services", "finance_evidence"]
+notes = "Owned local Mac mini. Charlotte is purchase provenance only, not the machine identity or current location."
+
+[[machines]]
+id = "daniel-laptop-01"
+label = "Daniel MacBook Pro 01"
+kind = "owned_macbook"
+owner = "daniel"
+trust_tier = "personal_local"
+primary = false
+roles = ["source_evidence", "repo_source", "photo_source", "travel_data_source", "token_pointer_source"]
+notes = "Personal laptop source machine. Use for read-only evidence, repo, photo, trip, and token-pointer discovery; do not treat as the preferred deployment target."
+
+[[machines]]
+id = "rentamac-cyprus-01"
+label = "Rent a Mac Cyprus Mac mini"
+kind = "rented_mac_mini"
+owner = "rentamac"
+provider = "Rent a Mac"
+region = "Cyprus"
+trust_tier = "rented_remote"
+primary = false
+roles = ["remote_capacity", "experiments", "overflow", "remote_builds"]
+notes = "Remote rented Mac mini. Do not conflate with mac-mini-01."

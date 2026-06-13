@@ -204,6 +204,76 @@
       }
     },
     {
+      "name": "conduit",
+      "description": "Registry-backed CLI for reaching personal-infrastructure machines: model machines, access paths, workloads, and append-only reachability proofs.",
+      "source": "./plugins/conduit",
+      "category": "agent-tools",
+      "homepage": "https://github.com/dshanklin-bv/conduit",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "ssh",
+        "tailscale",
+        "infrastructure",
+        "registry",
+        "claude-code",
+        "cli-first",
+        "machine-mesh"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-06-13",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/conduit.md"
+        },
+        "site": {
+          "slug": "conduit",
+          "icon": "CD",
+          "tagline": "Reach your machines through verified conduits.",
+          "shape": "Machine-mesh CLI",
+          "status": "ready",
+          "hosts": [
+            "codex",
+            "claude-code"
+          ],
+          "codex": "codex-package",
+          "claude": "claude-marketplace",
+          "install": {
+            "codex": "Install from the Eidos plugin store.",
+            "claude": "claude plugins install conduit@eidos-marketplace"
+          },
+          "start": "Run `conduit check-macs` to prove the mesh is reachable.",
+          "requires": [
+            "Python 3.11+",
+            "Tailscale",
+            "SSH access to targets"
+          ]
+        },
+        "recommend": {
+          "for_projects": [
+            "plugin",
+            "marketplace-entry",
+            "company-distribution"
+          ],
+          "pairs_with": [
+            "foss-forge",
+            "ship-forge",
+            "mcp-forge"
+          ],
+          "preflight_check": "/conduit"
+        }
+      }
+    },
+    {
       "name": "converge",
       "description": "Target tables, drift monitors, regression memory, and repair loops that help AI agents converge on software goals.",
       "source": "./plugins/converge",
@@ -404,6 +474,62 @@
             "forge-forge"
           ],
           "preflight_check": "/eidos-storemetheus"
+        }
+      }
+    },
+    {
+      "name": "emux",
+      "description": "Eidos mux: TUI picker and MCP server for named tmux sessions.",
+      "source": "./plugins/emux",
+      "category": "agent-tools",
+      "homepage": "https://github.com/eidos-agi/emux",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "mcp",
+        "tmux",
+        "claude-code",
+        "terminal",
+        "session-control",
+        "automation"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "tool",
+          "signals": [
+            "single_capability",
+            "uvx_shim",
+            "mcp_server"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-31",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/emux.md"
+        },
+        "site": {
+          "slug": "emux",
+          "icon": "MX",
+          "tagline": "Pick up where you left off in tmux.",
+          "shape": "Session registry + MCP",
+          "status": "ready",
+          "hosts": [
+            "codex",
+            "claude-code"
+          ],
+          "codex": "codex-package",
+          "claude": "claude-marketplace",
+          "install": {
+            "codex": "Install from the Eidos plugin store.",
+            "claude": "claude plugins install emux@eidos-marketplace"
+          },
+          "start": "Register a tmux session, then drive it with send/run/capture.",
+          "requires": [
+            "tmux",
+            "Python 3.11+"
+          ]
         }
       }
     },
