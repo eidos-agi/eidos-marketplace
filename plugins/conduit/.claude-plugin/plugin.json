@@ -1,0 +1,41 @@
+{
+  "name": "conduit",
+  "version": "0.1.0",
+  "description": "Registry-backed CLI for reaching personal-infrastructure machines: model machines, access paths, workloads, and append-only reachability proofs.",
+  "author": {
+    "name": "Eidos AGI",
+    "url": "https://github.com/dshanklin-bv"
+  },
+  "homepage": "https://github.com/dshanklin-bv/conduit",
+  "repository": "https://github.com/dshanklin-bv/conduit",
+  "license": "MIT",
+  "category": "agent-tools",
+  "keywords": [
+    "ssh",
+    "tailscale",
+    "infrastructure",
+    "registry",
+    "claude-code",
+    "cli-first",
+    "machine-mesh"
+  ],
+  "skills": "./skills/",
+  "x-eidos": {
+    "site": {
+      "slug": "conduit",
+      "icon": "CD",
+      "tagline": "Reach your machines through verified conduits.",
+      "shape": "Machine-mesh CLI",
+      "status": "ready",
+      "hosts": ["codex", "claude-code"],
+      "codex": "codex-package",
+      "claude": "claude-marketplace",
+      "install": {
+        "codex": "Install from the Eidos plugin store.",
+        "claude": "claude plugins install conduit@eidos-marketplace"
+      },
+      "start": "Run `conduit check-macs` to prove the mesh is reachable.",
+      "requires": ["Python 3.11+", "Tailscale", "SSH access to targets"]
+    }
+  }
+}

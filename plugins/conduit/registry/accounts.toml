@@ -1,0 +1,21 @@
+[[accounts]]
+id = "mac-mini-01-dshanklin"
+machine_id = "mac-mini-01"
+username = "dshanklin"
+uid = 501
+home = "/Users/dshanklin"
+primary = true
+roles = ["personal_operator", "codex_host", "admin"]
+ssh_user_default = "dshanklin"
+notes = "Primary Daniel account on the owned apartment Mac mini."
+
+[[accounts]]
+id = "mac-mini-01-danieleidos"
+machine_id = "mac-mini-01"
+username = "danieleidos"
+uid = 502
+home = "/Users/danieleidos"
+primary = false
+roles = ["eidos_operator", "separate_local_context"]
+ssh_user_default = "danieleidos"
+notes = "Separate Eidos-oriented local account on the owned apartment Mac mini."

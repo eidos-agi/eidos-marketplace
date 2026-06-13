@@ -65,6 +65,18 @@
       "category": "Developer Tools"
     },
     {
+      "name": "conduit",
+      "source": {
+        "source": "local",
+        "path": "./plugins/conduit"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
       "name": "converge",
       "source": {
         "source": "local",
@@ -117,6 +129,18 @@
       "source": {
         "source": "local",
         "path": "./plugins/eidos-storemetheus"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "emux",
+      "source": {
+        "source": "local",
+        "path": "./plugins/emux"
       },
       "policy": {
         "installation": "AVAILABLE",

@@ -1,0 +1,54 @@
+[[services]]
+id = "conduit-cli"
+label = "Conduit CLI and registry"
+machine_id = "mac-mini-01"
+kind = "local_cli"
+status = "source_repo_ready"
+repo_path = "/Users/dshanklin/repos-personal/conduit"
+proof_command = "scripts/conduit registry --json"
+notes = "Registry-backed CLI that answers machine, conduit, workload, and proof questions."
+
+[[services]]
+id = "mac-mini-ssh"
+label = "Apartment Mac mini SSH"
+machine_id = "mac-mini-01"
+kind = "ssh_access"
+status = "reachable_in_latest_proof"
+proof_command = "scripts/conduit doctor mac-mini-01 --json"
+notes = "Primary personal-local machine conduit. Latest proof rows show successful SSH."
+
+[[services]]
+id = "daniel-laptop-ssh"
+label = "Daniel laptop SSH"
+machine_id = "daniel-laptop-01"
+kind = "ssh_access"
+status = "reachable_in_latest_proof"
+proof_command = "scripts/conduit doctor daniel-laptop-01 --json"
+notes = "Personal laptop conduit for read-only evidence, repo, photo, trip, and token-pointer discovery."
+
+[[services]]
+id = "daniel-laptop-repo-inventory"
+label = "Daniel laptop repo inventory"
+machine_id = "daniel-laptop-01"
+kind = "read_only_inventory"
+status = "available_when_ssh_succeeds"
+proof_command = "scripts/conduit inventory-repos --target daniel-laptop-01 --json"
+notes = "Metadata-only repo and infra inventory. Reports paths, first-hop docs, .omnidata presence, and token aliases without printing secret values."
+
+[[services]]
+id = "rentamac-cyprus-ssh"
+label = "Rent a Mac Cyprus SSH"
+machine_id = "rentamac-cyprus-01"
+kind = "ssh_access"
+status = "blocked_auth"
+proof_command = "scripts/conduit doctor rentamac-cyprus-01 --json"
+notes = "Known rented remote Mac conduit. Latest proof rows show permission denied for rentamac@rentamac-1."
+
+[[services]]
+id = "tally-cfo-deploy-target"
+label = "Tally CFO deploy target"
+machine_id = "mac-mini-01"
+kind = "workload_target"
+status = "policy_defined"
+proof_command = "scripts/conduit workloads --json"
+notes = "Preferred target is mac-mini-01. Cyprus fallback requires explicit Daniel approval."
