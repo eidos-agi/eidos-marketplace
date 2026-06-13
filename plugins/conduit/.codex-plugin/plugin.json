@@ -1,0 +1,22 @@
+{
+  "name": "conduit",
+  "version": "0.1.0",
+  "description": "Conduit registry for machines, access paths, workloads, and deployment proof.",
+  "author": {
+    "name": "Daniel Shanklin"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Conduit",
+    "shortDescription": "Route personal infrastructure work through verified machine conduits.",
+    "longDescription": "Conduit keeps Daniel's machines, access paths, workloads, and deployment proof separate. It models owned local infrastructure such as mac-mini-01 and remote capacity such as rentamac-cyprus-01 without hardcoding work to one machine.",
+    "developerName": "Daniel Shanklin",
+    "category": "Developer Tools",
+    "capabilities": [
+      "machine-registry",
+      "conduit-proof",
+      "plugin-deploy"
+    ],
+    "defaultPrompt": "Use Conduit when work must be built, synced, verified, or run through a known machine conduit."
+  }
+}

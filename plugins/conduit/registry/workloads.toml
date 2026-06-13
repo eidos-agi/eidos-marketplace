@@ -1,0 +1,19 @@
+[[workloads]]
+id = "tally-cfo"
+label = "Tally CFO"
+kind = "codex_plugin"
+preferred_machine_id = "mac-mini-01"
+allowed_fallback_machine_ids = ["rentamac-cyprus-01"]
+required_capabilities = ["codex_plugin_host", "local_storage", "finance_evidence", "proof_records"]
+deployment_policy = "Prefer mac-mini-01. Use rentamac-cyprus-01 only when Daniel explicitly asks for the rented machine or approves fallback."
+notes = "Tally owns CFO judgment; this registry owns machine and conduit targeting."
+
+[[workloads]]
+id = "conduit"
+label = "Conduit plugin"
+kind = "codex_plugin"
+preferred_machine_id = "mac-mini-01"
+allowed_fallback_machine_ids = ["rentamac-cyprus-01"]
+required_capabilities = ["ssh", "rsync", "proof_records"]
+deployment_policy = "Self-host on mac-mini-01 once the apartment SSH conduit is configured."
+notes = "Bootstrap plugin for deploying personal infrastructure through known machine conduits."
