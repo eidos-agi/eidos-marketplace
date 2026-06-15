@@ -14,6 +14,7 @@ product and remembers what happened.
 - Eidos shipment gate summaries and blockers
 - Proof command history
 - Distribution channels
+- Release routes to specialist shippers
 - Human approval gates
 - Rollback paths
 - Per-product lessons for the next release
@@ -101,6 +102,22 @@ test, validation, security, and proof/audit names.
 `shipr frontier --json` surfaces the latest blocker records and recurring
 blockers seen across attempts, so repeated failures can be promoted to durable
 gate repairs without making Shipr absorb the specialist tool behavior itself.
+
+## Store Routing
+
+For Eidos plugin projects, Shipr records an `eidos-plugin-store` release route.
+That route hands marketplace releases to the standard Eidos store path instead
+of treating them as a generic publish:
+
+```text
+eidos-marketplace/tools/marketplace_publish.py publish <source-repo> --audit-date <YYYY-MM-DD>
+eidos-marketplace/tools/marketplace_publish.py check <plugin> --source <source-repo>
+codex plugin add <plugin>@eidos-agi
+codex plugin list --marketplace eidos-agi
+```
+
+Shipr owns the routing, memory, and proof expectations. The marketplace
+publisher and Eidos AGI catalog remain the store operators.
 
 ## Boundary
 

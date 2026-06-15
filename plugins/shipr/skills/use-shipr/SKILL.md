@@ -19,6 +19,7 @@ The model should identify:
 
 - artifact types
 - distribution channels
+- release routes to specialist shippers
 - proof commands
 - human approval gates
 - rollback paths
@@ -51,6 +52,17 @@ shipr frontier --project . --json
 
 Shipr will infer `ready` vs `blocked`, store blocked gate IDs, retain a compact
 gate summary, and surface next actions in the frontier.
+
+## Route Store Releases
+
+When a product is an Eidos plugin, Shipr should route the release through the
+standard Eidos store path instead of treating it as a generic publish. The
+frontier should point to `eidos-plugin-store` / `eidos-marketplace` proof:
+
+- `tools/marketplace_publish.py publish <source-repo> --audit-date <date>`
+- `tools/marketplace_publish.py check <plugin> --source <source-repo>`
+- `codex plugin add <plugin>@eidos-agi`
+- merged marketplace PR or equivalent store proof
 
 ## Compose, Do Not Replace
 
