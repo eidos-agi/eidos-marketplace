@@ -1,0 +1,15 @@
+{
+  "kind": {
+    "type": "tool",
+    "signals": [
+      "single_capability",
+      "upstream_wrapper",
+      "ships_skills"
+    ]
+  },
+  "audit": {
+    "audited_by": "Upstream GitHub metadata + Eidos marketplace checks",
+    "audit_version": "STANDARD.md",
+    "grade": "PENDING"
+  }
+}

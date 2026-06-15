@@ -1,0 +1,47 @@
+{
+  "name": "apple-a-day",
+  "version": "0.3.1",
+  "description": "Agent-native Mac health toolkit for read-only diagnostics, vitals monitoring, and cleanup recommendations.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/apple-a-day",
+  "repository": "https://github.com/eidos-agi/apple-a-day",
+  "license": "MIT",
+  "keywords": [
+    "macos",
+    "diagnostics",
+    "health",
+    "monitoring",
+    "cleanup",
+    "agent-native",
+    "codex"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "apple-a-day",
+    "shortDescription": "Check and monitor Mac health from an agent-safe CLI.",
+    "longDescription": "apple-a-day gives Codex a read-only Mac health surface: checkups, JSON findings, launchd vitals monitoring, profile-aware cleanup recommendations, and install/status commands for durable observability. It is CLI-first and keeps remediation as explicit suggested actions.",
+    "developerName": "Eidos AGI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "CLI",
+      "Mac Diagnostics",
+      "Vitals Monitoring",
+      "Cleanup Recommendations",
+      "Launchd",
+      "Structured JSON"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/apple-a-day",
+    "privacyPolicyURL": "https://github.com/eidos-agi/apple-a-day/blob/main/SECURITY.md",
+    "termsOfServiceURL": "https://github.com/eidos-agi/apple-a-day",
+    "defaultPrompt": [
+      "Use apple-a-day to run a read-only Mac health check.",
+      "Use apple-a-day to inspect recent vitals before heavy local work.",
+      "Use apple-a-day to install the vitals monitor and verify launchd status."
+    ],
+    "brandColor": "#22C55E"
+  }
+}

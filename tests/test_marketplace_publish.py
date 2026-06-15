@@ -115,6 +115,53 @@ def test_publish_renders_plugin_bundle_and_marketplace_entry(tmp_path: Path) -> 
     assert entry["x-eidos"]["audit"]["audit_doc"] == "AUDITS/felix.md"
 
 
+def test_publish_uses_eidos_plugin_recommend_override(tmp_path: Path) -> None:
+    marketplace = tmp_path / "marketplace"
+    source = tmp_path / "source" / "shipr"
+    write_json(
+        marketplace / ".claude-plugin" / "marketplace.json",
+        {"name": "eidos-marketplace", "plugins": []},
+    )
+    write_json(
+        source / ".codex-plugin" / "plugin.json",
+        {
+            "name": "shipr",
+            "version": "0.1.0",
+            "description": "Persistent Eidos shipping operator.",
+            "homepage": "https://github.com/eidos-agi/shipr",
+            "license": "MIT",
+            "skills": "./skills/",
+        },
+    )
+    write_json(
+        source / ".eidos-plugin.json",
+        {
+            "kind": {
+                "type": "forge",
+                "signals": ["ships_skills", "coordinates_with_other_forges"],
+            },
+            "recommend": {
+                "for_projects": ["release", "shipping"],
+                "pairs_with": ["forge-forge", "ship-forge", "learning-forge"],
+                "preflight_check": "shipr frontier --json",
+            },
+        },
+    )
+    (source / "skills" / "use-shipr").mkdir(parents=True)
+    (source / "skills" / "use-shipr" / "SKILL.md").write_text("# Use Shipr\n")
+
+    marketplace_publish.publish(source, marketplace, audit_date="2026-06-11")
+
+    marketplace_json = json.loads((marketplace / ".claude-plugin" / "marketplace.json").read_text())
+    [entry] = marketplace_json["plugins"]
+    assert entry["x-eidos"]["recommend"]["pairs_with"] == [
+        "forge-forge",
+        "ship-forge",
+        "learning-forge",
+    ]
+    assert entry["x-eidos"]["recommend"]["preflight_check"] == "shipr frontier --json"
+
+
 def test_check_fails_when_marketplace_entry_points_to_missing_bundle(tmp_path: Path) -> None:
     marketplace = tmp_path / "marketplace"
     write_json(

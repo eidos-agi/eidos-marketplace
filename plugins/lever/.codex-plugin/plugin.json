@@ -1,0 +1,47 @@
+{
+  "name": "lever",
+  "version": "0.1.0",
+  "description": "Use Lever to find constraints, build leverage, and turn durable corrections into better agent behavior.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "hello@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/lever",
+  "repository": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/lever",
+  "license": "MIT",
+  "keywords": [
+    "lever",
+    "leverage",
+    "agent",
+    "self-learning",
+    "decision-framing",
+    "eidos-agi"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Lever",
+    "shortDescription": "Find constraints. Build leverage.",
+    "longDescription": "Lever routes leverage scoring, bottleneck diagnosis, durable corrections, learning distillation, and bounded agent-build decisions to the live Lever CLI. It is the agent that asks whether the work creates power, not just motion.",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "CLI",
+      "Leverage Review",
+      "Leverage Scoring",
+      "Self-Learning",
+      "Learning Distillation",
+      "Agent Design",
+      "Decision Framing"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/lever",
+    "privacyPolicyURL": "https://github.com/eidos-agi/eidos-marketplace",
+    "termsOfServiceURL": "https://github.com/eidos-agi/eidos-marketplace",
+    "defaultPrompt": [
+      "Use Lever to score the highest-leverage move.",
+      "Ask Lever whether this should become an agent.",
+      "Use Lever to record and distill this durable correction."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

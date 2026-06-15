@@ -88,11 +88,11 @@ degradation.
 These helpers are lab equipment, not the Converge engine:
 
 ```bash
-cp /Users/dshanklinbv/plugins/converge/assets/templates/converge-spec.json ./converge-spec.json
-python3 /Users/dshanklinbv/plugins/converge/adapters/json_reference.py ./converge-spec.json
-python3 /Users/dshanklinbv/plugins/converge/adapters/json_reference.py ./converge-spec.json --rows
-python3 /Users/dshanklinbv/plugins/converge/adapters/pytest_adapter.py --junit path/to/junit.xml --out pytest-rows.json
-python3 /Users/dshanklinbv/plugins/converge/adapters/aggregate_rows.py reference-rows.json pytest-rows.json
+cp /Users/dshanklin/plugins/converge/assets/templates/converge-spec.json ./converge-spec.json
+python3 /Users/dshanklin/plugins/converge/adapters/json_reference.py ./converge-spec.json
+python3 /Users/dshanklin/plugins/converge/adapters/json_reference.py ./converge-spec.json --rows
+python3 /Users/dshanklin/plugins/converge/adapters/pytest_adapter.py --junit path/to/junit.xml --out pytest-rows.json
+python3 /Users/dshanklin/plugins/converge/adapters/aggregate_rows.py reference-rows.json pytest-rows.json
 ```
 
 Adapters emit rows. Aggregators summarize rows. Codex repairs rows. Eidos
@@ -101,5 +101,5 @@ preserves the outer evidence loop when the work is part of an Eidos task.
 ## Validate Adapter Examples
 
 ```bash
-python3 /Users/dshanklinbv/plugins/converge/tests/validate_adapter_examples.py
+python3 /Users/dshanklin/plugins/converge/tests/validate_adapter_examples.py
 ```

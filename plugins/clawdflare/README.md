@@ -56,6 +56,7 @@ clawdflare fix example.com          # dry-run: show what would change
 clawdflare fix example.com --apply  # apply fixes (PIN required)
 clawdflare ssl-status example.com   # SSL/TLS summary
 clawdflare dns-records example.com  # list DNS records
+clawdflare dns-upsert-cname example.com app.example.com target.up.railway.app
 clawdflare set-setting example.com ssl full  # set a setting (PIN required)
 clawdflare purge-cache example.com --everything  # purge cache (PIN required)
 clawdflare store-token --account work # store or rotate a reusable token
@@ -100,7 +101,8 @@ Every opinion includes a reason. Disagree? Override with `clawdflare set-setting
 
 | Operation | Token used | AI can see token? | Authorization |
 |---|---|---|---|
-| `zones`, `audit`, `dns-records`, `ssl-status`, `zone-settings` | Read (env var) | Yes | None needed |
+| `zones`, `audit`, `dns-records`, `ssl-status`, `zone-settings`, `dns-upsert-cname` dry-run | Read (env var) | Yes | None needed |
 | `fix --apply`, `set-setting`, `purge-cache` | Write (Touch ID Keychain or encrypted vault) | Never | Touch ID when configured, PIN fallback |
+| `dns-upsert-cname --apply` | Write (Touch ID Keychain or encrypted vault) | Never | Touch ID when configured, PIN fallback |
 
 See [SETUP.md](SETUP.md) for the full threat model and rationale.

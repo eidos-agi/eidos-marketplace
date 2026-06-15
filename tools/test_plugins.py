@@ -10,6 +10,8 @@ Usage:
     python tools/test_plugins.py resume-resume ike  # test specific plugins
 """
 
+from __future__ import annotations
+
 import json
 import os
 import subprocess

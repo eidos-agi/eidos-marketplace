@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title>kai Slack app icon</title>
+  <desc>Eidos AGI trilogy dots. The third dot is slightly off-center: alive, not static.</desc>
+  <defs>
+    <filter id="n">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="72" fill="#161210"/>
+  <rect x="36" y="36" width="440" height="440" rx="52" fill="#1e1a17"/>
+  <rect width="512" height="512" rx="72" filter="url(#n)" opacity="0.045"/>
+  <!-- Three dots — the trilogy. Third is slightly off-center: alive, not static. -->
+  <g transform="translate(256 245) rotate(-6) translate(-256 -245)">
+    <circle cx="154" cy="255" r="46" fill="#d8a263"/>
+    <circle cx="256" cy="255" r="46" fill="#c4935a"/>
+    <circle cx="358" cy="236" r="46" fill="#c8d4ad"/>
+  </g>
+</svg>

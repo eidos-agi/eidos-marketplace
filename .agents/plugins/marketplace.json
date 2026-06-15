@@ -5,6 +5,18 @@
   },
   "plugins": [
     {
+      "name": "apple-a-day",
+      "source": {
+        "source": "local",
+        "path": "./plugins/apple-a-day"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
       "name": "browser-autonomy",
       "source": {
         "source": "local",
@@ -161,6 +173,18 @@
       "category": "Productivity"
     },
     {
+      "name": "kai",
+      "source": {
+        "source": "local",
+        "path": "./plugins/kai"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
       "name": "knox",
       "source": {
         "source": "local",
@@ -171,6 +195,30 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Developer Tools"
+    },
+    {
+      "name": "lever",
+      "source": {
+        "source": "local",
+        "path": "./plugins/lever"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "pavo",
+      "source": {
+        "source": "local",
+        "path": "./plugins/pavo"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     },
     {
       "name": "probe-forge",
@@ -231,6 +279,30 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity"
+    },
+    {
+      "name": "shipr",
+      "source": {
+        "source": "local",
+        "path": "./plugins/shipr"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "skillopt",
+      "source": {
+        "source": "local",
+        "path": "./plugins/skillopt"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
     },
     {
       "name": "visionlog",

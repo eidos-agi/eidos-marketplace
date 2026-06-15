@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "apple-a-day"
+version = "0.3.1"
+description = "Agent-native Mac health toolkit — keeps the doctor away. Zero dependencies."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [
+    { name = "Eidos AGI", email = "daniel@eidosagi.com" },
+]
+keywords = ["macos", "diagnostics", "health", "monitoring", "apple-silicon", "agent-native"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Environment :: MacOS X",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Monitoring",
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/eidos-agi/apple-a-day"
+Repository = "https://github.com/eidos-agi/apple-a-day"
+Issues = "https://github.com/eidos-agi/apple-a-day/issues"
+Changelog = "https://github.com/eidos-agi/apple-a-day/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+rich = ["rich>=13.0"]
+report = ["jinja2>=3.0"]
+mcp = ["mcp[cli]>=1.0"]
+dev = ["pytest", "ruff"]
+
+[project.scripts]
+aad = "apple_a_day.cli:main"
+# [project.entry-points."mcp.servers"]
+# apple-a-day = "apple_a_day.mcp_server:serve"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100

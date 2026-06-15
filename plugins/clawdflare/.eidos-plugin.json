@@ -1,0 +1,32 @@
+{
+  "kind": {
+    "type": "tool",
+    "signals": [
+      "single_capability",
+      "mcp_server",
+      "human_authorized_writes"
+    ]
+  },
+  "audit": {
+    "audited_by": "Clawdflare CLI tests + Eidos marketplace checks",
+    "audit_version": "STANDARD.md",
+    "audit_date": "2026-06-13",
+    "grade": "PENDING"
+  },
+  "recommend": {
+    "for_projects": [
+      "cloudflare-dns",
+      "custom-domain",
+      "railway-domain",
+      "ssl-tls-audit",
+      "cloudflare-zone-repair"
+    ],
+    "pairs_with": [
+      "shipr",
+      "railguey",
+      "knox",
+      "eidos"
+    ],
+    "preflight_check": "clawdflare doctor"
+  }
+}

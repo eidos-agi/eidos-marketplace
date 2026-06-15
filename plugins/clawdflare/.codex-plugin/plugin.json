@@ -20,10 +20,11 @@
     "eidos-agi"
   ],
   "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
   "interface": {
     "displayName": "Clawdflare",
-    "shortDescription": "Audit Cloudflare zones and authorize fixes locally.",
-    "longDescription": "Clawdflare brings the Eidos CLI-first Cloudflare workflow into Codex: inspect accounts, zones, DNS, SSL/TLS, and opinionated audit findings through the CLI or MCP tools, then require local Touch ID or PIN authorization before write operations.",
+    "shortDescription": "Audit Cloudflare zones and fix DNS with local authorization.",
+    "longDescription": "Clawdflare brings the Eidos CLI-first Cloudflare workflow into Codex: inspect accounts, zones, DNS, SSL/TLS, and opinionated audit findings through the CLI or MCP tools, dry-run DNS changes such as CNAME upserts, then require local Touch ID or PIN authorization before write operations.",
     "developerName": "Eidos AGI",
     "category": "Developer Tools",
     "capabilities": [
@@ -31,6 +32,7 @@
       "MCP",
       "Cloudflare",
       "DNS",
+      "CNAME Upsert",
       "Security Audit",
       "Human Authorization"
     ],
@@ -39,6 +41,7 @@
     "termsOfServiceURL": "https://github.com/eidos-agi/clawdflare",
     "defaultPrompt": [
       "Use Clawdflare to audit this Cloudflare zone.",
+      "Use Clawdflare to create or update the DNS record for this deployment.",
       "List my configured Clawdflare accounts and active account.",
       "Dry-run Cloudflare fixes before asking me to authorize them."
     ],

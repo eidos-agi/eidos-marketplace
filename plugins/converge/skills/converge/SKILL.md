@@ -64,13 +64,13 @@ reference utilities and adapters, not the Converge engine.
 The starter lattice schema lives at:
 
 ```bash
-/Users/dshanklinbv/plugins/converge/schemas/converge-spec.schema.json
+/Users/dshanklin/plugins/converge/schemas/converge-spec.schema.json
 ```
 
 The portable adapter row schema lives at:
 
 ```bash
-/Users/dshanklinbv/plugins/converge/schemas/converge-row.schema.json
+/Users/dshanklin/plugins/converge/schemas/converge-row.schema.json
 ```
 
 Good adapters include:
@@ -292,13 +292,13 @@ pytest/JUnit adapter, and a row aggregator. Use them to test the contract shape,
 not as the canonical Converge engine:
 
 ```bash
-python3 /Users/dshanklinbv/plugins/converge/adapters/json_reference.py path/to/converge-spec.json
-python3 /Users/dshanklinbv/plugins/converge/adapters/pytest_adapter.py --junit path/to/junit.xml --out pytest-rows.json
-python3 /Users/dshanklinbv/plugins/converge/adapters/aggregate_rows.py reference-rows.json pytest-rows.json
+python3 /Users/dshanklin/plugins/converge/adapters/json_reference.py path/to/converge-spec.json
+python3 /Users/dshanklin/plugins/converge/adapters/pytest_adapter.py --junit path/to/junit.xml --out pytest-rows.json
+python3 /Users/dshanklin/plugins/converge/adapters/aggregate_rows.py reference-rows.json pytest-rows.json
 ```
 
 The template lives at:
 
 ```bash
-/Users/dshanklinbv/plugins/converge/assets/templates/converge-spec.json
+/Users/dshanklin/plugins/converge/assets/templates/converge-spec.json
 ```
