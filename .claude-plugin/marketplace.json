@@ -935,7 +935,7 @@
       "category": "development",
       "homepage": "https://github.com/eidos-agi/shipr",
       "license": "MIT",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "tags": [
         "shipping",
         "release",
@@ -956,7 +956,7 @@
         "audit": {
           "audited_by": "Shipr self-release packet + Eidos marketplace checks",
           "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-13",
+          "audit_date": "2026-06-15",
           "grade": "PENDING",
           "audit_doc": "AUDITS/shipr.md"
         },

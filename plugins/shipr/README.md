@@ -11,6 +11,7 @@ product and remembers what happened.
 
 - Product release models
 - Release attempt ledgers
+- Eidos shipment gate summaries and blockers
 - Proof command history
 - Distribution channels
 - Human approval gates
@@ -42,6 +43,15 @@ shipr attempt --project /path/to/project \
   --json
 ```
 
+Ingest an `eidos ship --json` report and preserve the gate structure:
+
+```bash
+eidos ship /path/to/project --json > /tmp/eidos-ship.json
+shipr attempt --project /path/to/project \
+  --eidos-ship-report /tmp/eidos-ship.json \
+  --json
+```
+
 Show the release frontier:
 
 ```bash
@@ -70,6 +80,27 @@ The durable state lives under `.shipr/` in each product:
 When Shipr writes that state inside a Git project, it also ensures `.shipr/`
 is present in the project's `.gitignore` so release memory does not appear as
 untracked product code.
+
+## Problem Handling
+
+When Shipr ingests `eidos ship --json`, it keeps the compact failed gate IDs in
+`blockers` and also writes `blocker_records` with:
+
+- `category`
+- `owner`
+- `tool`
+- `severity`
+- `suggested_next_action`
+
+Known gates such as `git-clean-pushed`, `agentic-first-doctrine`, `node-build`,
+`python-tests`, `stepproof-audit`, `codex-plugin-validator`, and
+`felix-plugin-doctor` get deterministic routing. Custom gates fall back to a
+conservative `custom-gate` classification, with light inference for build,
+test, validation, security, and proof/audit names.
+
+`shipr frontier --json` surfaces the latest blocker records and recurring
+blockers seen across attempts, so repeated failures can be promoted to durable
+gate repairs without making Shipr absorb the specialist tool behavior itself.
 
 ## Boundary
 
