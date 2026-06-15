@@ -15,6 +15,15 @@ ProductReleaseModel
 
 The model is stored at `.shipr/product-release-model.json` in the product repo.
 Release attempts are stored as JSON files under `.shipr/release-attempts/`.
+Attempts may include structured `eidos ship` evidence:
+
+```text
+ReleaseAttempt
+- blockers
+- gate_summary
+- source
+- next_actions
+```
 
 This keeps release knowledge next to the product so each ship can improve the
 next one.

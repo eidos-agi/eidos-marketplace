@@ -38,6 +38,20 @@ shipr attempt --project . \
 Every release attempt should leave proof, blockers, and one lesson that should
 be automatic next time.
 
+## Ingest Eidos Ship Reports
+
+When `eidos ship --json` is available, preserve the structured gate results
+instead of flattening them into prose:
+
+```bash
+eidos ship . --json > /tmp/eidos-ship.json
+shipr attempt --project . --eidos-ship-report /tmp/eidos-ship.json --json
+shipr frontier --project . --json
+```
+
+Shipr will infer `ready` vs `blocked`, store blocked gate IDs, retain a compact
+gate summary, and surface next actions in the frontier.
+
 ## Compose, Do Not Replace
 
 Shipr routes through:

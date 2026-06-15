@@ -4,10 +4,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 from . import __version__
-from .core import detect_release_model, record_attempt, release_frontier, write_release_model
+from .core import (
+    detect_release_model,
+    record_attempt,
+    record_eidos_ship_attempt,
+    release_frontier,
+    write_release_model,
+)
 
 
 def _print(payload: dict, as_json: bool) -> None:
@@ -27,13 +34,29 @@ def _cmd_model(args: argparse.Namespace) -> None:
 
 
 def _cmd_attempt(args: argparse.Namespace) -> None:
-    path, attempt = record_attempt(
-        args.project,
-        goal=args.goal,
-        status=args.status,
-        notes=args.notes or "",
-        proofs=args.proof or [],
-    )
+    if args.eidos_ship_report:
+        if args.eidos_ship_report == "-":
+            report = json.loads(sys.stdin.read())
+        else:
+            report = json.loads(Path(args.eidos_ship_report).read_text())
+        path, attempt = record_eidos_ship_attempt(
+            args.project,
+            report,
+            goal=args.goal,
+            status=args.status,
+            notes=args.notes,
+            proofs=args.proof or [],
+        )
+    else:
+        if not args.goal:
+            raise SystemExit("shipr attempt requires --goal unless --eidos-ship-report is provided")
+        path, attempt = record_attempt(
+            args.project,
+            goal=args.goal,
+            status=args.status or "planned",
+            notes=args.notes or "",
+            proofs=args.proof or [],
+        )
     attempt["written_to"] = str(path)
     _print(attempt, args.json)
 
@@ -60,14 +83,21 @@ def main(argv: list[str] | None = None) -> None:
 
     p_attempt = sub.add_parser("attempt", help="Record a release attempt")
     p_attempt.add_argument("--project", type=Path, default=Path.cwd(), help="Project root")
-    p_attempt.add_argument("--goal", required=True, help="Release goal")
+    p_attempt.add_argument(
+        "--goal", help="Release goal. Optional when --eidos-ship-report is provided."
+    )
     p_attempt.add_argument(
         "--status",
-        default="planned",
+        default=None,
         choices=["planned", "ready", "blocked", "shipped", "rolled_back"],
+        help="Attempt status. Inferred from --eidos-ship-report when omitted.",
     )
     p_attempt.add_argument("--notes", help="Short release notes or blocker summary")
     p_attempt.add_argument("--proof", action="append", default=[], help="Proof command or artifact")
+    p_attempt.add_argument(
+        "--eidos-ship-report",
+        help="Path to `eidos ship --json` output, or '-' to read the report from stdin.",
+    )
     p_attempt.add_argument("--json", action="store_true", help="Output JSON")
 
     p_frontier = sub.add_parser("frontier", help="Show current release frontier")
