@@ -1,0 +1,6 @@
+{
+  "pavo": {
+    "command": "uvx",
+    "args": ["--from", "pavo", "pavo", "mcp", "serve"]
+  }
+}

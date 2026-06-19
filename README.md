@@ -90,6 +90,7 @@ The publisher copies store-facing files into `plugins/<name>/`, normalizes local
 | **railguey** | Railway deployment management | (audit pending) |
 | **clawdflare** | Cloudflare management — DNS, Workers, Pages, KV, R2 | (audit pending) |
 | **eidos-mail** | Email for Claude Code — read, search, send, reply, forward | (audit pending) |
+| **pavo** | Local-first meeting evidence, transcription, review, and routing control plane for Eidos AGI | B *(2026-06-18, by-hand)* |
 
 ### Forges — opinionated workflows
 

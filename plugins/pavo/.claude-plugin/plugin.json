@@ -1,20 +1,14 @@
 {
   "name": "pavo",
   "version": "0.1.0",
-  "description": "Manifest Anything: wrap Plaud CLI and MCP to control audio files, speaker identification, dictionaries, routing, and tasks.",
+  "description": "Local-first meeting evidence, transcription, review, and routing control plane for Eidos AGI.",
   "author": {
     "name": "Eidos AGI",
-    "email": "daniel@eidosagi.com",
-    "url": "https://github.com/eidos-agi"
+    "email": "hello@eidosagi.com",
+    "url": "https://eidosagi.com"
   },
+  "license": "MIT",
   "homepage": "https://github.com/eidos-agi/pavo",
   "repository": "https://github.com/eidos-agi/pavo",
-  "license": "MIT",
-  "keywords": [
-    "audio",
-    "codex",
-    "recordings",
-    "plaud",
-    "transcription"
-  ]
+  "keywords": ["meetings", "audio", "transcription", "evidence", "routing", "mcp"]
 }

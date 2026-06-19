@@ -800,46 +800,52 @@
     },
     {
       "name": "pavo",
-      "description": "Manifest Anything: wrap Plaud CLI and MCP to control audio files, speaker identification, dictionaries, routing, and tasks.",
+      "description": "Local-first meeting evidence, transcription, review, and routing control plane for Eidos AGI.",
       "source": "./plugins/pavo",
-      "category": "development",
+      "category": "productivity",
       "homepage": "https://github.com/eidos-agi/pavo",
       "license": "MIT",
       "version": "0.1.0",
       "tags": [
+        "meetings",
         "audio",
-        "codex",
-        "recordings",
-        "plaud",
-        "transcription"
+        "transcription",
+        "evidence",
+        "routing",
+        "mcp"
       ],
       "x-eidos": {
         "kind": {
-          "type": "forge",
+          "type": "tool",
           "signals": [
-            "ships_skills",
-            "opinionated_workflow"
+            "cli_first",
+            "mcp_shim",
+            "local_first"
           ]
         },
         "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-09",
-          "grade": "PENDING",
+          "audited_by": "by-hand",
+          "audit_version": "STANDARD.md@2026-04-28",
+          "audit_date": "2026-06-18",
+          "grade": "B",
+          "next_audit": "2026-07-18",
           "audit_doc": "AUDITS/pavo.md"
         },
         "recommend": {
           "for_projects": [
-            "plugin",
-            "marketplace-entry",
-            "company-distribution"
+            "meeting-intelligence",
+            "audio-evidence",
+            "task-extraction",
+            "speaker-review",
+            "local-first-transcription"
           ],
           "pairs_with": [
-            "foss-forge",
-            "ship-forge",
-            "mcp-forge"
+            "eidos-transcribe",
+            "plaud",
+            "linear",
+            "conduit"
           ],
-          "preflight_check": "/pavo"
+          "preflight_check": "pavo doctor --json"
         }
       }
     },
