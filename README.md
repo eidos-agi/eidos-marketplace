@@ -22,12 +22,23 @@ Then install plugins from the single public Codex marketplace identity:
 
 ```bash
 codex plugin add eidos@eidos-agi
+codex plugin add eidos-skills-hub@eidos-agi
 codex plugin add felix@eidos-agi
 codex plugin add foreman@eidos-agi
 ```
 
 Codex users should see one Eidos marketplace: **Eidos AGI**. Bootstrap and
 catalog helpers are plugins inside that marketplace, not separate stores.
+
+Update the remote marketplace snapshot, reinstall a plugin, and verify it with:
+
+```bash
+codex plugin marketplace upgrade eidos-agi
+codex plugin add eidos-skills-hub@eidos-agi
+codex plugin list
+```
+
+Start a new Codex thread after installing or updating so newly bundled skills and MCP tools are loaded.
 
 ### Claude Code
 
