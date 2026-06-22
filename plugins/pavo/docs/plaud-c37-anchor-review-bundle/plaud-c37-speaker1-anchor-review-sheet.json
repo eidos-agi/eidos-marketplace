@@ -1,7 +1,7 @@
 {
   "passed": false,
   "human_reviewed": false,
-  "review_packet": "/Users/dshanklin/repos-eidos-agi/pavo/docs/plaud-c37-speaker1-anchor-review-packet.json",
+  "review_packet": "/Users/dshanklinbv/repos-eidos-agi/pavo/docs/plaud-c37-speaker1-anchor-review-packet.json",
   "clip_packet": "docs/plaud-c37-speaker1-anchor-review-clips.json",
   "target_speaker_label": "SPEAKER_01",
   "target_speaker_name": "Speaker 1",
@@ -25,7 +25,7 @@
       "clip_path": "clips/candidate-01.wav",
       "suggested_speaker_correction": "00:12-00:16=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-01-001206-001606.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-01-001206-001606.wav"
     },
     {
       "index": 2,
@@ -42,7 +42,7 @@
       "clip_path": "clips/candidate-02.wav",
       "suggested_speaker_correction": "02:25-02:29=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-02-022460-022860.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-02-022460-022860.wav"
     },
     {
       "index": 3,
@@ -59,7 +59,7 @@
       "clip_path": "clips/candidate-03.wav",
       "suggested_speaker_correction": "15:38-15:42=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-03-153788-154188.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-03-153788-154188.wav"
     },
     {
       "index": 4,
@@ -76,7 +76,7 @@
       "clip_path": "clips/candidate-04.wav",
       "suggested_speaker_correction": "15:34-15:38=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-04-153386-153786.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-04-153386-153786.wav"
     },
     {
       "index": 5,
@@ -93,7 +93,7 @@
       "clip_path": "clips/candidate-05.wav",
       "suggested_speaker_correction": "12:13-12:17=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-05-121272-121672.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-05-121272-121672.wav"
     },
     {
       "index": 6,
@@ -110,7 +110,7 @@
       "clip_path": "clips/candidate-06.wav",
       "suggested_speaker_correction": "05:39-05:43=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-06-053948-054348.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-06-053948-054348.wav"
     },
     {
       "index": 7,
@@ -127,7 +127,7 @@
       "clip_path": "clips/candidate-07.wav",
       "suggested_speaker_correction": "15:42-15:46=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-07-154190-154590.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-07-154190-154590.wav"
     },
     {
       "index": 8,
@@ -144,7 +144,7 @@
       "clip_path": "clips/candidate-08.wav",
       "suggested_speaker_correction": "00:16-00:20=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-08-001608-002008.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-08-001608-002008.wav"
     },
     {
       "index": 9,
@@ -161,7 +161,7 @@
       "clip_path": "clips/candidate-09.wav",
       "suggested_speaker_correction": "16:14-16:18=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-09-161404-161804.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-09-161404-161804.wav"
     },
     {
       "index": 10,
@@ -178,7 +178,7 @@
       "clip_path": "clips/candidate-10.wav",
       "suggested_speaker_correction": "28:55-28:57=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-10-285460-285660.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-10-285460-285660.wav"
     },
     {
       "index": 11,
@@ -195,7 +195,7 @@
       "clip_path": "clips/candidate-11.wav",
       "suggested_speaker_correction": "04:59-05:03=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-11-045932-050332.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-11-045932-050332.wav"
     },
     {
       "index": 12,
@@ -212,7 +212,7 @@
       "clip_path": "clips/candidate-12.wav",
       "suggested_speaker_correction": "26:58-27:02=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-12-265792-270192.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-12-265792-270192.wav"
     },
     {
       "index": 13,
@@ -229,7 +229,7 @@
       "clip_path": "clips/candidate-13.wav",
       "suggested_speaker_correction": "23:25-23:29=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-13-232484-232884.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-13-232484-232884.wav"
     },
     {
       "index": 14,
@@ -246,7 +246,7 @@
       "clip_path": "clips/candidate-14.wav",
       "suggested_speaker_correction": "23:17-23:21=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-14-231680-232080.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-14-231680-232080.wav"
     },
     {
       "index": 15,
@@ -263,7 +263,7 @@
       "clip_path": "clips/candidate-15.wav",
       "suggested_speaker_correction": "15:54-15:58=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-15-155396-155796.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-15-155396-155796.wav"
     },
     {
       "index": 16,
@@ -280,7 +280,7 @@
       "clip_path": "clips/candidate-16.wav",
       "suggested_speaker_correction": "11:53-11:57=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-16-115264-115664.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-16-115264-115664.wav"
     },
     {
       "index": 17,
@@ -297,7 +297,7 @@
       "clip_path": "clips/candidate-17.wav",
       "suggested_speaker_correction": "26:30-26:34=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-17-262980-263380.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-17-262980-263380.wav"
     },
     {
       "index": 18,
@@ -314,7 +314,7 @@
       "clip_path": "clips/candidate-18.wav",
       "suggested_speaker_correction": "12:05-12:09=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-18-120468-120868.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-18-120468-120868.wav"
     },
     {
       "index": 19,
@@ -331,7 +331,7 @@
       "clip_path": "clips/candidate-19.wav",
       "suggested_speaker_correction": "05:52-05:56=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-19-055154-055554.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-19-055154-055554.wav"
     },
     {
       "index": 20,
@@ -348,7 +348,7 @@
       "clip_path": "clips/candidate-20.wav",
       "suggested_speaker_correction": "20:23-20:27=SPEAKER_01",
       "reviewer_note": "",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-20-202254-202654.wav"
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-20-202254-202654.wav"
     }
   ],
   "instructions": [

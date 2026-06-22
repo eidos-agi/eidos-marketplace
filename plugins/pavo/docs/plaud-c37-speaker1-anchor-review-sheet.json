@@ -1,7 +1,7 @@
 {
   "passed": false,
   "human_reviewed": false,
-  "review_packet": "/Users/dshanklin/repos-eidos-agi/pavo/docs/plaud-c37-speaker1-anchor-review-packet.json",
+  "review_packet": "/Users/dshanklinbv/repos-eidos-agi/pavo/docs/plaud-c37-speaker1-anchor-review-packet.json",
   "clip_packet": "docs/plaud-c37-speaker1-anchor-review-clips.json",
   "target_speaker_label": "SPEAKER_01",
   "target_speaker_name": "Speaker 1",
@@ -22,7 +22,7 @@
       "text": "I think I'd wrap out.",
       "confidence": 1.0,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-01-001206-001606.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-01-001206-001606.wav",
       "suggested_speaker_correction": "00:12-00:16=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -38,7 +38,7 @@
       "text": "memory.",
       "confidence": 1.0,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-02-022460-022860.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-02-022460-022860.wav",
       "suggested_speaker_correction": "02:25-02:29=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -54,7 +54,7 @@
       "text": "I just covered this in a variety of different energy",
       "confidence": 1.0,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-03-153788-154188.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-03-153788-154188.wav",
       "suggested_speaker_correction": "15:38-15:42=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -70,7 +70,7 @@
       "text": "Wait, I'll ask you.",
       "confidence": 0.997,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-04-153386-153786.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-04-153386-153786.wav",
       "suggested_speaker_correction": "15:34-15:38=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -86,7 +86,7 @@
       "text": "Yeah, I think also it's like",
       "confidence": 0.96,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-05-121272-121672.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-05-121272-121672.wav",
       "suggested_speaker_correction": "12:13-12:17=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -102,7 +102,7 @@
       "text": "Now you can build back. If you can build back,",
       "confidence": 0.816,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-06-053948-054348.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-06-053948-054348.wav",
       "suggested_speaker_correction": "05:39-05:43=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -118,7 +118,7 @@
       "text": "and compliments by that side.",
       "confidence": 0.816,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-07-154190-154590.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-07-154190-154590.wav",
       "suggested_speaker_correction": "15:42-15:46=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -134,7 +134,7 @@
       "text": "Fall into IC.",
       "confidence": 0.784,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-08-001608-002008.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-08-001608-002008.wav",
       "suggested_speaker_correction": "00:16-00:20=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -150,7 +150,7 @@
       "text": "I'm driving through Kokomo, Indiana",
       "confidence": 0.768,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-09-161404-161804.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-09-161404-161804.wav",
       "suggested_speaker_correction": "16:14-16:18=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -166,7 +166,7 @@
       "text": "Thank you.",
       "confidence": 0.74,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-10-285460-285660.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-10-285460-285660.wav",
       "suggested_speaker_correction": "28:55-28:57=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -182,7 +182,7 @@
       "text": "If these routers become connected to",
       "confidence": 0.722,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-11-045932-050332.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-11-045932-050332.wav",
       "suggested_speaker_correction": "04:59-05:03=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -198,7 +198,7 @@
       "text": "So if we can figure out a way for this ability here",
       "confidence": 0.684,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-12-265792-270192.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-12-265792-270192.wav",
       "suggested_speaker_correction": "26:58-27:02=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -214,7 +214,7 @@
       "text": "Is there any one thing that you can think of as I'm talking this out",
       "confidence": 0.672,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-13-232484-232884.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-13-232484-232884.wav",
       "suggested_speaker_correction": "23:25-23:29=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -230,7 +230,7 @@
       "text": "it literally can't donate a little bit. Like, it's not possible to give you",
       "confidence": 0.656,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-14-231680-232080.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-14-231680-232080.wav",
       "suggested_speaker_correction": "23:17-23:21=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -246,7 +246,7 @@
       "text": "I felt like that is absolutely awesome. You know what else we can do?",
       "confidence": 0.654,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-15-155396-155796.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-15-155396-155796.wav",
       "suggested_speaker_correction": "15:54-15:58=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -262,7 +262,7 @@
       "text": "Most companies are fine.",
       "confidence": 0.648,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-16-115264-115664.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-16-115264-115664.wav",
       "suggested_speaker_correction": "11:53-11:57=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -278,7 +278,7 @@
       "text": "I'm going to go load it up with our phone call, take a picture of this",
       "confidence": 0.648,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-17-262980-263380.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-17-262980-263380.wav",
       "suggested_speaker_correction": "26:30-26:34=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -294,7 +294,7 @@
       "text": "So that one seems pretty obvious in a way.",
       "confidence": 0.624,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-18-120468-120868.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-18-120468-120868.wav",
       "suggested_speaker_correction": "12:05-12:09=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -310,7 +310,7 @@
       "text": "This is kind of a new different thing. When you go to",
       "confidence": 0.616,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-19-055154-055554.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-19-055154-055554.wav",
       "suggested_speaker_correction": "05:52-05:56=SPEAKER_01",
       "reviewer_note": ""
     },
@@ -326,7 +326,7 @@
       "text": "Like my mind doesn't even comprehend how that's possible.",
       "confidence": 0.608,
       "method": "audio_overlap",
-      "clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-20-202254-202654.wav",
+      "clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/anchor-review/speaker-1/candidate-20-202254-202654.wav",
       "suggested_speaker_correction": "20:23-20:27=SPEAKER_01",
       "reviewer_note": ""
     }

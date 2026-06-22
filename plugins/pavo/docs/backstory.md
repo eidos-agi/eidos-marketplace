@@ -3,56 +3,22 @@
 Pavo exists because important conversations often come back as weak transcripts
 that teams cannot audit, improve, or route into real work. Plaud exposed the
 first version of the problem: it was excellent at capture, but the stock
-workflow was not enough when recordings needed to become durable intelligence
-and approved action.
+workflow was not enough when recordings needed to become durable intelligence.
 
-The broader product is an evidence-first approval queue for captured
-conversations. Teams need control over the actual audio files, speaker
-identification, custom dictionaries per call, overlap checks, routing
-recommendations, approval state, destination writes, and durable archives.
+The broader product is for any team that wants high-quality transcription led
+by data scientists. Teams need control over the actual audio files, speaker
+identification, custom dictionaries per call, overlap checks, routing, task
+creation, and durable archives.
 
 The goal is simple:
 
 ```text
-recording source -> real audio -> tuned evidence -> routing packet -> approval -> destination proof
+recording source -> real audio -> speaker-aware transcript -> routed notes and tasks -> durable archive
 ```
 
 Pavo owns source wrappers, Plaud CLI/MCP access, imported media, file control,
-review state, routing packets, approvals, destination manifests, policy memory,
-and the archive layer. `eidos-transcribe` owns the audio-intelligence layer
-that Pavo can call as an installable package.
-
-## Flight Path
-
-Pavo moves spoken records through a Flight Path:
-
-```text
-Nest -> Tune -> Scout -> Land -> Home
-```
-
-- **Nest:** capture and preserve the source recording.
-- **Tune:** make the record accurate and trustworthy.
-- **Scout:** recommend routes and actions.
-- **Land:** execute approved actions.
-- **Home:** learn where future records belong.
-
-This matters because recordings have levels of completion. A record can be
-safely nested without being transcribed, tuned without being routed, scouted
-without being approved, or landed only after a user or policy approves the
-action. The compact product model lives in [product.md](product.md), the edited
-reader-facing manuscript lives in
-[pavo-core-manuscript.md](pavo-core-manuscript.md), and the full long-form
-product canon lives in [pavo-product-book.md](pavo-product-book.md). The
-implementation-ready response to meeting-bot complaints lives in
-[pavo-meeting-bot-complaint-response.md](pavo-meeting-bot-complaint-response.md),
-with test fixtures in
-[pavo-complaint-fixture-ledger.md](pavo-complaint-fixture-ledger.md) and build
-contracts in [pavo-gate-contracts.md](pavo-gate-contracts.md). The plain-user
-UX, demo, packaging, and anti-slop standards live in
-[pavo-one-button-ux-acceptance.md](pavo-one-button-ux-acceptance.md),
-[pavo-proof-first-demo-script.md](pavo-proof-first-demo-script.md),
-[pavo-packaging-trust-promises.md](pavo-packaging-trust-promises.md), and
-[pavo-anti-slop-audit.md](pavo-anti-slop-audit.md).
+routing, task creation, and the archive layer. `eidos-transcribe` owns the
+audio-intelligence layer that Pavo can call as an installable package.
 
 ## Bio-Inspired Audio Intelligence
 
@@ -217,12 +183,8 @@ Pavo solves:
 - Real audio download.
 - Local cache and config structure.
 - Recording manifests.
-- Review and correction state.
-- Routing packets.
-- Approval-gated destination writes.
 - Google Drive archiving.
 - Intelligent routing and task creation.
-- Policy memory from approvals and corrections.
 - Agent/plugin instructions for safe use.
 
 `eidos-transcribe` solves:
@@ -247,6 +209,5 @@ Plaud recording id -> audio.mp3 -> eidos-transcribe -> transcript + manifest
 ```
 
 The remaining product work is to make the loop durable for daily use: local
-sync index, Google Drive archive, duplicate-safe uploads, routing packets,
-approval state, destination write manifests, policy memory, and a thin Codex
+sync index, Google Drive archive, duplicate-safe uploads, and a thin Codex
 plugin surface that routes agents back to the Pavo CLI.

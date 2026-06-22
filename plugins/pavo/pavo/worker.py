@@ -6,7 +6,6 @@ import time
 from dataclasses import dataclass
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
@@ -17,7 +16,6 @@ class WorkerConfig:
     port: int
     private_key: str
     environment: str
-    data_dir: Path
 
 
 def load_worker_config() -> WorkerConfig:
@@ -29,7 +27,6 @@ def load_worker_config() -> WorkerConfig:
         port=int(os.environ.get("PORT", "8080")),
         private_key=private_key,
         environment=os.environ.get("PAVO_ENV", "development"),
-        data_dir=Path(os.environ.get("PAVO_WORKER_DATA_DIR", "/data")).expanduser(),
     )
 
 
@@ -47,8 +44,6 @@ def create_worker_handler(config: WorkerConfig) -> type[BaseHTTPRequestHandler]:
                         "ok": True,
                         "service": "eidos-pavo-worker",
                         "environment": config.environment,
-                        "data_dir": str(config.data_dir),
-                        "data_dir_ready": config.data_dir.exists(),
                         "uptime_seconds": round(time.time() - started_at, 3),
                     }
                 )
@@ -64,8 +59,6 @@ def create_worker_handler(config: WorkerConfig) -> type[BaseHTTPRequestHandler]:
                         "mode": "private-single-user",
                         "capabilities": ["status", "manual_tick"],
                         "next_capabilities": ["plaud_sync", "fireflies_sync", "omni_routing"],
-                        "data_dir": str(config.data_dir),
-                        "data_dir_ready": config.data_dir.exists(),
                         "uptime_seconds": round(time.time() - started_at, 3),
                     }
                 )
@@ -116,7 +109,6 @@ def create_worker_handler(config: WorkerConfig) -> type[BaseHTTPRequestHandler]:
 
 def main() -> None:
     config = load_worker_config()
-    config.data_dir.mkdir(parents=True, exist_ok=True)
     server = ThreadingHTTPServer((config.host, config.port), create_worker_handler(config))
     print(f"pavo worker listening on {config.host}:{config.port} ({config.environment})")
     try:

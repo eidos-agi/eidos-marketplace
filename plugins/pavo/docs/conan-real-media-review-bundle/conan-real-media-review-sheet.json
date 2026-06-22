@@ -32,10 +32,7 @@
       "review_heading": "Opening handoff: mixed audio",
       "review_prompt": "First listen for the overlap: Conan asks the setup, then Kaitlin starts \u201cwhat was that experience like?\u201d",
       "review_subtitle": "Diagnostic handoff review",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-experience-like-pad-0p1/region-01-00m05s-00m06s/mixed.wav",
-      "reviewer_note_transcript": "",
-      "reviewer_note_audio_path": "review-notes/row-1-1781038047.webm",
-      "review_parse": {}
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-experience-like-pad-0p1/region-01-00m05s-00m06s/mixed.wav"
     },
     {
       "index": 2,
@@ -58,10 +55,7 @@
       "review_heading": "Opening handoff: Conan stem",
       "review_prompt": "This should contain Conan voice evidence from the handoff. It is diagnostic, not a final accepted split.",
       "review_subtitle": "Diagnostic handoff review",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-experience-like-pad-0p1/region-01-00m05s-00m06s/conan-obrien.wav",
-      "reviewer_note_transcript": "",
-      "reviewer_note_audio_path": "",
-      "review_parse": {}
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-experience-like-pad-0p1/region-01-00m05s-00m06s/conan-obrien.wav"
     },
     {
       "index": 3,
@@ -84,10 +78,7 @@
       "review_heading": "Opening handoff: Kaitlin stem",
       "review_prompt": "This is intentionally weak. Use it to judge why Pavo rejected the Kaitlin stem for this opening handoff.",
       "review_subtitle": "Diagnostic handoff review",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-experience-like-pad-0p1/region-01-00m05s-00m06s/kaitlin-olson.wav",
-      "reviewer_note_transcript": "",
-      "reviewer_note_audio_path": "",
-      "review_parse": {}
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-experience-like-pad-0p1/region-01-00m05s-00m06s/kaitlin-olson.wav"
     },
     {
       "index": 4,
@@ -110,10 +101,7 @@
       "review_heading": "Old sitcom: mixed audio",
       "review_prompt": "First listen to the mixed overlap around \u201cThat old sitcom.\u201d",
       "review_subtitle": "Accepted stem split review",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom-pad-0p25-short-window/region-01-00m18s-00m18s/mixed.wav",
-      "reviewer_note_transcript": "",
-      "reviewer_note_audio_path": "",
-      "review_parse": {}
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom-pad-0p25-short-window/region-01-00m18s-00m18s/mixed.wav"
     },
     {
       "index": 5,
@@ -136,10 +124,7 @@
       "review_heading": "Old sitcom: Conan stem",
       "review_prompt": "This should isolate Conan in the accepted \u201cthat old sitcom\u201d split.",
       "review_subtitle": "Accepted stem split review",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom-pad-0p25-short-window/region-01-00m18s-00m18s/conan-obrien.wav",
-      "reviewer_note_transcript": "",
-      "reviewer_note_audio_path": "",
-      "review_parse": {}
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom-pad-0p25-short-window/region-01-00m18s-00m18s/conan-obrien.wav"
     },
     {
       "index": 6,
@@ -162,10 +147,7 @@
       "review_heading": "Old sitcom: Kaitlin stem",
       "review_prompt": "This should isolate Kaitlin in the same accepted split.",
       "review_subtitle": "Accepted stem split review",
-      "source_clip_path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom-pad-0p25-short-window/region-01-00m18s-00m18s/kaitlin-olson.wav",
-      "reviewer_note_transcript": "",
-      "reviewer_note_audio_path": "",
-      "review_parse": {}
+      "source_clip_path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom-pad-0p25-short-window/region-01-00m18s-00m18s/kaitlin-olson.wav"
     }
   ],
   "instructions": [
@@ -175,9 +157,9 @@
     "This is a review-only Conan proof bundle; it does not generate Plaud speaker-correction flags."
   ],
   "evidence": {
-    "experience_like_analysis": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-experience-like-pad-0p1/region-01-00m05s-00m06s/analysis.json",
-    "old_sitcom_analysis": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom-pad-0p25-short-window/region-01-00m18s-00m18s/analysis.json",
-    "old_sitcom_stem_asr": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom-pad-0p25-short-window/stem-asr-accepted/decomposed-transcript.json",
+    "experience_like_analysis": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-experience-like-pad-0p1/region-01-00m05s-00m06s/analysis.json",
+    "old_sitcom_analysis": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom-pad-0p25-short-window/region-01-00m18s-00m18s/analysis.json",
+    "old_sitcom_stem_asr": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom-pad-0p25-short-window/stem-asr-accepted/decomposed-transcript.json",
     "conan_experience_report": "docs/conan-experience-comparison-report.json",
     "conan_old_sitcom_report": "docs/conan-old-sitcom-report.json"
   },

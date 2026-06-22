@@ -1,10 +1,10 @@
 {
   "passed": false,
-  "manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/decompose-transcribe.manifest.json",
+  "manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/decompose-transcribe.manifest.json",
   "speaker_signatures_present": true,
   "rolling_transcript_present": true,
-  "separation_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/separate-overlaps.manifest.json",
-  "stem_asr_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/stem-asr/stem-asr.manifest.json",
+  "separation_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/separate-overlaps.manifest.json",
+  "stem_asr_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/stem-asr/stem-asr.manifest.json",
   "separated_region_count": 20,
   "accepted_region_count": 0,
   "trusted_stem_region_count": 11,
@@ -12,7 +12,7 @@
   "include_rejected": true,
   "regions": [
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-01-00m21s-00m24s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-01-00m21s-00m24s/analysis.json",
       "accepted": false,
       "start": 21.0,
       "end": 24.0,
@@ -32,7 +32,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-02-00m30s-00m32s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-02-00m30s-00m32s/analysis.json",
       "accepted": false,
       "start": 30.0,
       "end": 32.75,
@@ -50,7 +50,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-03-00m35s-00m36s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-03-00m35s-00m36s/analysis.json",
       "accepted": false,
       "start": 35.0,
       "end": 36.0,
@@ -68,7 +68,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-04-01m14s-01m15s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-04-01m14s-01m15s/analysis.json",
       "accepted": false,
       "start": 74.5,
       "end": 75.75,
@@ -88,7 +88,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-05-01m41s-01m42s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-05-01m41s-01m42s/analysis.json",
       "accepted": false,
       "start": 101.0,
       "end": 102.75,
@@ -108,7 +108,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-06-02m02s-02m06s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-06-02m02s-02m06s/analysis.json",
       "accepted": false,
       "start": 122.25,
       "end": 126.5,
@@ -128,7 +128,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-07-02m25s-02m28s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-07-02m25s-02m28s/analysis.json",
       "accepted": false,
       "start": 145.5,
       "end": 148.0,
@@ -148,7 +148,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-08-02m33s-02m36s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-08-02m33s-02m36s/analysis.json",
       "accepted": false,
       "start": 153.0,
       "end": 156.5,
@@ -168,7 +168,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-09-02m42s-02m46s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-09-02m42s-02m46s/analysis.json",
       "accepted": false,
       "start": 162.5,
       "end": 166.75,
@@ -186,7 +186,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-10-02m57s-03m02s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-10-02m57s-03m02s/analysis.json",
       "accepted": false,
       "start": 177.25,
       "end": 182.5,
@@ -204,7 +204,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-11-03m18s-03m20s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-11-03m18s-03m20s/analysis.json",
       "accepted": false,
       "start": 198.0,
       "end": 200.5,
@@ -222,7 +222,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-12-03m41s-03m42s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-12-03m41s-03m42s/analysis.json",
       "accepted": false,
       "start": 221.0,
       "end": 222.25,
@@ -242,7 +242,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-13-03m55s-03m57s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-13-03m55s-03m57s/analysis.json",
       "accepted": false,
       "start": 235.0,
       "end": 237.5,
@@ -260,7 +260,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-14-04m01s-04m03s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-14-04m01s-04m03s/analysis.json",
       "accepted": false,
       "start": 241.5,
       "end": 243.75,
@@ -280,7 +280,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-15-04m12s-04m14s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-15-04m12s-04m14s/analysis.json",
       "accepted": false,
       "start": 252.5,
       "end": 254.0,
@@ -300,7 +300,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-16-04m17s-04m20s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-16-04m17s-04m20s/analysis.json",
       "accepted": false,
       "start": 257.5,
       "end": 260.0,
@@ -318,7 +318,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-17-04m34s-04m36s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-17-04m34s-04m36s/analysis.json",
       "accepted": false,
       "start": 274.0,
       "end": 276.0,
@@ -338,7 +338,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-18-04m53s-04m55s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-18-04m53s-04m55s/analysis.json",
       "accepted": false,
       "start": 293.5,
       "end": 295.0,
@@ -358,7 +358,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-19-05m25s-05m27s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-19-05m25s-05m27s/analysis.json",
       "accepted": false,
       "start": 325.25,
       "end": 327.5,
@@ -376,7 +376,7 @@
       }
     },
     {
-      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-20-05m35s-05m36s/analysis.json",
+      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/decompose-transcribe-proof-search-assignment/separated-overlaps/region-20-05m35s-05m36s/analysis.json",
       "accepted": false,
       "start": 335.0,
       "end": 336.0,

@@ -4,60 +4,15 @@
 
 **Manifest Anything.**
 
-Pavo is an evidence-first approval queue for captured conversations. It catches
-meetings, calls, voice notes, and field recordings before they disappear,
-preserves the original media, makes the record trustworthy, recommends where
-the information should go, and only writes to external systems after the user
-or policy approves.
+Pavo is a data-science-led transcription workbench for teams that need
+trustworthy records from messy audio. It was inspired by Plaud workflow gaps,
+but it is not a Plaud-only tool: Pavo gives operators control over real audio
+files, speaker identification, custom dictionaries per call, intelligent
+routing, task creation, and durable archives.
 
 Use it when the stock transcript is not enough and the team needs a repeatable
-way to improve the audio, prove who spoke, preserve the source file, and turn
-the resulting intelligence into approved, source-backed work.
-
-## Pavo Flight Path
-
-Pavo moves every spoken record through a Flight Path:
-
-```text
-Nest -> Tune -> Scout -> Land -> Home
-```
-
-- **Nest:** capture and preserve the source recording.
-- **Tune:** make the record accurate and trustworthy.
-- **Scout:** recommend routes and actions.
-- **Land:** execute approved actions.
-- **Home:** learn where future records belong.
-
-Each level is a completion state. A record can stop after Nest as a safe
-archive, after Tune as a corrected transcript, after Scout as a pending routing
-packet, or after Land as completed work with an audit trail.
-
-See [Pavo Core Manuscript](docs/pavo-core-manuscript.md) for the edited
-reader-facing product argument. See [product spine](docs/product.md) for the
-compact model, including routing packets, approval rules, and product
-boundaries. See [Pavo: The Product Book](docs/pavo-product-book.md) for the
-full long-form sourcebook covering vision, Flight Path vocabulary, scenarios,
-glossary/status vocabulary, UI specs, marketing, gotchas, implementation
-roadmap, operating doctrine, fixture ledger, scorecards, and final product-book
-structure.
-
-See [meeting-bot complaint response design](docs/pavo-meeting-bot-complaint-response.md)
-for the specific Pavo design answer to common Otter/Fireflies-style complaints:
-accuracy, speaker identity, meaning drift, bot privacy, confusing setup, data
-visibility, and follow-through.
-
-See [complaint fixture ledger](docs/pavo-complaint-fixture-ledger.md) and
-[gate contracts](docs/pavo-gate-contracts.md) for the testable version of that
-design: fixture IDs, expected route outcomes, gate statuses, route packet
-minimums, and landing manifest requirements.
-
-See [one-button UX acceptance](docs/pavo-one-button-ux-acceptance.md),
-[proof-first demo script](docs/pavo-proof-first-demo-script.md),
-[packaging and trust promises](docs/pavo-packaging-trust-promises.md), and
-[anti-slop audit](docs/pavo-anti-slop-audit.md) for the final product-design
-artifacts that keep the system usable, demonstrable, priceable, and specific.
-See [completion audit](docs/pavo-completion-audit.md) for the requirement-level
-evidence that the product-doc goal is complete.
+way to improve the audio, prove who spoke, preserve the source file, and route
+the resulting intelligence into real work.
 
 ## Bio-Inspired Audio Intelligence
 
@@ -102,23 +57,22 @@ route. Plaud was the first pain point: it captured well, but the stock workflow
 did not give enough control over the underlying audio or the downstream
 intelligence layer.
 
-The larger product is for any team that wants captured conversations to become
-trusted records and controlled action. A team needs access to the audio itself,
-control over where it goes, better speaker identification, call-specific
-vocabulary, source-separation checks for messy regions, and an approval queue
-for deciding what should become follow-up work.
+The larger product is for any team that wants transcription led by data
+scientists instead of treated as a black box. A team needs access to the audio
+itself, control over where it goes, better speaker identification,
+call-specific vocabulary, source-separation checks for messy regions, and a way
+to turn the recording into follow-up work.
 
 The target loop is:
 
 ```text
-recording source -> real audio -> tuned evidence -> routing packet -> approval -> destination proof
+recording source -> real audio -> speaker-aware transcript -> routed notes and tasks -> durable archive
 ```
 
-Pavo owns ingestion wrappers, file control, review state, routing packets,
-approval state, destination manifests, and the archive layer. It can wrap Plaud
-CLI/MCP today, and it can also process imported local media. For the audio
-intelligence layer, Pavo uses `eidos-transcribe` as an installable package that
-can improve independently.
+Pavo owns ingestion wrappers, file control, routing, and the archive layer. It
+can wrap Plaud CLI/MCP today, and it can also process imported local media. For
+the audio intelligence layer, Pavo uses `eidos-transcribe` as an installable
+package that can improve independently.
 
 The problems Pavo is built around:
 
