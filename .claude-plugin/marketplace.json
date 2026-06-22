@@ -536,6 +536,40 @@
       }
     },
     {
+      "name": "emux",
+      "description": "Eidos mux: TUI picker and MCP server for named tmux sessions.",
+      "source": "./plugins/emux",
+      "category": "agent-tools",
+      "homepage": "https://github.com/eidos-agi/emux",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "mcp",
+        "tmux",
+        "claude-code",
+        "terminal",
+        "session-control",
+        "automation"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "tool",
+          "signals": [
+            "single_capability",
+            "uvx_shim",
+            "mcp_server"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-05-31",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/emux.md"
+        }
+      }
+    },
+    {
       "name": "felix",
       "description": "Use the live Felix CLI to build, assess, and maintain agent ecosystems.",
       "source": "./plugins/felix",
@@ -584,7 +618,7 @@
     },
     {
       "name": "foreman",
-      "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees.",
+      "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees, including Emux-headed interactive Claude Code workers.",
       "source": "./plugins/foreman",
       "category": "development",
       "homepage": "https://github.com/eidos-agi/foreman",
@@ -592,6 +626,7 @@
       "version": "0.3.1",
       "tags": [
         "claude-code",
+        "emux",
         "codex",
         "worktrees",
         "delegation",
@@ -610,7 +645,7 @@
         "audit": {
           "audited_by": "pending",
           "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-23",
+          "audit_date": "2026-05-31",
           "grade": "PENDING",
           "audit_doc": "AUDITS/foreman.md"
         },
