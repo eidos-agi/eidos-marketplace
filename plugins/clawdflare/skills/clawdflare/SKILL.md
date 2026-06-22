@@ -1,3 +1,8 @@
+---
+name: clawdflare
+description: Audit and manage Cloudflare accounts, zones, DNS, SSL/TLS, cache, and Railway custom domains through the Clawdflare CLI and MCP server. Use for Cloudflare inspection, safe DNS dry-runs, authorized record changes, and zone troubleshooting.
+---
+
 # Clawdflare
 
 Use this skill when the user asks for Cloudflare, DNS, custom-domain, SSL/TLS, cache, zone-audit, or Railway domain troubleshooting through the Eidos plugin store.

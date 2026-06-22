@@ -2,7 +2,7 @@
 apple-a-day checkup
 macOS 15.3.1 | Apple M4 Max | 36 GB RAM
 
-                                Memory Pressure                                 
+                                Memory Pressure
 ┌────┬────────────────────────────────────┬────────────────────────────────────┐
 │⚠   │ Swap usage: 30767.00MM             │ High swap causes SSD wear and      │
 │    │   vm.swapusage: total = 31744.00M  │ slowdowns.                         │
@@ -10,7 +10,7 @@ macOS 15.3.1 | Apple M4 Max | 36 GB RAM
 │    │ (encrypted)                        │                                    │
 └────┴────────────────────────────────────┴────────────────────────────────────┘
 
-                                 Kernel Panics                                  
+                                 Kernel Panics
 ┌────┬────────────────────────────────────┬────────────────────────────────────┐
 │✗   │ Kernel panic on 2026-03-22         │ Full report:                       │
 │    │ 00:47:51.48 -0500                  │ /Library/Logs/DiagnosticReports/pa…│
@@ -68,7 +68,7 @@ macOS 15.3.1 | Apple M4 Max | 36 GB RAM
 │    │ service.                           │                                    │
 └────┴────────────────────────────────────┴────────────────────────────────────┘
 
-                                  Crash Loops                                   
+                                  Crash Loops
 ┌────┬────────────────────────────────────┬────────────────────────────────────┐
 │✗   │ watchman crashed 182 times in the  │ Check: `log show --predicate       │
 │    │ last 24h                           │ 'process == "watchman"' --last 24h`│
@@ -76,7 +76,7 @@ macOS 15.3.1 | Apple M4 Max | 36 GB RAM
 │    │ DiagnosticReports directories.     │                                    │
 └────┴────────────────────────────────────┴────────────────────────────────────┘
 
-                                 Launch Agents                                  
+                                 Launch Agents
 ┌────┬────────────────────────────────────┬────────────────────────────────────┐
 │✗   │ com.github.facebook.watchman:      │ Stop with: `launchctl bootout      │
 │    │ crash-looping (KeepAlive + exit    │ gui/$(id -u)                       │
@@ -95,7 +95,7 @@ macOS 15.3.1 | Apple M4 Max | 36 GB RAM
 │    │                                    │ restart.                           │
 └────┴────────────────────────────────────┴────────────────────────────────────┘
 
-                                    Homebrew                                    
+                                    Homebrew
 ┌────┬────────────────────────────────────┬────────────────────────────────────┐
 │⚠   │ A newer Command Line Tools release │ Run `brew doctor` for full details.│
 │    │ is available.                      │                                    │

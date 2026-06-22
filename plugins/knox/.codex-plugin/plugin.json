@@ -1,6 +1,6 @@
 {
   "name": "knox",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260622193804",
   "description": "Knox local MCP secret broker with capability-scoped, short-lived sessions.",
   "author": {
     "name": "Knox"
@@ -22,14 +22,6 @@
       "audit-trail"
     ],
     "defaultPrompt": "Issue a short-lived Knox session and invoke allowed provider operations with scoped sessions."
-  },
-  "security": {
-    "posture": "strict-local-first",
-    "notes": [
-      "macOS Keychain required for secret storage.",
-      "No plaintext fallback for v1.",
-      "Fail-closed when Keychain is unavailable."
-    ]
   },
   "mcpServers": "./.mcp.json"
 }

@@ -1,6 +1,6 @@
 {
   "name": "scridos",
-  "version": "2.0.0",
+  "version": "2.0.0+codex.20260622193805",
   "description": "LLM Wiki \u2014 persistent, compounding knowledge base inside Obsidian. Ingest, compile, query, lint, and remove knowledge base wikis. Based on Karpathy's LLM Wiki pattern.",
   "author": {
     "name": "Eidos AGI"
@@ -10,11 +10,16 @@
   "interface": {
     "displayName": "Scridos",
     "shortDescription": "LLM Wiki \u2014 persistent, compounding knowledge base inside Obsidian. Ingest, compile, query, lint, and remove knowledge ba",
+    "longDescription": "Build and maintain a persistent Obsidian knowledge base for agents by ingesting, compiling, querying, linting, and removing wiki content.",
     "developerName": "Eidos AGI",
     "category": "Productivity",
     "capabilities": [],
     "websiteURL": "https://github.com/eidos-agi/scridos",
     "privacyPolicyURL": "https://github.com/eidos-agi/scridos",
-    "termsOfServiceURL": "https://github.com/eidos-agi/scridos"
+    "termsOfServiceURL": "https://github.com/eidos-agi/scridos",
+    "defaultPrompt": [
+      "Query the current Scridos wiki for this topic.",
+      "Ingest these notes and compile the affected wiki pages."
+    ]
   }
 }

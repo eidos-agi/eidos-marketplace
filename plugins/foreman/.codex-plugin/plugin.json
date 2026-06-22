@@ -1,6 +1,6 @@
 {
   "name": "foreman",
-  "version": "0.3.1",
+  "version": "0.3.1+codex.20260622193804",
   "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees, including Emux-headed interactive Claude Code workers.",
   "author": {
     "name": "Eidos AGI",

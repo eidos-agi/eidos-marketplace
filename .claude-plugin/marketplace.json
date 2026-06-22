@@ -480,6 +480,26 @@
       }
     },
     {
+      "name": "eidos-storemetheus",
+      "description": "Build governed Codex plugin stores for companies that need trusted AI operating layers.",
+      "source": "./plugins/eidos-storemetheus",
+      "category": "development",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/eidos-storemetheus",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": ["eidos", "plugin-store", "codex", "marketplace", "governance"],
+      "x-eidos": {
+        "kind": {"type": "forge", "signals": ["ships_skills", "opinionated_workflow"]},
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-06-08",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/eidos-storemetheus.md"
+        }
+      }
+    },
+    {
       "name": "emux",
       "description": "Eidos mux: TUI picker and MCP server for named tmux sessions.",
       "source": "./plugins/emux",
@@ -532,40 +552,6 @@
             "tmux",
             "Python 3.11+"
           ]
-        }
-      }
-    },
-    {
-      "name": "emux",
-      "description": "Eidos mux: TUI picker and MCP server for named tmux sessions.",
-      "source": "./plugins/emux",
-      "category": "agent-tools",
-      "homepage": "https://github.com/eidos-agi/emux",
-      "license": "MIT",
-      "version": "0.1.0",
-      "tags": [
-        "mcp",
-        "tmux",
-        "claude-code",
-        "terminal",
-        "session-control",
-        "automation"
-      ],
-      "x-eidos": {
-        "kind": {
-          "type": "tool",
-          "signals": [
-            "single_capability",
-            "uvx_shim",
-            "mcp_server"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-31",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/emux.md"
         }
       }
     },
@@ -872,6 +858,26 @@
             "mcp-forge"
           ],
           "preflight_check": "/lever"
+        }
+      }
+    },
+    {
+      "name": "linearplus",
+      "description": "Use the LinearPlus CLI for Linear GraphQL initiative workflows missing from connector surfaces.",
+      "source": "./plugins/linearplus",
+      "category": "agent-tools",
+      "homepage": "https://github.com/eidos-agi/linearplus",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": ["linear", "graphql", "initiatives", "projects", "cli", "eidos-agi"],
+      "x-eidos": {
+        "kind": {"type": "tool", "signals": ["ships_skills", "cli_first"]},
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-06-08",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/linearplus.md"
         }
       }
     },

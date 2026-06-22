@@ -1,6 +1,6 @@
 {
   "name": "pavo",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260622193805",
   "description": "Manifest Anything: data-science-led transcription for real audio, speaker identification, dictionaries, routing, and tasks.",
   "author": {
     "name": "Eidos AGI",

@@ -1,6 +1,6 @@
 {
   "name": "visionlog",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260622193805",
   "description": "Vision, goals, guardrails, SOPs, and ADRs \u2014 the contracts all execution must honor",
   "author": {
     "name": "Eidos AGI"
@@ -10,6 +10,7 @@
   "interface": {
     "displayName": "Visionlog",
     "shortDescription": "Vision, goals, guardrails, SOPs, and ADRs \u2014 the contracts all execution must honor",
+    "longDescription": "Capture and consult vision, goals, guardrails, operating procedures, and architecture decisions as durable execution contracts.",
     "developerName": "Eidos AGI",
     "category": "Productivity",
     "capabilities": [
@@ -17,7 +18,11 @@
     ],
     "websiteURL": "https://github.com/eidos-agi/visionlog",
     "privacyPolicyURL": "https://github.com/eidos-agi/visionlog",
-    "termsOfServiceURL": "https://github.com/eidos-agi/visionlog"
+    "termsOfServiceURL": "https://github.com/eidos-agi/visionlog",
+    "defaultPrompt": [
+      "Show the governing vision and guardrails for this work.",
+      "Record this decision as an ADR with its rationale."
+    ]
   },
   "mcpServers": "./.mcp.json"
 }

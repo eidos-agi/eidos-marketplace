@@ -1,6 +1,6 @@
 {
   "name": "resume-resume",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260622193805",
   "description": "Post-crash session recovery, dirty repos inventory, and session search across your full Claude Code history",
   "author": {
     "name": "Eidos AGI"
@@ -10,6 +10,7 @@
   "interface": {
     "displayName": "Resume Resume",
     "shortDescription": "Post-crash session recovery, dirty repos inventory, and session search across your full Claude Code history",
+    "longDescription": "Recover interrupted agent work by searching prior sessions, inventorying dirty repositories, and reconstructing the next actionable context.",
     "developerName": "Eidos AGI",
     "category": "Productivity",
     "capabilities": [
@@ -17,7 +18,11 @@
     ],
     "websiteURL": "https://github.com/eidos-agi/resume-resume",
     "privacyPolicyURL": "https://github.com/eidos-agi/resume-resume",
-    "termsOfServiceURL": "https://github.com/eidos-agi/resume-resume"
+    "termsOfServiceURL": "https://github.com/eidos-agi/resume-resume",
+    "defaultPrompt": [
+      "Find the interrupted session and reconstruct what remains.",
+      "Inventory dirty repositories and rank recovery priorities."
+    ]
   },
   "mcpServers": "./.mcp.json"
 }

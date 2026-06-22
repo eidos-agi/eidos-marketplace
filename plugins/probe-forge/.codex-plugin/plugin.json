@@ -1,6 +1,6 @@
 {
   "name": "probe-forge",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260622193805",
   "description": "Agentic testing forge \u2014 point at anything, say test this",
   "author": {
     "name": "Eidos AGI"
@@ -10,6 +10,7 @@
   "interface": {
     "displayName": "Probe Forge",
     "shortDescription": "Agentic testing forge \u2014 point at anything, say test this",
+    "longDescription": "Run agentic probes against a target, gather reproducible evidence, and report whether the tested behavior meets its contract.",
     "developerName": "Eidos AGI",
     "category": "Productivity",
     "capabilities": [
@@ -17,7 +18,11 @@
     ],
     "websiteURL": "https://github.com/eidos-agi/probe-forge",
     "privacyPolicyURL": "https://github.com/eidos-agi/probe-forge",
-    "termsOfServiceURL": "https://github.com/eidos-agi/probe-forge"
+    "termsOfServiceURL": "https://github.com/eidos-agi/probe-forge",
+    "defaultPrompt": [
+      "Probe this target and show reproducible failures.",
+      "Test this behavior against its stated contract."
+    ]
   },
   "mcpServers": "./.mcp.json"
 }

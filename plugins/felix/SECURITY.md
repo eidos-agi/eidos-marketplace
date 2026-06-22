@@ -27,4 +27,3 @@ Felix follows coordinated disclosure. Please give maintainers reasonable time to
 ## Agentic Threat Notes
 
 Felix may eventually scaffold or repair other agent repos. Treat generated commands, repo paths, install hooks, and CI files as sensitive behavior surfaces. Felix should never write secrets into Git, Scridos, logs, or chat.
-

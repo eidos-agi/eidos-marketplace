@@ -38,4 +38,3 @@ that is deemed necessary and appropriate to the circumstances.
 ## Attribution
 
 This Code of Conduct is adapted from the Contributor Covenant, version 2.0.
-

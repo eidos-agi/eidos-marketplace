@@ -1,1 +1,1 @@
-{"probe-forge":{"command":"uvx","args":["--from","probe-forge","probe-forge-mcp"]}}
+{"mcpServers":{"probe-forge":{"command":"uvx","args":["--from","probe-forge","probe-forge-mcp"]}}}

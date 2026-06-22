@@ -1,6 +1,6 @@
 {
   "name": "ike",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260622193804",
   "description": "Task and project management \u2014 create tasks, track milestones, manage documents, and execute within visionlog contracts",
   "author": {
     "name": "Eidos AGI"
@@ -10,6 +10,7 @@
   "interface": {
     "displayName": "Ike",
     "shortDescription": "Task and project management \u2014 create tasks, track milestones, manage documents, and execute within visionlog contracts",
+    "longDescription": "Create and organize tasks, milestones, and project documents while keeping execution aligned with Visionlog contracts.",
     "developerName": "Eidos AGI",
     "category": "Productivity",
     "capabilities": [
@@ -17,7 +18,11 @@
     ],
     "websiteURL": "https://github.com/eidos-agi/ike",
     "privacyPolicyURL": "https://github.com/eidos-agi/ike",
-    "termsOfServiceURL": "https://github.com/eidos-agi/ike"
+    "termsOfServiceURL": "https://github.com/eidos-agi/ike",
+    "defaultPrompt": [
+      "Show the current project tasks and next milestone.",
+      "Create a task with explicit completion criteria."
+    ]
   },
   "mcpServers": "./.mcp.json"
 }

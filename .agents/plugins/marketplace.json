@@ -257,6 +257,30 @@
       "category": "Productivity"
     },
     {
+      "name": "linearplus",
+      "source": {
+        "source": "local",
+        "path": "./plugins/linearplus"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "meeting2action",
+      "source": {
+        "source": "local",
+        "path": "./plugins/meeting2action"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
       "name": "pavo",
       "source": {
         "source": "local",

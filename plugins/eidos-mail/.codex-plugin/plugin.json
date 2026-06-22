@@ -1,6 +1,6 @@
 {
   "name": "eidos-mail",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260622193804",
   "description": "Email for Claude Code \u2014 read, search, send, reply, forward, and manage your inbox",
   "author": {
     "name": "Eidos AGI"
@@ -10,6 +10,7 @@
   "interface": {
     "displayName": "Eidos Mail",
     "shortDescription": "Email for Claude Code \u2014 read, search, send, reply, forward, and manage your inbox",
+    "longDescription": "Read, search, draft, reply, forward, and manage email through the Eidos Mail MCP surface while keeping mailbox actions explicit.",
     "developerName": "Eidos AGI",
     "category": "Productivity",
     "capabilities": [
@@ -17,7 +18,11 @@
     ],
     "websiteURL": "https://github.com/eidos-agi/eidos-mail",
     "privacyPolicyURL": "https://github.com/eidos-agi/eidos-mail",
-    "termsOfServiceURL": "https://github.com/eidos-agi/eidos-mail"
+    "termsOfServiceURL": "https://github.com/eidos-agi/eidos-mail",
+    "defaultPrompt": [
+      "Search my email and summarize the relevant threads.",
+      "Draft a reply without sending it."
+    ]
   },
   "mcpServers": "./.mcp.json"
 }

@@ -1,6 +1,6 @@
 {
   "name": "skillopt",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260622193805",
   "description": "Use Microsoft SkillOpt to train reusable agent skill documents from scored rollouts.",
   "author": {
     "name": "Eidos AGI",

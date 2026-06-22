@@ -120,6 +120,7 @@ class SessionStore:
         conn = sqlite3.connect(self.db_path)
         conn.execute("PRAGMA journal_mode=WAL;")
         conn.execute("PRAGMA foreign_keys=ON;")
+        conn.execute("PRAGMA secure_delete=ON;")
         self._secure_db_files()
         return conn
 
@@ -168,6 +169,7 @@ class SessionStore:
             conn.commit()
             if legacy_purged:
                 conn.execute("VACUUM;")
+                conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
             self._secure_db_files()
 
     def _migrate_schema(self, conn: sqlite3.Connection) -> None:

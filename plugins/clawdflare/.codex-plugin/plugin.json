@@ -1,6 +1,6 @@
 {
   "name": "clawdflare",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260622193804",
   "description": "Opinionated Cloudflare management CLI and MCP server for auditing and fixing zones.",
   "author": {
     "name": "Eidos AGI",

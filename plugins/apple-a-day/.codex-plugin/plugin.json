@@ -1,6 +1,6 @@
 {
   "name": "apple-a-day",
-  "version": "0.3.1",
+  "version": "0.3.1+codex.20260622193804",
   "description": "Agent-native Mac health toolkit for read-only diagnostics, vitals monitoring, and cleanup recommendations.",
   "author": {
     "name": "Eidos AGI",
