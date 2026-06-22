@@ -13,8 +13,6 @@ from typing import Any
 MODEL_PATH = Path(".shipr/product-release-model.json")
 ATTEMPTS_DIR = Path(".shipr/release-attempts")
 SHIPR_IGNORE_ENTRY = ".shipr/"
-EIDOS_MARKETPLACE_DIR = "eidos-marketplace"
-EIDOS_STORE_ROUTE_ID = "eidos-plugin-store"
 
 BLOCKER_CLASSIFICATIONS: dict[str, dict[str, str]] = {
     "git-clean-pushed": {
@@ -107,75 +105,6 @@ def _read_json_text(text: str) -> dict[str, Any]:
 
 def _project_uses_git(root: Path) -> bool:
     return (root / ".git").exists() or (root / ".gitignore").exists()
-
-
-def _plugin_name(root: Path, fallback: str) -> str:
-    plugin_manifests = (
-        root / ".codex-plugin" / "plugin.json",
-        root / ".claude-plugin" / "plugin.json",
-    )
-    for plugin_json in plugin_manifests:
-        if not plugin_json.exists():
-            continue
-        try:
-            payload = _read_json(plugin_json)
-        except json.JSONDecodeError:
-            continue
-        name = payload.get("name")
-        if isinstance(name, str) and name.strip():
-            return name.strip()
-    return fallback
-
-
-def _marketplace_root_hint(root: Path) -> str:
-    candidates = (
-        root.parent / EIDOS_MARKETPLACE_DIR,
-        root.parent.parent / EIDOS_MARKETPLACE_DIR,
-    )
-    for candidate in candidates:
-        if candidate.exists():
-            return str(candidate)
-    return f"<{EIDOS_MARKETPLACE_DIR}>"
-
-
-def _eidos_store_route(root: Path, product: str) -> dict[str, Any]:
-    plugin = _plugin_name(root, product)
-    marketplace = _marketplace_root_hint(root)
-    source = str(root)
-    return {
-        "id": EIDOS_STORE_ROUTE_ID,
-        "channel": "Eidos AGI marketplace",
-        "owner": "eidos-plugin-store",
-        "tool": "eidos-marketplace/tools/marketplace_publish.py",
-        "intent": "handoff plugin releases to the standard Eidos store publishing path",
-        "handoff": {
-            "target_project": marketplace,
-            "source_project": source,
-            "commands": [
-                (
-                    f"cd {shlex.quote(marketplace)} && python3 tools/marketplace_publish.py "
-                    f"publish {shlex.quote(source)} --audit-date <YYYY-MM-DD>"
-                ),
-                (
-                    f"cd {shlex.quote(marketplace)} && python3 tools/marketplace_publish.py "
-                    f"check {shlex.quote(plugin)} --source {shlex.quote(source)}"
-                ),
-                f"codex plugin add {plugin}@eidos-agi",
-                f"codex plugin list --marketplace eidos-agi | rg {shlex.quote(plugin)}",
-            ],
-            "proofs": [
-                "marketplace publish command completed",
-                "marketplace check passed",
-                "store branch/PR merged into main",
-                "Codex install/list proof sees the plugin from eidos-agi",
-            ],
-        },
-        "approval_gate": "public marketplace merge/publish remains explicit-human-approved",
-    }
-
-
-def _has_route(release_routes: list[dict[str, Any]], route_id: str) -> bool:
-    return any(route.get("id") == route_id for route in release_routes)
 
 
 def _has_shipr_ignore(lines: list[str]) -> bool:
@@ -387,12 +316,9 @@ def next_actions_for_attempt(
     status: str,
     blockers: list[str] | None = None,
     blocker_records: list[dict[str, Any]] | None = None,
-    release_routes: list[dict[str, Any]] | None = None,
 ) -> list[str]:
     blockers = blockers or []
     blocker_records = blocker_records or []
-    release_routes = release_routes or []
-    has_store_route = _has_route(release_routes, EIDOS_STORE_ROUTE_ID)
     if status == "blocked":
         if blocker_records:
             return [
@@ -412,22 +338,11 @@ def next_actions_for_attempt(
             ]
         return ["clear the blocker, then rerun proof commands"]
     if status == "ready":
-        if has_store_route:
-            return [
-                "handoff to eidos-plugin-store using the standard marketplace_publish.py publish path",
-                "verify store entry with marketplace_publish.py check and codex plugin install/list proof",
-                "after explicit approval, merge the store PR and record shipped with PR + install proof",
-            ]
         return [
             "request explicit human approval for public publish/deploy if needed",
             "record shipped or rolled_back after the irreversible step",
         ]
     if status == "shipped":
-        if has_store_route:
-            return [
-                "route store-shipping lessons to learning-forge",
-                "watch marketplace install/support signals through eidos-plugin-store",
-            ]
         return ["route lessons to learning-forge", "watch rollback and support signals"]
     if status == "rolled_back":
         return ["record root cause", "define the next automatic release gate"]
@@ -441,7 +356,6 @@ def detect_release_model(project: Path, description: str = "") -> dict[str, Any]
     artifact_types: list[str] = []
     channels: list[str] = []
     proof_commands: list[str] = []
-    release_routes: list[dict[str, Any]] = []
     approval_gates = [
         "credentials",
         "payments",
@@ -471,7 +385,6 @@ def detect_release_model(project: Path, description: str = "") -> dict[str, Any]
     ):
         artifact_types.append("eidos-plugin")
         channels.append("Eidos AGI marketplace")
-        release_routes.append(_eidos_store_route(root, product))
         proof_commands.extend(
             [
                 "python tools/marketplace_publish.py check <plugin> --source <source-repo>",
@@ -530,7 +443,6 @@ def detect_release_model(project: Path, description: str = "") -> dict[str, Any]
         "approval_gates": list(dict.fromkeys(approval_gates)),
         "rollback_paths": list(dict.fromkeys(rollback)),
         "forge_stack": companions,
-        "release_routes": release_routes,
         "learning_questions": [
             "What broke or slowed this release?",
             "What proof was missing until late?",
@@ -590,23 +502,17 @@ def record_attempt(
         "blocker_records": blocker_records,
         "gate_summary": gate_summary or [],
         "source": source or None,
-        "next_actions": next_actions
-        or next_actions_for_attempt(status, blockers, blocker_records, model.get("release_routes", [])),
+        "next_actions": next_actions or next_actions_for_attempt(status, blockers, blocker_records),
         "release_model_snapshot": {
             "artifact_types": model["artifact_types"],
             "distribution_channels": model["distribution_channels"],
             "proof_commands": model["proof_commands"],
             "approval_gates": model["approval_gates"],
             "forge_stack": model["forge_stack"],
-            "release_routes": model.get("release_routes", []),
         },
         "learning_prompts": model["learning_questions"],
         "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
     }
-    if next_actions is None:
-        attempt["next_actions"] = next_actions_for_attempt(
-            status, blockers, blocker_records, model.get("release_routes", [])
-        )
     path = root / ATTEMPTS_DIR / f"{timestamp}-{_slug(goal)}.json"
     _write_json(path, attempt)
     return path, attempt
@@ -633,6 +539,7 @@ def record_eidos_ship_attempt(
         blocker_records=summary["blocker_records"],
         gate_summary=summary["gate_summary"],
         source=summary["source"],
+        next_actions=summary["next_actions"],
     )
 
 
@@ -712,10 +619,7 @@ def release_frontier(project: Path) -> dict[str, Any]:
         blockers = latest_attempt.get("blockers") or []
         blocker_records = _blocker_records_for_attempt(latest_attempt)
         next_actions = next_actions_for_attempt(
-            latest_status,
-            [str(item) for item in blockers],
-            blocker_records,
-            model.get("release_routes", []),
+            latest_status, [str(item) for item in blockers], blocker_records
         )
         if latest_status == "blocked":
             recurring = _recurring_blockers(loaded_attempts)
@@ -736,7 +640,6 @@ def release_frontier(project: Path) -> dict[str, Any]:
         "distribution_channels": model["distribution_channels"],
         "proof_commands": model["proof_commands"],
         "approval_gates": model["approval_gates"],
-        "release_routes": model.get("release_routes", []),
         "attempt_count": len(attempts),
         "latest_attempt": str(attempts[-1]) if attempts else None,
         "latest_status": latest_attempt.get("status") if latest_attempt else None,

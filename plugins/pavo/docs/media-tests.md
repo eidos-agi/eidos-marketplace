@@ -9,17 +9,23 @@ public repo. They live under `~/Eidos/Pavo/demos/` on the test machine.
 - Source: `When The Always Sunny Cast Met Danny DeVito | CONAN on TBS`
 - YouTube ID: `KxJWK8R7uVQ`
 - Pavo source ID: `youtube_KxJWK8R7uVQ_named_v1`
-- Local demo: `/Users/dshanklinbv/Eidos/Pavo/demos/conan-pavo-demo/pavo-conan-demo.mp4`
-- Comparison: `/Users/dshanklinbv/Eidos/Pavo/demos/conan-pavo-demo/comparison.json`
+- Local demo: `/Users/dshanklin/Eidos/Pavo/demos/conan-pavo-demo/pavo-conan-demo.mp4`
+- Comparison: `/Users/dshanklin/Eidos/Pavo/demos/conan-pavo-demo/comparison.json`
 - Demo video report: [conan-demo-video-report.json](conan-demo-video-report.json)
-- Overlap report: `/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom/region-01-00m18s-00m18s/analysis.md`
+- Overlap report: `/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/pavo-separated-overlaps-that-old-sitcom/region-01-00m18s-00m18s/analysis.md`
 - Diagnostic stem ASR report: [Conan diagnostic stems](conan-diagnostic-stems.md)
 - Speaker-change fixture: [Conan "Experience Like" fixture](conan-experience-like.md)
+- Cleaner human-review bundle:
+  [conan-real-media-review-bundle/index.html](conan-real-media-review-bundle/index.html)
+- Conan review report:
+  [conan-real-media-review-report.json](conan-real-media-review-report.json)
 
 Useful cases:
 
 - Reviewed speaker anchors for named captioning.
 - Short overlap review for the "that old sitcom" moment.
+- Cleaner review clips for the opening "what was that experience like" handoff
+  and the accepted "that old sitcom" Conan/Kaitlin stem split.
 - Speaker-change recall for short interjections, independent from whether the
   final speaker attribution is accepted.
 - Pavo-branded burned-caption preview.
@@ -37,18 +43,24 @@ pavo audio separate-overlaps youtube_KxJWK8R7uVQ_named_v1 \
   --min-duration 0.25
 ```
 
+Review the cleaner Conan proof bundle:
+
+```bash
+pavo review anchors serve docs/conan-real-media-review-bundle --port 9877
+```
+
 ## Test 2: New Zealand Accent / Slang
 
 - Source: `New Zealand Accent/ Slang`
 - Channel: `King Country Kiwi`
 - YouTube ID: `ddIP0k-XzpI`
 - Pavo source ID: `youtube_ddIP0k-XzpI_nz_accent_6speakers`
-- Local demo folder: `/Users/dshanklinbv/Eidos/Pavo/demos/nz-accent-test/`
-- Preview video: `/Users/dshanklinbv/Eidos/Pavo/demos/nz-accent-test/pavo-nz-accent-preview.mp4`
-- Comparison: `/Users/dshanklinbv/Eidos/Pavo/demos/nz-accent-test/comparison.json`
+- Local demo folder: `/Users/dshanklin/Eidos/Pavo/demos/nz-accent-test/`
+- Preview video: `/Users/dshanklin/Eidos/Pavo/demos/nz-accent-test/pavo-nz-accent-preview.mp4`
+- Comparison: `/Users/dshanklin/Eidos/Pavo/demos/nz-accent-test/comparison.json`
 - Slang comparison report: [nz-slang-comparison-report.json](nz-slang-comparison-report.json)
-- Process manifest: `/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/pavo-process-manifest.json`
-- Scorecard: `/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/process-call/speaker-pipeline/scorecard.json`
+- Process manifest: `/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/pavo-process-manifest.json`
+- Scorecard: `/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_ddIP0k-XzpI_nz_accent_6speakers/process-call/speaker-pipeline/scorecard.json`
 
 Useful cases:
 
@@ -65,10 +77,10 @@ Useful cases:
 Rerun the six-speaker process:
 
 ```bash
-pavo audio process /Users/dshanklinbv/Eidos/Pavo/imports/youtube/ddIP0k-XzpI/ddIP0k-XzpI.mp4 \
+pavo audio process /Users/dshanklin/Eidos/Pavo/imports/youtube/ddIP0k-XzpI/ddIP0k-XzpI.mp4 \
   --source-id youtube_ddIP0k-XzpI_nz_accent_6speakers \
   --title "New Zealand Accent/ Slang | King Country Kiwi" \
-  --context-file /Users/dshanklinbv/Eidos/Pavo/demos/nz-accent-test/context-terms.txt \
+  --context-file /Users/dshanklin/Eidos/Pavo/demos/nz-accent-test/context-terms.txt \
   --context-term "New Zealand" \
   --context-term Kiwi \
   --context-term "King Country Kiwi" \
@@ -81,7 +93,7 @@ Rerun the preview render:
 pavo video render youtube_ddIP0k-XzpI_nz_accent_6speakers \
   --title "New Zealand Accent/ Slang | Pavo Test" \
   --duration 45 \
-  --out /Users/dshanklinbv/Eidos/Pavo/demos/nz-accent-test/pavo-nz-accent-preview.mp4
+  --out /Users/dshanklin/Eidos/Pavo/demos/nz-accent-test/pavo-nz-accent-preview.mp4
 ```
 
 Current proof notes:

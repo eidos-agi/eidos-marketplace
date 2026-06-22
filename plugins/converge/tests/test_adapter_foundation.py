@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -12,7 +13,7 @@ import jsonschema
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PYTHON = "/Users/dshanklinbv/.pyenv/shims/python3"
+PYTHON = sys.executable
 ROW_SCHEMA = ROOT / "schemas" / "converge-row.schema.json"
 SPEC_SCHEMA = ROOT / "schemas" / "converge-spec.schema.json"
 SPEC_TEMPLATE = ROOT / "assets" / "templates" / "converge-spec.json"

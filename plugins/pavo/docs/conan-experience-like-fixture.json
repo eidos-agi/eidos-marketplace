@@ -2,7 +2,7 @@
   "name": "conan-experience-like-speaker-change",
   "video_id": "KxJWK8R7uVQ",
   "source_id": "youtube_KxJWK8R7uVQ_named_v1",
-  "source_transcript_json": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/speaker-pipeline/resemblyzer-agglomerative.immune.attributed.json",
+  "source_transcript_json": "/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/speaker-pipeline/resemblyzer-agglomerative.immune.attributed.json",
   "expectation": {
     "phrase": "what was that experience like",
     "expected_speaker": "Kaitlin Olson",

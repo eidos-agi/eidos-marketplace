@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "eidos-felix"
+version = "0.1.0"
+description = "Felix builds, audits, documents, and maintains agent ecosystems."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Eidos AGI", email = "daniel@eidosagi.com"}]
+keywords = ["agents", "cli", "agentic-software", "eidos", "scaffolding", "plugins"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development",
+]
+dependencies = ["PyYAML>=6.0"]
+
+[project.optional-dependencies]
+dev = ["build>=1.2", "pytest>=8.0", "ruff>=0.8", "twine>=5.0"]
+
+[project.urls]
+Homepage = "https://eidosagi.com/tools/felix"
+Repository = "https://github.com/eidos-agi/felix"
+Issues = "https://github.com/eidos-agi/felix/issues"
+Documentation = "https://eidosagi.com/tools/felix"
+
+[project.scripts]
+felix = "felix.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["felix"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"AGENTS.md" = "AGENTS.md"
+"CHANGELOG.md" = "CHANGELOG.md"
+"CLAUDE.md" = "CLAUDE.md"
+"CODEX-PLUGIN.md" = "CODEX-PLUGIN.md"
+"CODE_OF_CONDUCT.md" = "CODE_OF_CONDUCT.md"
+"CONTRIBUTING.md" = "CONTRIBUTING.md"
+"SECURITY.md" = "SECURITY.md"
+"assets" = "assets"
+"docs" = "docs"
+"examples" = "examples"
+"skills" = "skills"
+"templates" = "templates"
+"wiki" = "wiki"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

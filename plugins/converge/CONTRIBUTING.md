@@ -5,10 +5,10 @@ Converge is a contract-first plugin. Contributions should preserve that boundary
 ## Development Setup
 
 ```bash
-cd /Users/dshanklinbv/plugins/converge
+cd /Users/dshanklin/plugins/converge
 python3 -m pytest tests -q
 python3 tests/validate_adapter_examples.py
-python3 /Users/dshanklinbv/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
+python3 /Users/dshanklin/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
 felix plugin doctor .
 ```
 

@@ -27,51 +27,6 @@ def test_detects_python_plugin_project(tmp_path: Path) -> None:
     assert "ship-forge" in model["forge_stack"]
 
 
-def test_detects_eidos_store_route_for_plugin_project(tmp_path: Path) -> None:
-    marketplace = tmp_path / "eidos-marketplace"
-    marketplace.mkdir()
-    plugin = tmp_path / "demo-plugin"
-    plugin.mkdir()
-    (plugin / "pyproject.toml").write_text("[project]\nname='demo-plugin'\n")
-    (plugin / ".codex-plugin").mkdir()
-    (plugin / ".codex-plugin" / "plugin.json").write_text('{"name": "demo-plugin"}')
-
-    model = detect_release_model(plugin)
-
-    assert model["release_routes"] == [
-        {
-            "id": "eidos-plugin-store",
-            "channel": "Eidos AGI marketplace",
-            "owner": "eidos-plugin-store",
-            "tool": "eidos-marketplace/tools/marketplace_publish.py",
-            "intent": "handoff plugin releases to the standard Eidos store publishing path",
-            "handoff": {
-                "target_project": str(marketplace),
-                "source_project": str(plugin),
-                "commands": [
-                    (
-                        f"cd {marketplace} && python3 tools/marketplace_publish.py "
-                        f"publish {plugin} --audit-date <YYYY-MM-DD>"
-                    ),
-                    (
-                        f"cd {marketplace} && python3 tools/marketplace_publish.py "
-                        f"check demo-plugin --source {plugin}"
-                    ),
-                    "codex plugin add demo-plugin@eidos-agi",
-                    "codex plugin list --marketplace eidos-agi | rg demo-plugin",
-                ],
-                "proofs": [
-                    "marketplace publish command completed",
-                    "marketplace check passed",
-                    "store branch/PR merged into main",
-                    "Codex install/list proof sees the plugin from eidos-agi",
-                ],
-            },
-            "approval_gate": "public marketplace merge/publish remains explicit-human-approved",
-        }
-    ]
-
-
 def test_write_model_and_frontier(tmp_path: Path) -> None:
     (tmp_path / "pyproject.toml").write_text("[project]\nname='demo'\n")
     path = write_release_model(tmp_path, detect_release_model(tmp_path))
@@ -111,29 +66,6 @@ def test_frontier_uses_latest_ready_attempt_next_actions(tmp_path: Path) -> None
         "request explicit human approval for public publish/deploy if needed",
         "record shipped or rolled_back after the irreversible step",
     ]
-
-
-def test_frontier_routes_ready_plugin_to_standard_store_path(tmp_path: Path) -> None:
-    marketplace = tmp_path / "eidos-marketplace"
-    marketplace.mkdir()
-    plugin = tmp_path / "demo-plugin"
-    plugin.mkdir()
-    (plugin / "pyproject.toml").write_text("[project]\nname='demo-plugin'\n")
-    (plugin / ".codex-plugin").mkdir()
-    (plugin / ".codex-plugin" / "plugin.json").write_text('{"name": "demo-plugin"}')
-    write_release_model(plugin, detect_release_model(plugin))
-
-    path, attempt = record_attempt(plugin, goal="ready for store", status="ready")
-    frontier = release_frontier(plugin)
-
-    assert path.exists()
-    assert attempt["release_model_snapshot"]["release_routes"][0]["id"] == "eidos-plugin-store"
-    assert attempt["next_actions"] == [
-        "handoff to eidos-plugin-store using the standard marketplace_publish.py publish path",
-        "verify store entry with marketplace_publish.py check and codex plugin install/list proof",
-        "after explicit approval, merge the store PR and record shipped with PR + install proof",
-    ]
-    assert frontier["next_actions"] == attempt["next_actions"]
 
 
 def test_summarizes_eidos_ship_report() -> None:

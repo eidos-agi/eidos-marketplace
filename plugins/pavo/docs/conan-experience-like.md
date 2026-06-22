@@ -10,7 +10,7 @@ phrase and preserve a speaker-change candidate.
 - Video: `When The Always Sunny Cast Met Danny DeVito | CONAN on TBS`
 - YouTube ID: `KxJWK8R7uVQ`
 - Pavo source ID: `youtube_KxJWK8R7uVQ_named_v1`
-- Transcript artifact: `/Users/dshanklinbv/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/speaker-pipeline/resemblyzer-agglomerative.immune.attributed.json`
+- Transcript artifact: `/Users/dshanklin/Eidos/Pavo/cache/imports/youtube_KxJWK8R7uVQ_named_v1/process-call/speaker-pipeline/resemblyzer-agglomerative.immune.attributed.json`
 - Fixture JSON: [conan-experience-like-fixture.json](conan-experience-like-fixture.json)
 - YouTube comparison report: [conan-experience-comparison-report.json](conan-experience-comparison-report.json)
 

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>apple-a-day — {{ grade }} ({{ overall }}/100)</title>
+<style>
+{% include 'style.css' %}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">🍎 apple-a-day</div>
+  <nav>
+    <div class="nav-label">Overview</div>
+    <a href="#bluf" data-level="1">BLUF</a>
+    <a href="#sysinfo" data-level="1">System</a>
+    <a href="#actions" data-level="1">Actions</a>
+    <div class="nav-label nav-l2">Analysis</div>
+    <a href="#matrix" data-level="2" class="nav-l2">Health Matrix</a>
+    <a href="#pressure" data-level="2" class="nav-l2">Pressure</a>
+    <a href="#criticals" data-level="2" class="nav-l2">Critical Issues</a>
+    <div class="nav-label nav-l3">Deep Dive</div>
+    <a href="#load" data-level="3" class="nav-l3">Load History</a>
+    <a href="#hogs" data-level="3" class="nav-l3">Process Hogs</a>
+    <a href="#warnings" data-level="3" class="nav-l3">Warnings</a>
+    <a href="#cleanup" data-level="3" class="nav-l3">App Cleanup</a>
+    <a href="#redundant" data-level="3" class="nav-l3">Similar Apps</a>
+  </nav>
+</div>
+
+<div class="main">
+
+<div class="top-rail">
+  {% include 'components/pills.html' %}
+</div>
+
+{% include 'components/header.html' %}
+
+<section id="bluf">
+  <div class="section-label">BLUF</div>
+  {% include 'components/bluf.html' %}
+</section>
+
+<section id="sysinfo">
+  <div class="section-label">System</div>
+  {% include 'components/sysinfo.html' %}
+</section>
+
+<section id="actions">
+  <div class="section-label">Actions</div>
+  {% include 'components/actions.html' %}
+</section>
+
+<div class="l2">
+  <section id="matrix">
+    <div class="section-label">Health Matrix</div>
+    {% include 'components/matrix.html' %}
+  </section>
+
+  <section id="pressure">
+    <div class="section-label">Pressure</div>
+    {% include 'components/pressure.html' %}
+  </section>
+
+  <section id="criticals">
+    <div class="section-label">Critical Issues</div>
+    {% include 'components/criticals.html' %}
+  </section>
+
+  <div class="l3">
+    <section id="load">
+      <div class="section-label">Load History</div>
+      {% include 'components/sparkline.html' %}
+    </section>
+
+    <section id="hogs">
+      <div class="section-label">Process Hogs</div>
+      {% include 'components/hogs.html' %}
+    </section>
+
+    <section id="warnings">
+      <div class="section-label">Warnings</div>
+      {% include 'components/warnings.html' %}
+    </section>
+
+    <section id="cleanup">
+      <div class="section-label">App Cleanup</div>
+      {% include 'components/cleanup.html' %}
+    </section>
+
+    <section id="redundant">
+      <div class="section-label">Similar Apps</div>
+      {% include 'components/redundant.html' %}
+    </section>
+
+    <section>
+      <div class="section-label">Info &amp; Trend</div>
+      {% include 'components/info.html' %}
+      {% include 'components/trend.html' %}
+    </section>
+  </div>
+</div>
+
+<footer>
+  🍏 apple-a-day v0.3.1 · {{ now_str }} · {{ duration_ms }}ms
+  <br>
+  <button class="json-download" onclick="downloadJSON()">Download report as JSON</button>
+</footer>
+<script>
+function downloadJSON() {
+  const data = {{ report_json }};
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'apple-a-day-report-{{ now_str.replace(" ", "T") }}.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+
+</div><!-- /main -->
+
+<div class="apple-progress">
+  <div class="apple-track"><span class="apple-dot" id="appleDot">🍎</span></div>
+</div>
+
+<script>
+{% include 'script.js' %}
+</script>
+
+</body>
+</html>

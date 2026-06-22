@@ -1,0 +1,14 @@
+{
+  "kind": {
+    "type": "tool",
+    "signals": [
+      "single_capability",
+      "uvx_shim"
+    ]
+  },
+  "audit": {
+    "audited_by": "pending Forge-Forge release packet",
+    "audit_version": "STANDARD.md",
+    "grade": "PENDING"
+  }
+}

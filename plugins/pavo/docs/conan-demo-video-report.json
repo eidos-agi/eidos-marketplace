@@ -1,9 +1,9 @@
 {
   "passed": true,
-  "final_video": "/Users/dshanklinbv/Eidos/Pavo/demos/conan-pavo-demo/pavo-conan-demo.mp4",
+  "final_video": "/Users/dshanklin/Eidos/Pavo/demos/conan-pavo-demo/pavo-conan-demo.mp4",
   "final_video_present": true,
   "final_video_size_bytes": 3606036,
-  "comparison_json": "/Users/dshanklinbv/Eidos/Pavo/demos/conan-pavo-demo/comparison.json",
+  "comparison_json": "/Users/dshanklin/Eidos/Pavo/demos/conan-pavo-demo/comparison.json",
   "comparison_valid": true,
   "narration_present": true,
   "required_sections": [
@@ -30,5 +30,5 @@
   ],
   "missing_sections": [],
   "section_count": 9,
-  "source_demo": "/Users/dshanklinbv/Eidos/Pavo/demos/conan-pavo-demo"
+  "source_demo": "/Users/dshanklin/Eidos/Pavo/demos/conan-pavo-demo"
 }

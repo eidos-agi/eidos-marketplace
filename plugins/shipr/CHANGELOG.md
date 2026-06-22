@@ -2,11 +2,6 @@
 
 ## Unreleased
 
-- Added Eidos store release routing: plugin release models now include an
-  `eidos-plugin-store` handoff route with the standard marketplace publish,
-  check, install, and merged-PR proof path.
-- Ready plugin releases now surface store-specific next actions instead of
-  generic publish/record-shipped guidance.
 - Added deterministic blocker classification for common `eidos ship` gates,
   including category, owner, tool, severity, and suggested next action.
 - Release attempts now store `blocker_records` alongside legacy blocker IDs.

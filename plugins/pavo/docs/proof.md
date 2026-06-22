@@ -16,7 +16,7 @@ Result:
 ```text
 Plaud CLI: /opt/homebrew/bin/plaud
 Plaud version: plaud 0.2.4
-eidos-transcribe: /Users/dshanklinbv/.pyenv/shims/eidos-transcribe
+eidos-transcribe: /Users/dshanklin/.pyenv/shims/eidos-transcribe
 eidos-transcribe version: eidos-transcribe 0.1.0
 
 [ok ] ffmpeg
@@ -38,8 +38,8 @@ optional speaker and separation dependencies installed.
 Command:
 
 ```bash
-cd /Users/dshanklinbv/repos-eidos-agi/eidos-transcribe
-/Users/dshanklinbv/.pyenv/versions/3.12.7/bin/python -m pytest -q \
+cd /Users/dshanklin/repos-eidos-agi/eidos-transcribe
+/Users/dshanklin/.pyenv/versions/3.12.7/bin/python -m pytest -q \
   tests/test_speaker_pipeline.py \
   -k "immune or rolling or separation or stems"
 ```
@@ -78,10 +78,10 @@ pavo transcribe d195d22dec3d2bf3ea31b12a0aa43654 \
 Result:
 
 ```text
-audio_path: /Users/dshanklinbv/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/audio.mp3
+audio_path: /Users/dshanklin/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/audio.mp3
 audio_sha256: dee0b7c5134b1c3c6e5408a42df21873c11412e4847a7bedf29347ea2716e9d6
-transcribe_output_dir: /Users/dshanklinbv/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/transcribe
-manifest: /Users/dshanklinbv/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/pavo-transcribe-manifest.json
+transcribe_output_dir: /Users/dshanklin/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/transcribe
+manifest: /Users/dshanklin/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/pavo-transcribe-manifest.json
 ```
 
 The Pavo manifest records:
@@ -159,25 +159,73 @@ Transcript output:
 - Pavo now writes a c37 Speaker 1 anchor review packet with 20 candidate spans
   and suggested `--speaker-correction` values:
   [plaud-c37-speaker1-anchor-review-packet.json](plaud-c37-speaker1-anchor-review-packet.json).
+- Pavo also cuts the 20 real c37 candidate spans into reviewable WAV clips, so
+  a human can listen to the likely Speaker 1 anchors before rerunning the
+  Plaud decompose path with corrections:
+  [plaud-c37-speaker1-anchor-review-clips.json](plaud-c37-speaker1-anchor-review-clips.json).
+- Pavo now turns those clips into a pending human review sheet:
+  [plaud-c37-speaker1-anchor-review-sheet.json](plaud-c37-speaker1-anchor-review-sheet.json).
+  The sheet currently has 20 pending rows and 0 approved corrections, so no
+  unreviewed clip can be exported as a speaker override.
+- Pavo also writes a local HTML listening page for that same sheet:
+  [plaud-c37-speaker1-anchor-review.html](plaud-c37-speaker1-anchor-review.html).
+  It embeds all 20 WAV clips with their proposed `--speaker-correction` values
+  and lets the reviewer approve, reject, annotate, and export an updated JSON
+  sheet without opening clip paths or editing JSON by hand. The exported sheet
+  can be validated and imported with `pavo review anchors import`, which rejects
+  changed clip identities before corrections are generated. Once approved rows
+  exist, `pavo review anchors rerun-command` prints the exact corrected
+  `pavo audio decompose` command from the original Pavo manifest plus the
+  approved `--speaker-correction` flags. The current c37 sheet still has no
+  approved rows, so the rerun command report correctly remains blocked:
+  [plaud-c37-anchor-rerun-command-report.json](plaud-c37-anchor-rerun-command-report.json).
+- The review page itself is now verified by a local HTML parser because the
+  in-app browser blocks direct `file://` navigation. The page verification
+  report confirms 20 audio players, 20 approve controls, 20 reject controls,
+  20 pending controls, 20 note fields, embedded sheet JSON, and import/rerun
+  instructions:
+  [plaud-c37-anchor-review-page-report.json](plaud-c37-anchor-review-page-report.json).
+- Pavo now also creates a browser-safe review bundle with all 20 WAV clips
+  copied beside `index.html` using relative audio URLs. The bundle can be
+  served locally with `pavo review anchors serve
+  docs/plaud-c37-anchor-review-bundle --port 9876`.
+  Browser DOM verification over `http://127.0.0.1:9876/index.html` confirms the
+  same 20 audio controls and review controls render over HTTP:
+  [plaud-c37-anchor-review-bundle-manifest.json](plaud-c37-anchor-review-bundle-manifest.json),
+  [plaud-c37-anchor-review-browser-report.json](plaud-c37-anchor-review-browser-report.json).
+- The combined review gate now checks sheet status, page verification, bundle
+  readiness, browser verification, and rerun-command readiness in one report:
+  [plaud-c37-anchor-review-gate-report.json](plaud-c37-anchor-review-gate-report.json).
+  It currently passes every UI/bundle check and fails only because 20 review
+  rows are still pending and no speaker-anchor clips are approved.
+- `pavo review anchors status` now prints the review URL, serve command,
+  blockers, and next action in one place:
+  [plaud-c37-anchor-review-status-report.json](plaud-c37-anchor-review-status-report.json).
 - The real-media audit now finds accepted Conan/Kaitlin overlap separation:
   both stems pass the trust gate with wrong-window leakage checks. The accepted
   stem ASR manifest writes trusted global-timed evidence for that overlap.
-- The accepted Conan stem ASR does not yet prove transcript improvement: the
-  reviewed expected phrase appears in the same-region mixed ASR too, so
+- The accepted Conan stem ASR does not prove transcript improvement by itself:
+  the reviewed expected phrase appears in the same-region mixed ASR too, so
   [stem-asr-improvement-report.json](stem-asr-improvement-report.json) remains
   `passed: false`.
 - A broader Conan search checked 80 candidate overlap regions across 4 padding
   settings and did not find another accepted region that proves stem-ASR word
   recovery; see
   [stem-asr-improvement-search-report.json](stem-asr-improvement-search-report.json).
+- The New Zealand accent/slang fixture now runs through generic speaker
+  signature enrollment, rolling/immune attribution, separated overlap regions,
+  and diagnostic stem transcripts. A later assignment fix lets stems match any
+  of the six speaker labels instead of only the first two labels. The accepted
+  sweep evidence shows trusted stem ASR recovered three words that the
+  same-region mixed ASR missed; see
+  [accepted-stem-asr-recovery-report.json](accepted-stem-asr-recovery-report.json).
+  This closes the machine-comparison proof gap, but it is still not
+  human-reviewed.
 - Pavo does not currently run genetic algorithms.
 - The merge policy is now proven by
   [stem-merge-policy-report.json](stem-merge-policy-report.json); the remaining
-  blockers are stem-ASR improvement over mixed audio and human-reviewed
-  multi-person Plaud accepted overlap.
+  blocker is human-reviewed multi-person Plaud accepted overlap.
 
 The next proof target should be a real two-speaker Plaud recording with overlap,
 speaker mappings, and a `separate-overlaps` run that produces accepted stem
-reports, ideally with human-reviewed speaker identities. The other next target
-is a real-media comparison proving stem ASR recovers words missed by mixed-audio
-ASR.
+reports, ideally with human-reviewed speaker identities.

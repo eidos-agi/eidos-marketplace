@@ -138,6 +138,49 @@ The schema is forward-compatible: new fields under `x-eidos` are additive, never
 
 ---
 
+## Post-AI primitives — what plugins are for
+
+The marketplace is not a bag of productivity helpers. It is a set of
+agent-operating primitives. Different plugins serve different primitives; a good
+plugin should know which primitive it owns and should not pretend to own the
+whole system.
+
+Execution gets cheaper as AI improves. The scarce layer becomes what to point
+execution at, how to prove it worked, what should compound, and where humans
+must stay in control. Eidos plugins should therefore make one or more of these
+primitives stronger:
+
+| Primitive | What it means | Example plugin shape |
+|---|---|---|
+| Judgment | Decide what matters, what to kill, what to test, and what to upgrade | leverage scorer, research gate, policy/governor |
+| Constraint detection | Find the active bottleneck before planning work | review forge, diagnostic CLI, outside-in steering |
+| Proof | Verify outcomes with evidence, not vibes | audit tool, test forge, evidence ledger |
+| Memory | Preserve durable lessons, decisions, and source-of-truth state | wiki steward, lesson log, ADR tool |
+| Execution | Do bounded work through reversible commands or scoped tools | MCP server, CLI, worker/delegation tool |
+| Coordination | Route work across agents, repos, people, and task systems | recommender, dispatcher, task manager |
+| Approval | Keep money, law, health, credentials, identity, reputation, and trust under explicit human gates | approval hook, dry-run gate, policy checker |
+| Asset creation | Turn repeated work into systems, agents, ledgers, defaults, or canonical records | agent builder, scaffold forge, source publisher |
+| Review cadence | Revisit what compounded, what stayed one-off, and what should be retired | weekly review forge, self-improvement loop |
+
+No plugin has to cover every primitive. In fact, most should not. A plugin earns
+its place by serving a primitive cleanly, exposing its boundaries, and composing
+with adjacent primitives. `Lever` can be a judgment layer; `Felix` can build
+agents; `Foreman` can delegate execution; `StepProof` can enforce proof and
+approval; `Visionlog` can preserve governance memory. The store philosophy is
+that these are complementary surfaces in an agent operating system, not
+interchangeable apps.
+
+This also changes how plugins should be reviewed:
+
+- Name the primitive the plugin serves.
+- Name adjacent primitives it depends on or should pair with.
+- Do not expand scope just to look more complete.
+- Prefer explicit handoff points over hidden all-in-one behavior.
+- A plugin that claims self-improvement must show the proof loop and the memory
+  it changes.
+
+---
+
 ## Tools and Forges — two surfaces, one bar
 
 The marketplace classifies every plugin as one of two `kind.type` values: `tool` or `forge`. The distinction matters because **discovery patterns differ**, even though the [Standard's three layers](#the-bar--three-layers) apply equally to both.

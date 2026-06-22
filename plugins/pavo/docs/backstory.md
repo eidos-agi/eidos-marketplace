@@ -1,19 +1,58 @@
 # Backstory
 
-Pavo exists because Plaud is excellent at capture, but the stock Plaud workflow
-is not enough when recordings need to become real working intelligence. A user
-needs more control over the actual audio files, speaker identification, custom
-dictionaries per call, routing, task creation, and durable archives.
+Pavo exists because important conversations often come back as weak transcripts
+that teams cannot audit, improve, or route into real work. Plaud exposed the
+first version of the problem: it was excellent at capture, but the stock
+workflow was not enough when recordings needed to become durable intelligence
+and approved action.
+
+The broader product is an evidence-first approval queue for captured
+conversations. Teams need control over the actual audio files, speaker
+identification, custom dictionaries per call, overlap checks, routing
+recommendations, approval state, destination writes, and durable archives.
 
 The goal is simple:
 
 ```text
-Plaud Cloud -> real audio -> speaker-aware transcript -> routed notes and tasks -> durable archive
+recording source -> real audio -> tuned evidence -> routing packet -> approval -> destination proof
 ```
 
-Pavo owns the Plaud wrapper, file control, routing, task creation, and archive
-layer. `eidos-transcribe` owns the audio-intelligence layer that Pavo can call
-as an installable package.
+Pavo owns source wrappers, Plaud CLI/MCP access, imported media, file control,
+review state, routing packets, approvals, destination manifests, policy memory,
+and the archive layer. `eidos-transcribe` owns the audio-intelligence layer
+that Pavo can call as an installable package.
+
+## Flight Path
+
+Pavo moves spoken records through a Flight Path:
+
+```text
+Nest -> Tune -> Scout -> Land -> Home
+```
+
+- **Nest:** capture and preserve the source recording.
+- **Tune:** make the record accurate and trustworthy.
+- **Scout:** recommend routes and actions.
+- **Land:** execute approved actions.
+- **Home:** learn where future records belong.
+
+This matters because recordings have levels of completion. A record can be
+safely nested without being transcribed, tuned without being routed, scouted
+without being approved, or landed only after a user or policy approves the
+action. The compact product model lives in [product.md](product.md), the edited
+reader-facing manuscript lives in
+[pavo-core-manuscript.md](pavo-core-manuscript.md), and the full long-form
+product canon lives in [pavo-product-book.md](pavo-product-book.md). The
+implementation-ready response to meeting-bot complaints lives in
+[pavo-meeting-bot-complaint-response.md](pavo-meeting-bot-complaint-response.md),
+with test fixtures in
+[pavo-complaint-fixture-ledger.md](pavo-complaint-fixture-ledger.md) and build
+contracts in [pavo-gate-contracts.md](pavo-gate-contracts.md). The plain-user
+UX, demo, packaging, and anti-slop standards live in
+[pavo-one-button-ux-acceptance.md](pavo-one-button-ux-acceptance.md),
+[pavo-proof-first-demo-script.md](pavo-proof-first-demo-script.md),
+[pavo-packaging-trust-promises.md](pavo-packaging-trust-promises.md), and
+[pavo-anti-slop-audit.md](pavo-anti-slop-audit.md).
 
 ## Bio-Inspired Audio Intelligence
 
@@ -28,13 +67,14 @@ a segment as mixed when the audio looks like more than one voice. When a region
 is mixed, the separation path can isolate the suspicious slice, split it into
 stems, and score those stems against known speaker fingerprints.
 
-That gives Pavo a practical path from Plaud audio to speaker-aware intelligence:
+That gives Pavo a practical path from source audio to speaker-aware
+intelligence:
 
 ```text
-Plaud audio -> speaker fingerprints -> rolling detector votes -> overlap flags -> source-separation analysis
+source audio -> speaker fingerprints -> rolling detector votes -> overlap flags -> source-separation analysis
 ```
 
-## Why Plaud Alone Was Not Sufficient
+## Why Plaud Was The Starting Point
 
 ### 1. Transcript-only access is not enough
 
@@ -177,8 +217,12 @@ Pavo solves:
 - Real audio download.
 - Local cache and config structure.
 - Recording manifests.
+- Review and correction state.
+- Routing packets.
+- Approval-gated destination writes.
 - Google Drive archiving.
 - Intelligent routing and task creation.
+- Policy memory from approvals and corrections.
 - Agent/plugin instructions for safe use.
 
 `eidos-transcribe` solves:
@@ -203,5 +247,6 @@ Plaud recording id -> audio.mp3 -> eidos-transcribe -> transcript + manifest
 ```
 
 The remaining product work is to make the loop durable for daily use: local
-sync index, Google Drive archive, duplicate-safe uploads, and a thin Codex
+sync index, Google Drive archive, duplicate-safe uploads, routing packets,
+approval state, destination write manifests, policy memory, and a thin Codex
 plugin surface that routes agents back to the Pavo CLI.

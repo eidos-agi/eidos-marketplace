@@ -11,6 +11,20 @@ from .config import DEFAULT_HOME, home_from_arg, init_home
 from .download import save_audio
 from .overlap import SeparateOverlapsRequest, separate_overlaps
 from .plaud import PlaudCli, PlaudCliError
+from .review import (
+    build_anchor_review_rerun_command,
+    build_anchor_review_serve_command,
+    create_anchor_review_bundle,
+    create_anchor_review_page,
+    create_anchor_review_sheet,
+    compile_anchor_review_corrections,
+    gate_anchor_review,
+    import_anchor_review_sheet,
+    serve_anchor_review_bundle,
+    status_anchor_review,
+    summarize_anchor_review_sheet,
+    verify_anchor_review_page,
+)
 from .render import RenderVideoRequest, render_video
 from .transcribe import (
     DecomposeAudioRequest,
@@ -100,6 +114,52 @@ def build_parser() -> argparse.ArgumentParser:
     video_render.add_argument("--fps", type=int, help="Output frames per second")
     video_render.add_argument("--start", type=float, help="Start time in seconds")
     video_render.add_argument("--duration", type=float, help="Render only this many seconds")
+
+    review = subparsers.add_parser("review", help="Human review helpers")
+    review_sub = review.add_subparsers(dest="review_command", required=True)
+    review_anchors = review_sub.add_parser("anchors", help="Review speaker anchor clips")
+    review_anchors_sub = review_anchors.add_subparsers(dest="review_anchors_command", required=True)
+    review_anchors_init = review_anchors_sub.add_parser("init", help="Create a pending review sheet from a clip packet")
+    review_anchors_init.add_argument("clip_packet", type=Path)
+    review_anchors_init.add_argument("--out", type=Path, help="Review sheet JSON path")
+    review_anchors_summary = review_anchors_sub.add_parser("summary", help="Summarize review progress")
+    review_anchors_summary.add_argument("review_sheet", type=Path)
+    review_anchors_page = review_anchors_sub.add_parser("page", help="Create an HTML page for listening to anchor clips")
+    review_anchors_page.add_argument("review_sheet", type=Path)
+    review_anchors_page.add_argument("--out", type=Path, help="Review page HTML path")
+    review_anchors_bundle = review_anchors_sub.add_parser("bundle", help="Create a browser-safe review bundle with copied clips")
+    review_anchors_bundle.add_argument("review_sheet", type=Path)
+    review_anchors_bundle.add_argument("--out-dir", type=Path, required=True, help="Bundle directory")
+    review_anchors_serve = review_anchors_sub.add_parser("serve", help="Serve a browser-safe review bundle over localhost")
+    review_anchors_serve.add_argument("bundle_dir", type=Path)
+    review_anchors_serve.add_argument("--host", default="127.0.0.1")
+    review_anchors_serve.add_argument("--port", type=int, default=9876)
+    review_anchors_verify_page = review_anchors_sub.add_parser("verify-page", help="Verify a generated anchor review HTML page")
+    review_anchors_verify_page.add_argument("review_sheet", type=Path)
+    review_anchors_verify_page.add_argument("review_page", type=Path)
+    review_anchors_verify_page.add_argument("--report", type=Path, help="Write machine-readable verification report JSON")
+    review_anchors_import = review_anchors_sub.add_parser("import", help="Validate and import an exported reviewed sheet")
+    review_anchors_import.add_argument("review_sheet", type=Path)
+    review_anchors_import.add_argument("reviewed_export", type=Path)
+    review_anchors_import.add_argument("--out", type=Path, help="Imported review sheet path; defaults to replacing review_sheet")
+    review_anchors_rerun = review_anchors_sub.add_parser("rerun-command", help="Print decompose rerun command with approved corrections")
+    review_anchors_rerun.add_argument("review_sheet", type=Path)
+    review_anchors_rerun.add_argument("pavo_decompose_manifest", type=Path)
+    review_anchors_rerun.add_argument("--source-id", help="Override rerun source id; defaults to original source id plus _reviewed")
+    review_anchors_gate = review_anchors_sub.add_parser("gate", help="Check whether anchor review is ready for corrected decompose rerun")
+    review_anchors_gate.add_argument("review_sheet", type=Path)
+    review_anchors_gate.add_argument("--page-report", type=Path)
+    review_anchors_gate.add_argument("--bundle-manifest", type=Path)
+    review_anchors_gate.add_argument("--browser-report", type=Path)
+    review_anchors_gate.add_argument("--rerun-report", type=Path)
+    review_anchors_gate.add_argument("--report", type=Path, help="Write machine-readable gate report JSON")
+    review_anchors_status = review_anchors_sub.add_parser("status", help="Show review URL, blockers, and next action")
+    review_anchors_status.add_argument("review_sheet", type=Path)
+    review_anchors_status.add_argument("--gate-report", type=Path)
+    review_anchors_status.add_argument("--bundle-manifest", type=Path)
+    review_anchors_status.add_argument("--report", type=Path, help="Write machine-readable status report JSON")
+    review_anchors_corrections = review_anchors_sub.add_parser("corrections", help="Print approved --speaker-correction flags")
+    review_anchors_corrections.add_argument("review_sheet", type=Path)
 
     config = subparsers.add_parser("config", help="Inspect local Pavo config")
     config_sub = config.add_subparsers(dest="config_command", required=True)
@@ -291,6 +351,151 @@ def main(argv: list[str] | None = None) -> int:
             print(f"output_video: {result.out_path}")
             print(f"manifest: {result.manifest_path}")
             return 0
+
+    if args.command == "review":
+        if args.review_command == "anchors":
+            if args.review_anchors_command == "init":
+                result = create_anchor_review_sheet(args.clip_packet, out_path=args.out)
+                print(f"review_sheet: {result.review_sheet_path}")
+                print(f"candidate_count: {result.candidate_count}")
+                print(f"pending_count: {result.pending_count}")
+                return 0
+            if args.review_anchors_command == "summary":
+                summary = summarize_anchor_review_sheet(args.review_sheet)
+                print(f"review_sheet: {summary['review_sheet']}")
+                print(f"human_reviewed: {str(summary['human_reviewed']).lower()}")
+                print(f"candidate_count: {summary['candidate_count']}")
+                print(f"approved_count: {summary['approved_count']}")
+                print(f"rejected_count: {summary['rejected_count']}")
+                print(f"pending_count: {summary['pending_count']}")
+                return 0
+            if args.review_anchors_command == "page":
+                result = create_anchor_review_page(args.review_sheet, out_path=args.out)
+                print(f"review_page: {result.review_page_path}")
+                print(f"candidate_count: {result.candidate_count}")
+                print(f"pending_count: {result.pending_count}")
+                return 0
+            if args.review_anchors_command == "bundle":
+                result = create_anchor_review_bundle(args.review_sheet, out_dir=args.out_dir)
+                print(f"bundle_dir: {result.bundle_dir}")
+                print(f"review_sheet: {result.bundled_sheet_path}")
+                print(f"review_page: {result.review_page_path}")
+                print(f"copied_clip_count: {result.copied_clip_count}")
+                print(f"missing_clip_count: {result.missing_clip_count}")
+                return 0 if result.missing_clip_count == 0 else 2
+            if args.review_anchors_command == "serve":
+                try:
+                    result = build_anchor_review_serve_command(
+                        args.bundle_dir,
+                        host=args.host,
+                        port=args.port,
+                        python=sys.executable,
+                    )
+                except FileNotFoundError as exc:
+                    print(str(exc), file=sys.stderr)
+                    return 2
+                print(f"review_url: {result.url}")
+                print(f"bundle_dir: {result.bundle_dir}")
+                print("Press Ctrl-C to stop the review server.")
+                try:
+                    serve_anchor_review_bundle(args.bundle_dir, host=args.host, port=args.port)
+                except KeyboardInterrupt:
+                    return 0
+                return 0
+            if args.review_anchors_command == "verify-page":
+                result = verify_anchor_review_page(args.review_sheet, args.review_page)
+                if args.report:
+                    args.report.parent.mkdir(parents=True, exist_ok=True)
+                    args.report.write_text(__import__("json").dumps(result.as_report(), indent=2) + "\n")
+                    print(f"report: {args.report}")
+                print(f"passed: {str(result.passed).lower()}")
+                print(f"candidate_count: {result.candidate_count}")
+                print(f"audio_count: {result.audio_count}")
+                print(f"approve_count: {result.approve_count}")
+                print(f"reject_count: {result.reject_count}")
+                print(f"pending_button_count: {result.pending_button_count}")
+                print(f"note_count: {result.note_count}")
+                if result.missing:
+                    print("missing: " + "; ".join(result.missing))
+                return 0 if result.passed else 2
+            if args.review_anchors_command == "import":
+                try:
+                    result = import_anchor_review_sheet(args.review_sheet, args.reviewed_export, out_path=args.out)
+                except ValueError as exc:
+                    print(str(exc), file=sys.stderr)
+                    return 2
+                print(f"review_sheet: {result.review_sheet_path}")
+                print(f"imported_sheet: {result.imported_sheet_path}")
+                print(f"human_reviewed: {str(result.human_reviewed).lower()}")
+                print(f"candidate_count: {result.candidate_count}")
+                print(f"approved_count: {result.approved_count}")
+                print(f"rejected_count: {result.rejected_count}")
+                print(f"pending_count: {result.pending_count}")
+                return 0
+            if args.review_anchors_command == "rerun-command":
+                try:
+                    result = build_anchor_review_rerun_command(
+                        args.review_sheet,
+                        args.pavo_decompose_manifest,
+                        source_id=args.source_id,
+                    )
+                except (KeyError, ValueError) as exc:
+                    print(str(exc), file=sys.stderr)
+                    return 2
+                print(result.shell_command)
+                return 0
+            if args.review_anchors_command == "gate":
+                result = gate_anchor_review(
+                    args.review_sheet,
+                    page_report_path=args.page_report,
+                    bundle_manifest_path=args.bundle_manifest,
+                    browser_report_path=args.browser_report,
+                    rerun_report_path=args.rerun_report,
+                )
+                if args.report:
+                    args.report.parent.mkdir(parents=True, exist_ok=True)
+                    args.report.write_text(__import__("json").dumps(result.as_report(), indent=2) + "\n")
+                    print(f"report: {args.report}")
+                print(f"passed: {str(result.passed).lower()}")
+                print(f"human_reviewed: {str(result.human_reviewed).lower()}")
+                print(f"approved_count: {result.approved_count}")
+                print(f"rejected_count: {result.rejected_count}")
+                print(f"pending_count: {result.pending_count}")
+                print(f"page_ready: {str(result.page_ready).lower()}")
+                print(f"bundle_ready: {str(result.bundle_ready).lower()}")
+                print(f"browser_verified: {str(result.browser_verified).lower()}")
+                print(f"rerun_command_ready: {str(result.rerun_command_ready).lower()}")
+                if result.blockers:
+                    print("blockers: " + "; ".join(result.blockers))
+                print(f"next_action: {result.next_action}")
+                return 0 if result.passed else 2
+            if args.review_anchors_command == "status":
+                result = status_anchor_review(
+                    args.review_sheet,
+                    gate_report_path=args.gate_report,
+                    bundle_manifest_path=args.bundle_manifest,
+                )
+                if args.report:
+                    args.report.parent.mkdir(parents=True, exist_ok=True)
+                    args.report.write_text(__import__("json").dumps(result.as_report(), indent=2) + "\n")
+                    print(f"report: {args.report}")
+                print(f"passed: {str(result.passed).lower()}")
+                if result.serve_command:
+                    print(f"serve_command: {result.serve_command}")
+                if result.review_url:
+                    print(f"review_url: {result.review_url}")
+                print(f"approved_count: {result.approved_count}")
+                print(f"rejected_count: {result.rejected_count}")
+                print(f"pending_count: {result.pending_count}")
+                if result.blockers:
+                    print("blockers: " + "; ".join(result.blockers))
+                print(f"next_action: {result.next_action}")
+                return 0 if result.passed else 2
+            if args.review_anchors_command == "corrections":
+                result = compile_anchor_review_corrections(args.review_sheet)
+                if result.cli_args:
+                    print(" ".join(result.cli_args))
+                return 0
 
     if args.command == "config":
         pavo_home = init_home(home)

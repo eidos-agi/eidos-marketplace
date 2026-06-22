@@ -4,16 +4,19 @@ import unittest
 from pathlib import Path
 
 from pavo.proof import (
+    accepted_stem_asr_recovery_report,
     conan_demo_video_report,
     conan_experience_comparison_report,
     conan_old_sitcom_report,
     nz_slang_comparison_report,
     plaud_anchor_quality_report,
+    plaud_anchor_review_clip_packet,
     plaud_anchor_review_packet,
     plaud_decompose_recording_report,
     plaud_real_recording_report,
     proof_status_summary,
     real_media_accepted_stems_audit,
+    real_media_decompose_search_report,
     stem_asr_improvement_search_report,
     stem_asr_improvement_report,
 )
@@ -104,6 +107,19 @@ class ProofTests(unittest.TestCase):
         self.assertGreater(report["review_candidate_count"], 0)
         self.assertGreater(len(report["suggested_speaker_corrections"]), 0)
 
+    def test_committed_plaud_c37_anchor_review_clip_packet_is_ready_for_human_review(self):
+        report_path = Path(__file__).resolve().parents[1] / "docs" / "plaud-c37-speaker1-anchor-review-clips.json"
+        report = json.loads(report_path.read_text())
+
+        self.assertTrue(report["passed"])
+        self.assertFalse(report["human_reviewed"])
+        self.assertEqual(report["target_speaker_label"], "SPEAKER_01")
+        self.assertTrue(report["source_audio_present"])
+        self.assertGreaterEqual(report["candidate_count"], 20)
+        self.assertGreaterEqual(report["clip_count"], 20)
+        self.assertEqual(report["missing_clips"], [])
+        self.assertTrue(all(clip["present"] for clip in report["clips"]))
+
     def test_committed_conan_old_sitcom_report_has_accepted_stem_asr_proof(self):
         report_path = Path(__file__).resolve().parents[1] / "docs" / "conan-old-sitcom-report.json"
         report = json.loads(report_path.read_text())
@@ -115,6 +131,21 @@ class ProofTests(unittest.TestCase):
         self.assertFalse(report["stem_asr_improvement_passed"])
         self.assertGreater(report["trusted_segment_count"], 0)
 
+    def test_committed_conan_real_media_review_report_covers_cleaner_audio(self):
+        report_path = Path(__file__).resolve().parents[1] / "docs" / "conan-real-media-review-report.json"
+        report = json.loads(report_path.read_text())
+
+        self.assertTrue(report["passed"])
+        self.assertFalse(report["human_reviewed"])
+        self.assertEqual(report["case_count"], 2)
+        self.assertEqual(report["clip_count"], 6)
+        self.assertEqual(report["experience_like"]["phrase"], "what was that experience like?")
+        self.assertFalse(report["experience_like"]["accepted"])
+        self.assertEqual(report["experience_like"]["trusted_stems"], ["conan-obrien"])
+        self.assertTrue(report["that_old_sitcom"]["accepted"])
+        self.assertEqual(report["that_old_sitcom"]["trusted_stems"], ["conan-obrien", "kaitlin-olson"])
+        self.assertGreaterEqual(report["that_old_sitcom"]["stem_asr_segment_count"], 4)
+
     def test_committed_stem_asr_improvement_report_keeps_gap_open(self):
         report_path = Path(__file__).resolve().parents[1] / "docs" / "stem-asr-improvement-report.json"
         report = json.loads(report_path.read_text())
@@ -125,6 +156,16 @@ class ProofTests(unittest.TestCase):
         self.assertEqual(report["recovered_terms"], [])
         self.assertIn("that old sitcom", report["mixed_text"].lower())
 
+    def test_committed_accepted_stem_asr_recovery_report_closes_real_media_recovery_gap(self):
+        report_path = Path(__file__).resolve().parents[1] / "docs" / "accepted-stem-asr-recovery-report.json"
+        report = json.loads(report_path.read_text())
+
+        self.assertTrue(report["passed"])
+        self.assertFalse(report["reviewed"])
+        self.assertGreaterEqual(report["comparison_count"], 2)
+        self.assertGreaterEqual(report["recovered_item_count"], 3)
+        self.assertTrue(any(item["term"] == "who" for item in report["recovered_items"]))
+
     def test_committed_stem_asr_improvement_search_report_records_broader_search(self):
         report_path = Path(__file__).resolve().parents[1] / "docs" / "stem-asr-improvement-search-report.json"
         report = json.loads(report_path.read_text())
@@ -134,6 +175,19 @@ class ProofTests(unittest.TestCase):
         self.assertGreaterEqual(report["region_count"], 20)
         self.assertGreaterEqual(report["accepted_region_count"], 1)
         self.assertFalse(report["improvement_passed"])
+
+    def test_committed_nz_decompose_search_report_records_generic_signature_search(self):
+        report_path = Path(__file__).resolve().parents[1] / "docs" / "nz-decompose-proof-search-report.json"
+        report = json.loads(report_path.read_text())
+
+        self.assertFalse(report["passed"])
+        self.assertTrue(report["speaker_signatures_present"])
+        self.assertTrue(report["rolling_transcript_present"])
+        self.assertEqual(report["accepted_region_count"], 0)
+        self.assertGreaterEqual(report["separated_region_count"], 20)
+        self.assertGreaterEqual(report["trusted_stem_region_count"], 11)
+        self.assertGreaterEqual(report["transcribed_stem_count"], 40)
+        self.assertTrue(report["include_rejected"])
 
     def test_committed_real_media_accepted_stems_audit_records_accepted_overlap(self):
         report_path = Path(__file__).resolve().parents[1] / "docs" / "real-media-accepted-stems-audit.json"
@@ -153,13 +207,47 @@ class ProofTests(unittest.TestCase):
         self.assertEqual(report["proved_count"], 25)
         self.assertTrue(report["accepted_real_media_stems"])
         self.assertTrue(report["accepted_real_media_stems_with_window_checks"])
-        self.assertFalse(report["real_media_stem_asr_improvement"])
         self.assertEqual(report["plaud_decompose_attempt_count"], 2)
         self.assertEqual(report["plaud_accepted_stem_attempt_count"], 0)
+        self.assertTrue(report["plaud_anchor_review_clip_packet_ready"])
+        self.assertGreaterEqual(report["plaud_anchor_review_clip_count"], 20)
+        self.assertTrue(report["plaud_anchor_review_sheet_ready"])
+        self.assertEqual(report["plaud_anchor_review_sheet_pending_count"], 20)
+        self.assertEqual(report["plaud_anchor_review_sheet_approved_count"], 0)
+        self.assertTrue(report["plaud_anchor_review_page_ready"])
+        self.assertEqual(report["plaud_anchor_review_page_audio_count"], 20)
+        self.assertEqual(report["plaud_anchor_review_page_approve_count"], 20)
+        self.assertEqual(report["plaud_anchor_review_page_missing"], [])
+        self.assertTrue(report["plaud_anchor_review_bundle_ready"])
+        self.assertEqual(report["plaud_anchor_review_bundle_clip_count"], 20)
+        self.assertEqual(report["plaud_anchor_review_bundle_url"], "http://127.0.0.1:9876/index.html")
+        self.assertEqual(
+            report["plaud_anchor_review_bundle_serve_command"],
+            "pavo review anchors serve docs/plaud-c37-anchor-review-bundle --port 9876",
+        )
+        self.assertTrue(report["plaud_anchor_review_bundle_serve_command_verified"])
+        self.assertTrue(report["plaud_anchor_review_browser_verified"])
+        self.assertEqual(report["plaud_anchor_review_browser_audio_count"], 20)
+        self.assertEqual(report["plaud_anchor_review_browser_approve_count"], 20)
+        self.assertFalse(report["plaud_anchor_review_gate_passed"])
+        self.assertIn("20 review rows are still pending", report["plaud_anchor_review_gate_blockers"])
+        self.assertIn("no speaker-anchor clips are approved", report["plaud_anchor_review_gate_blockers"])
+        self.assertEqual(report["plaud_anchor_review_status_review_url"], "http://127.0.0.1:9876/index.html")
+        self.assertIn("review the bundled clips", report["plaud_anchor_review_status_next_action"])
+        self.assertFalse(report["plaud_anchor_rerun_command_ready"])
+        self.assertEqual(report["plaud_anchor_rerun_command_approved_count"], 0)
+        self.assertEqual(report["plaud_anchor_rerun_command_pending_count"], 20)
+        self.assertIn("no approved speaker corrections", report["plaud_anchor_rerun_command_blocked_reason"])
         self.assertTrue(report["merge_policy_reviewed"])
         self.assertGreater(report["reviewable_real_media_stem_count"], 0)
+        self.assertEqual(report["nz_decompose_search_region_count"], 20)
+        self.assertEqual(report["nz_decompose_search_transcribed_stem_count"], 40)
+        self.assertEqual(report["nz_decompose_search_accepted_region_count"], 0)
+        self.assertEqual(report["nz_decompose_search_trusted_stem_region_count"], 11)
         self.assertNotIn("real accepted stems on a real overlap clip", report["remaining_gaps"])
-        self.assertIn("real-media comparison showing stem ASR recovers words missed by mixed-audio ASR", report["remaining_gaps"])
+        self.assertTrue(report["real_media_stem_asr_improvement"])
+        self.assertGreaterEqual(report["real_media_stem_asr_recovery_item_count"], 3)
+        self.assertNotIn("real-media comparison showing stem ASR recovers words missed by mixed-audio ASR", report["remaining_gaps"])
         self.assertNotIn("reviewed merge policy for when stem ASR can augment or override the canonical transcript", report["remaining_gaps"])
 
     def test_conan_experience_comparison_proves_pavo_adds_named_speaker_evidence(self):
@@ -606,6 +694,67 @@ class ProofTests(unittest.TestCase):
         self.assertEqual(report["review_candidate_count"], 1)
         self.assertEqual(report["suggested_speaker_corrections"], ["00:20-00:24=SPEAKER_01"])
 
+    def test_plaud_anchor_review_clip_packet_requires_all_candidate_clips(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            audio = root / "audio.wav"
+            clips = root / "clips"
+            clips.mkdir()
+            audio.write_bytes(b"audio")
+            packet = root / "review.json"
+            packet.write_text(
+                json.dumps(
+                    {
+                        "target_speaker_label": "SPEAKER_01",
+                        "target_speaker_name": "Speaker 1",
+                        "source_audio_wav": str(audio),
+                        "review_candidates": [
+                            {"start": 12.06, "end": 16.06, "text": "candidate one"},
+                            {"start": 144.6, "end": 148.6, "text": "candidate two"},
+                        ],
+                    }
+                )
+            )
+            (clips / "candidate-01-001206-001606.wav").write_bytes(b"clip")
+
+            report = plaud_anchor_review_clip_packet(review_packet=packet, clips_dir=clips)
+
+        self.assertFalse(report["passed"])
+        self.assertEqual(report["candidate_count"], 2)
+        self.assertEqual(report["clip_count"], 1)
+        self.assertEqual(len(report["missing_clips"]), 1)
+        self.assertEqual(report["clips"][0]["suggested_speaker_correction"], "00:12-00:16=SPEAKER_01")
+
+    def test_plaud_anchor_review_clip_packet_passes_when_all_candidate_clips_exist(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            audio = root / "audio.wav"
+            clips = root / "clips"
+            clips.mkdir()
+            audio.write_bytes(b"audio")
+            packet = root / "review.json"
+            packet.write_text(
+                json.dumps(
+                    {
+                        "target_speaker_label": "SPEAKER_01",
+                        "source_audio_wav": str(audio),
+                        "review_candidates": [
+                            {"start": 12.06, "end": 16.06, "text": "candidate one"},
+                            {"start": 144.6, "end": 148.6, "text": "candidate two"},
+                        ],
+                    }
+                )
+            )
+            (clips / "candidate-01-001206-001606.wav").write_bytes(b"clip")
+            (clips / "candidate-02-022460-022860.wav").write_bytes(b"clip")
+
+            report = plaud_anchor_review_clip_packet(review_packet=packet, clips_dir=clips)
+
+        self.assertTrue(report["passed"])
+        self.assertFalse(report["human_reviewed"])
+        self.assertEqual(report["clip_count"], 2)
+        self.assertEqual(report["missing_clips"], [])
+
     def test_conan_old_sitcom_report_proves_rejected_diagnostic_stem_asr(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -919,6 +1068,29 @@ class ProofTests(unittest.TestCase):
         self.assertFalse(report["passed"])
         self.assertEqual(report["recovered_terms"], [])
 
+    def test_accepted_stem_asr_recovery_report_passes_for_accepted_real_media_recovery(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            mixed = root / "mixed.json"
+            stem = root / "stem.json"
+            mixed.write_text(json.dumps({"segments": [{"text": "Mike. He wrote this caption."}]}))
+            stem.write_text(json.dumps({"segments": [{"text": "Mike, who are you? He wrote this caption."}]}))
+
+            report = accepted_stem_asr_recovery_report(
+                comparisons=[
+                    {
+                        "label": "fixture",
+                        "mixed_transcript": str(mixed),
+                        "stem_transcript": str(stem),
+                        "separation_accepted": True,
+                        "expected_recovered_terms": ["who"],
+                    }
+                ]
+            )
+
+        self.assertTrue(report["passed"])
+        self.assertEqual(report["recovered_items"], [{"label": "fixture", "term": "who"}])
+
     def test_stem_asr_improvement_search_report_counts_accepted_regions(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -945,6 +1117,61 @@ class ProofTests(unittest.TestCase):
         self.assertEqual(report["candidate_count"], 2)
         self.assertEqual(report["accepted_region_count"], 1)
         self.assertEqual(report["manifests"][0]["accepted_region_count"], 1)
+
+    def test_real_media_decompose_search_report_counts_rejected_diagnostic_search(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            signatures = root / "speaker-signatures.manifest.json"
+            rolling = root / "rolling.json"
+            separated = root / "separated"
+            stem_asr = root / "stem-asr"
+            separated.mkdir()
+            stem_asr.mkdir()
+            signatures.write_text("{}")
+            rolling.write_text("[]")
+            analysis = separated / "analysis.json"
+            analysis.write_text(
+                json.dumps(
+                    {
+                        "accepted": False,
+                        "region": {"start": 1.0, "end": 2.0, "text": "candidate"},
+                        "stem_reports": {
+                            "speaker-00": {
+                                "target": "Speaker 0",
+                                "wrong_rate": 0.0,
+                                "whole_clip": {"best": "Speaker 0", "margin": 0.2},
+                            },
+                            "speaker-01": {
+                                "target": "Speaker 1",
+                                "wrong_rate": 1.0,
+                                "whole_clip": {"best": "Speaker 0", "margin": 0.01},
+                            },
+                        },
+                    }
+                )
+            )
+            separation_manifest = separated / "separate-overlaps.manifest.json"
+            separation_manifest.write_text(json.dumps({"regions": [str(analysis)]}))
+            stem_manifest = stem_asr / "stem-asr.manifest.json"
+            stem_manifest.write_text(json.dumps({"include_rejected": True, "transcribed_stem_count": 2}))
+            manifest = root / "decompose-transcribe.manifest.json"
+            manifest.write_text(
+                json.dumps(
+                    {
+                        "speaker_signatures_manifest": str(signatures),
+                        "rolling_attributed_json": str(rolling),
+                        "overlap_separation_manifest": str(separation_manifest),
+                        "stem_asr_manifest": str(stem_manifest),
+                    }
+                )
+            )
+
+            report = real_media_decompose_search_report(manifest)
+
+        self.assertFalse(report["passed"])
+        self.assertTrue(report["speaker_signatures_present"])
+        self.assertEqual(report["trusted_stem_region_count"], 1)
+        self.assertEqual(report["accepted_region_count"], 0)
 
     def test_proof_status_summary_keeps_goal_open_without_real_accepted_stems(self):
         with tempfile.TemporaryDirectory() as tmp:

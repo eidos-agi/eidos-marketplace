@@ -5,10 +5,22 @@ description: Use when the user asks about Pavo, Plaud recordings, Plaud CLI, Pla
 
 # Use Pavo
 
-Pavo is a control layer for Plaud recordings. It wraps the Plaud CLI and Plaud
-MCP surfaces so agents can work with the real audio files, speaker-aware
-transcripts, custom dictionaries per call, routing, task creation, and durable
-archives.
+Pavo is an evidence-first approval queue for captured conversations. It wraps
+Plaud CLI/MCP surfaces and local media imports so agents can preserve real
+audio files, tune speaker-aware transcript evidence, scout routing
+recommendations, land approved actions, and archive durable proof.
+
+Use the Pavo Flight Path vocabulary when describing product state:
+
+```text
+Nest -> Tune -> Scout -> Land -> Home
+```
+
+- Nest: capture and preserve the source recording.
+- Tune: make the record accurate and trustworthy.
+- Scout: recommend routes and actions.
+- Land: execute approved actions.
+- Home: learn where future records belong.
 
 ## Source of Truth
 
@@ -28,8 +40,80 @@ pavo transcribe <recording-id> --context-term Plaud
 Canonical source repo:
 
 ```text
-/Users/dshanklinbv/repos-eidos-agi/pavo
+/Users/dshanklin/repos-eidos-agi/pavo
 ```
+
+Canonical product book:
+
+```text
+/Users/dshanklin/repos-eidos-agi/pavo/docs/pavo-product-book.md
+```
+
+Edited reader-facing manuscript:
+
+```text
+/Users/dshanklin/repos-eidos-agi/pavo/docs/pavo-core-manuscript.md
+```
+
+Meeting-bot complaint response design:
+
+```text
+/Users/dshanklin/repos-eidos-agi/pavo/docs/pavo-meeting-bot-complaint-response.md
+```
+
+Complaint fixture ledger:
+
+```text
+/Users/dshanklin/repos-eidos-agi/pavo/docs/pavo-complaint-fixture-ledger.md
+```
+
+Gate contracts:
+
+```text
+/Users/dshanklin/repos-eidos-agi/pavo/docs/pavo-gate-contracts.md
+```
+
+One-button UX acceptance:
+
+```text
+/Users/dshanklin/repos-eidos-agi/pavo/docs/pavo-one-button-ux-acceptance.md
+```
+
+Proof-first demo script:
+
+```text
+/Users/dshanklin/repos-eidos-agi/pavo/docs/pavo-proof-first-demo-script.md
+```
+
+Packaging and trust promises:
+
+```text
+/Users/dshanklin/repos-eidos-agi/pavo/docs/pavo-packaging-trust-promises.md
+```
+
+Anti-slop audit:
+
+```text
+/Users/dshanklin/repos-eidos-agi/pavo/docs/pavo-anti-slop-audit.md
+```
+
+Completion audit:
+
+```text
+/Users/dshanklin/repos-eidos-agi/pavo/docs/pavo-completion-audit.md
+```
+
+Use the product book for detailed Flight Path glossary/status vocabulary,
+routing packet concepts, approval-state language, UI product specs, marketing
+guardrails, implementation roadmap, operating doctrine, fixture ledger, and
+scorecards. Use the core manuscript when the user wants the clean product
+argument without the full sourcebook. Use the complaint-response design when
+the work needs to answer meeting-bot category failures with concrete UX. Use
+the fixture ledger and gate contracts when the work needs acceptance tests,
+algorithm gates, route-packet requirements, or release criteria. Use the
+one-button UX, demo, packaging, and anti-slop docs when shaping the build,
+launch narrative, or buyer-facing promises. Use the completion audit when
+checking whether the current product-doc goal has been satisfied.
 
 Local non-secret config/cache root:
 

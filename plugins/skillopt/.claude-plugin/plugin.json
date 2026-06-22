@@ -1,0 +1,23 @@
+{
+  "name": "skillopt",
+  "version": "0.1.0",
+  "description": "Use Microsoft SkillOpt to train reusable agent skill documents from scored rollouts.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/microsoft/SkillOpt",
+  "repository": "https://github.com/microsoft/SkillOpt",
+  "license": "MIT",
+  "keywords": [
+    "skillopt",
+    "agent-skills",
+    "skill-optimization",
+    "token-cost",
+    "tokut",
+    "eidos",
+    "claude-code"
+  ],
+  "skills": "./skills/"
+}

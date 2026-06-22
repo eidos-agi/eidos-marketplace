@@ -8,6 +8,12 @@ The plugin marketplace for [Claude Code](https://docs.claude.com/en/docs/claude-
 >
 > **The marketplace is its own first customer.** Audits run via `foss-forge`. Releases via `ship-forge`. Security checks via `security-forge`. Each is itself a plugin in this marketplace. If our own tools can't run our own operations, they don't belong here. See [Dogfooding](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins).
 
+> **Primitives, not productivity apps.** Eidos plugins serve agent-operating
+> primitives: judgment, constraint detection, proof, memory, execution,
+> coordination, approval, asset creation, and review cadence. A plugin does not
+> need to do all of them. It needs to serve its primitive clearly and compose
+> with the others.
+
 ## Install
 
 ### Codex
@@ -119,6 +125,13 @@ Per-plugin scorecards live in [AUDITS/](AUDITS/). Audit metadata is also publish
 ## How it works
 
 This marketplace is a directory of pointers, not code. The preferred Eidos pattern is **CLI-first progressive reveal**: plugins and MCP shims should point agents to local CLIs, while the CLIs expose deeper capability through `--help`, `status`, `doctor`, `list`, `find`, `ask`, and domain subcommands. This avoids loading thousands of tools into every agent context while preserving discoverability.
+
+The store is also a map of primitives, not only package names. Some plugins are
+judgment layers, some preserve memory, some enforce proof or approval, some
+execute bounded actions, and some create new assets or agents. The right
+question is not "does this plugin do everything?" It is "which primitive does
+this strengthen, what are its boundaries, and which adjacent primitive should it
+handoff to?" See [STANDARD.md § Post-AI primitives](STANDARD.md#post-ai-primitives--what-plugins-are-for).
 
 Plugins ship in two shapes depending on what they distribute:
 

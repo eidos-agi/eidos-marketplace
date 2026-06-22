@@ -34,7 +34,7 @@
           }
         }
       ],
-      "signatures_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_d535f050e8b65bd1ee0cf144cf215873_generic2/decompose-transcribe/process-call/speaker-pipeline/speaker-signatures/speaker-signatures.manifest.json",
+      "signatures_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_d535f050e8b65bd1ee0cf144cf215873_generic2/decompose-transcribe/process-call/speaker-pipeline/speaker-signatures/speaker-signatures.manifest.json",
       "decompose_report": "docs/plaud-d535-decompose-report.json",
       "blocked": true,
       "blockers": [
@@ -73,7 +73,7 @@
           }
         }
       ],
-      "signatures_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/speaker-signatures/speaker-signatures.manifest.json",
+      "signatures_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/speaker-signatures/speaker-signatures.manifest.json",
       "decompose_report": "docs/plaud-c37-decompose-report.json",
       "blocked": true,
       "blockers": [

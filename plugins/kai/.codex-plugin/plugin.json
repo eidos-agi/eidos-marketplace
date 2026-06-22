@@ -1,0 +1,51 @@
+{
+  "name": "kai",
+  "version": "0.1.0",
+  "description": "Route Eidos founder-ops and company-building work through the local Kai CLI.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/kai",
+  "repository": "https://github.com/eidos-agi/kai",
+  "license": "MIT",
+  "keywords": [
+    "kai",
+    "founder-ops",
+    "company-building",
+    "slack",
+    "deploy",
+    "ideas",
+    "eidos-agi",
+    "progressive-reveal"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Kai",
+    "shortDescription": "Use Kai to run Eidos founder-ops and company-building workflows.",
+    "longDescription": "Kai is the internal Eidos AGI founder-ops multitool. It gives Codex a progressive-reveal path for company procedures, platform guardrails, Slack operations, deploy routing, idea capture, and Kai feedback without duplicating the CLI's operating model in prompt memory.",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "CLI",
+      "Founder Ops",
+      "Company Building",
+      "Slack",
+      "Deploy",
+      "Idea Capture",
+      "Guardrails"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/kai",
+    "privacyPolicyURL": "https://github.com/eidos-agi/kai",
+    "termsOfServiceURL": "https://github.com/eidos-agi/kai",
+    "defaultPrompt": [
+      "Use Kai to route this company-building task.",
+      "Ask Kai for the right founder-ops guardrail.",
+      "Use Kai to capture this company idea."
+    ],
+    "brandColor": "#0F766E",
+    "composerIcon": "./assets/kai-slack-icon.svg",
+    "logo": "./assets/kai-slack-icon-512.png"
+  }
+}

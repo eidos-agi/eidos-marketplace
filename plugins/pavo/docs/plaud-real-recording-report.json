@@ -3,7 +3,7 @@
   "partial": true,
   "recording_id": "d195d22dec3d2bf3ea31b12a0aa43654",
   "audio_sha256": "dee0b7c5134b1c3c6e5408a42df21873c11412e4847a7bedf29347ea2716e9d6",
-  "audio_path": "/Users/dshanklinbv/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/audio.mp3",
+  "audio_path": "/Users/dshanklin/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/audio.mp3",
   "audio_size_bytes": 358234,
   "engines": [
     "faster-whisper"
@@ -12,9 +12,9 @@
     "Plaud",
     "Pavo"
   ],
-  "pavo_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/pavo-transcribe-manifest.json",
-  "eidos_transcribe_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/transcribe/manifest.json",
-  "ensemble": "/Users/dshanklinbv/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/transcribe/ensembled-contextual-transcript.md",
+  "pavo_manifest": "/Users/dshanklin/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/pavo-transcribe-manifest.json",
+  "eidos_transcribe_manifest": "/Users/dshanklin/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/transcribe/manifest.json",
+  "ensemble": "/Users/dshanklin/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654/transcribe/ensembled-contextual-transcript.md",
   "raw_output_count": 1,
   "missing_transcribe_paths": [],
   "stages": {
@@ -32,5 +32,5 @@
     "stem_asr"
   ],
   "next_required_proof": "real multi-speaker Plaud recording with voiceprints, speaker changes, decomposition, stem ASR, and manifests",
-  "source_recording_dir": "/Users/dshanklinbv/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654"
+  "source_recording_dir": "/Users/dshanklin/Eidos/Pavo/cache/plaud/d195d22dec3d2bf3ea31b12a0aa43654"
 }

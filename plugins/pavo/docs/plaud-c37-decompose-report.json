@@ -36,7 +36,7 @@
   },
   "regions": [
     {
-      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/region-01-04m07s-04m11s/analysis.json",
+      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/region-01-04m07s-04m11s/analysis.json",
       "accepted": false,
       "start": 247.02,
       "end": 251.02,
@@ -51,7 +51,7 @@
       }
     },
     {
-      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/region-02-04m47s-04m51s/analysis.json",
+      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/region-02-04m47s-04m51s/analysis.json",
       "accepted": false,
       "start": 287.26,
       "end": 291.26,
@@ -66,7 +66,7 @@
       }
     },
     {
-      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/region-03-05m03s-05m07s/analysis.json",
+      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/region-03-05m03s-05m07s/analysis.json",
       "accepted": false,
       "start": 303.34,
       "end": 307.34,
@@ -81,7 +81,7 @@
       }
     },
     {
-      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/region-04-05m11s-05m15s/analysis.json",
+      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/region-04-05m11s-05m15s/analysis.json",
       "accepted": false,
       "start": 311.36,
       "end": 315.36,
@@ -96,7 +96,7 @@
       }
     },
     {
-      "path": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/region-05-12m48s-12m52s/analysis.json",
+      "path": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/region-05-12m48s-12m52s/analysis.json",
       "accepted": false,
       "start": 768.88,
       "end": 772.9,
@@ -111,12 +111,12 @@
       }
     }
   ],
-  "pavo_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/pavo-decompose-manifest.json",
-  "eidos_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/decompose-transcribe.manifest.json",
-  "speaker_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/speaker-pipeline.manifest.json",
-  "signatures_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/speaker-signatures/speaker-signatures.manifest.json",
-  "separation_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/separate-overlaps.manifest.json",
-  "stem_asr_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/stem-asr/stem-asr.manifest.json",
-  "decomposed_transcript_json": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/stem-asr/decomposed-transcript.json",
+  "pavo_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/pavo-decompose-manifest.json",
+  "eidos_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/decompose-transcribe.manifest.json",
+  "speaker_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/speaker-pipeline.manifest.json",
+  "signatures_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/speaker-signatures/speaker-signatures.manifest.json",
+  "separation_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/separated-overlaps/separate-overlaps.manifest.json",
+  "stem_asr_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/stem-asr/stem-asr.manifest.json",
+  "decomposed_transcript_json": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/stem-asr/decomposed-transcript.json",
   "caveat": "Pipeline proof passes, but all separated regions are currently rejected; accepted real-media stems remain unproven."
 }

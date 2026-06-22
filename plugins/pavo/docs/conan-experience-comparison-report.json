@@ -10,5 +10,5 @@
   "rolling_status": "mixed",
   "rolling_run_count": 2,
   "pavo_preserves_speaker_evidence": true,
-  "source_comparison": "/Users/dshanklinbv/Eidos/Pavo/demos/conan-pavo-demo/comparison.json"
+  "source_comparison": "/Users/dshanklin/Eidos/Pavo/demos/conan-pavo-demo/comparison.json"
 }

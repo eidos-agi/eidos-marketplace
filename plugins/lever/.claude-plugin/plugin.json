@@ -1,0 +1,21 @@
+{
+  "name": "lever",
+  "version": "0.1.0",
+  "description": "Use Lever to find constraints, build leverage, and turn durable corrections into better agent behavior.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "hello@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/lever",
+  "repository": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/lever",
+  "license": "MIT",
+  "keywords": [
+    "lever",
+    "leverage",
+    "agent",
+    "self-learning",
+    "decision-framing",
+    "eidos-agi"
+  ]
+}

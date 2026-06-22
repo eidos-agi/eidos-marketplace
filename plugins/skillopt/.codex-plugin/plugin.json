@@ -1,0 +1,47 @@
+{
+  "name": "skillopt",
+  "version": "0.1.0",
+  "description": "Use Microsoft SkillOpt to train reusable agent skill documents from scored rollouts.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/microsoft/SkillOpt",
+  "repository": "https://github.com/microsoft/SkillOpt",
+  "license": "MIT",
+  "keywords": [
+    "skillopt",
+    "agent-skills",
+    "skill-optimization",
+    "token-cost",
+    "tokut",
+    "eidos",
+    "codex"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SkillOpt",
+    "shortDescription": "Train reusable skills from scored agent rollouts.",
+    "longDescription": "SkillOpt brings Microsoft Research's text-space optimizer into the Eidos workflow. Use it to turn rollout evidence, validation scores, and token-waste patterns into bounded edits on a deployable skill document, including Tokut-style remediation loops for thrashing and runaway AI cost.",
+    "developerName": "Eidos AGI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Skill Optimization",
+      "Rollout Analysis",
+      "Validation Gates",
+      "Token Waste Remediation",
+      "Tokut Workflow",
+      "CLI Bootstrap"
+    ],
+    "websiteURL": "https://github.com/microsoft/SkillOpt",
+    "privacyPolicyURL": "https://github.com/microsoft/SkillOpt/security",
+    "termsOfServiceURL": "https://github.com/microsoft/SkillOpt",
+    "defaultPrompt": [
+      "Use SkillOpt to optimize this agent skill from scored rollouts.",
+      "Use SkillOpt to turn token-thrashing evidence into a better skill.",
+      "Bootstrap Microsoft SkillOpt for a local Eidos experiment."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

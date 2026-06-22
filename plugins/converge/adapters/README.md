@@ -9,7 +9,7 @@ runtime.
 Every adapter should emit rows compatible with:
 
 ```bash
-/Users/dshanklinbv/plugins/converge/schemas/converge-row.schema.json
+/Users/dshanklin/plugins/converge/schemas/converge-row.schema.json
 ```
 
 Minimal row:
@@ -78,7 +78,7 @@ in repair rows, and should leave explicit gap rows for the unproved surface.
 - Keep examples valid with:
 
 ```bash
-python3 /Users/dshanklinbv/plugins/converge/tests/validate_adapter_examples.py
+python3 /Users/dshanklin/plugins/converge/tests/validate_adapter_examples.py
 ```
 
 ## Aggregation
@@ -89,7 +89,7 @@ weighted pass/fail/blocked totals, and emits the repair-focused map Codex should
 work from:
 
 ```bash
-python3 /Users/dshanklinbv/plugins/converge/adapters/aggregate_rows.py \
+python3 /Users/dshanklin/plugins/converge/adapters/aggregate_rows.py \
   path/to/reference-rows.json \
   path/to/pytest-rows.json
 ```
@@ -109,7 +109,7 @@ negative-space claims between handoffs.
 The pytest adapter converts JUnit XML into portable Converge rows:
 
 ```bash
-python3 /Users/dshanklinbv/plugins/converge/adapters/pytest_adapter.py \
+python3 /Users/dshanklin/plugins/converge/adapters/pytest_adapter.py \
   --junit path/to/junit.xml \
   --out converge-rows.json
 ```
@@ -123,8 +123,8 @@ pass`, and a probe/class pair of `pass/pass`, `fail/fail`, `error/blocked`, or
 The JSON reference adapter is a small local helper for exercising the contract:
 
 ```bash
-python3 /Users/dshanklinbv/plugins/converge/adapters/json_reference.py \
-  /Users/dshanklinbv/plugins/converge/assets/templates/converge-spec.json
+python3 /Users/dshanklin/plugins/converge/adapters/json_reference.py \
+  /Users/dshanklin/plugins/converge/assets/templates/converge-spec.json
 ```
 
 It is lab equipment, not the Converge engine.
@@ -132,7 +132,7 @@ It is lab equipment, not the Converge engine.
 To emit portable Converge rows:
 
 ```bash
-python3 /Users/dshanklinbv/plugins/converge/adapters/json_reference.py \
-  /Users/dshanklinbv/plugins/converge/assets/templates/converge-spec.json \
+python3 /Users/dshanklin/plugins/converge/adapters/json_reference.py \
+  /Users/dshanklin/plugins/converge/assets/templates/converge-spec.json \
   --rows
 ```

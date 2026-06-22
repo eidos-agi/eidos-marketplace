@@ -1,0 +1,23 @@
+{
+  "name": "kai",
+  "version": "0.1.0",
+  "description": "Route Eidos founder-ops and company-building work through the local Kai CLI.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/kai",
+  "repository": "https://github.com/eidos-agi/kai",
+  "license": "MIT",
+  "keywords": [
+    "kai",
+    "founder-ops",
+    "company-building",
+    "slack",
+    "deploy",
+    "ideas",
+    "eidos-agi",
+    "progressive-reveal"
+  ]
+}

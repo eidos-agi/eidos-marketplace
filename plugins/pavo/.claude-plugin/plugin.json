@@ -1,14 +1,20 @@
 {
   "name": "pavo",
   "version": "0.1.0",
-  "description": "Local-first meeting evidence, transcription, review, and routing control plane for Eidos AGI.",
+  "description": "Manifest Anything: data-science-led transcription for real audio, speaker identification, dictionaries, routing, and tasks.",
   "author": {
     "name": "Eidos AGI",
-    "email": "hello@eidosagi.com",
-    "url": "https://eidosagi.com"
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
   },
-  "license": "MIT",
   "homepage": "https://github.com/eidos-agi/pavo",
   "repository": "https://github.com/eidos-agi/pavo",
-  "keywords": ["meetings", "audio", "transcription", "evidence", "routing", "mcp"]
+  "license": "MIT",
+  "keywords": [
+    "audio",
+    "codex",
+    "recordings",
+    "plaud",
+    "transcription"
+  ]
 }

@@ -6,6 +6,17 @@ Felix is the agent-builder and maintainer for agent ecosystems.
 
 Felix owns the standards, scaffolds, health checks, repair playbooks, and roadmap for agent ecosystems. It is meant for anyone building families of agents, CLIs, and repo-native knowledge systems.
 
+Felix is agentic-first, software-second. The primary object is the agent's
+capability: judgment, memory, tools, coordination, goals, boundaries, and proof.
+Repos, CLIs, packages, docs, tests, and plugins are substrates for that
+capability. They matter, but Felix should not mistake the software artifact for
+the agent.
+
+Felix's CLI is the progressive-reveal surface for that method. Planning and
+health commands return both deterministic evidence and short agentic
+instructions so a calling agent knows how to interpret the evidence, where to
+repair first, and when not to mutate derived copies.
+
 Felix now lives with the Eidos AGI forges at:
 
 ```bash
@@ -20,7 +31,18 @@ https://github.com/eidos-agi/felix
 
 ## Install / Run
 
-Felix is public alpha. Until the first packaged release is published, run it from a source checkout:
+Felix is packaged for PyPI as `eidos-felix` because the plain `felix` package
+name is already owned by another project. The installed command remains
+`felix`.
+
+Once the first PyPI release is live, install it with:
+
+```bash
+pip install eidos-felix
+felix --help
+```
+
+Until then, run it from a source checkout:
 
 ```bash
 git clone https://github.com/eidos-agi/felix.git
@@ -37,6 +59,11 @@ python -m felix.cli --help
 
 `scridos` is Felix's default Eidos wiki/task adapter. It is useful for this repo's own wiki checks, but it is not a universal requirement for every public Felix user or every Felix-built agent.
 
+Release instructions live in [docs/RELEASE.md](docs/RELEASE.md). Felix uses the
+Eidos shipping rule: build the wheel and sdist, install those exact artifacts in
+clean virtual environments, and publish through GitHub trusted publishing rather
+than a stored PyPI token.
+
 ## Commands
 
 ```bash
@@ -49,6 +76,9 @@ felix plugin doctor /path/to/plugin
 felix plugin doctor /path/to/plugin --json
 felix plugin plan /path/to/plugin
 felix plugin plan /path/to/plugin --json
+felix cleanup scan
+felix cleanup plan
+felix cleanup apply <item-id> --confirm
 felix standards
 felix brand-safety
 felix interview sage --purpose "Sage Intacct maintenance CLI"
@@ -76,10 +106,27 @@ felix plugin plan /path/to/plugin
 
 `plugin doctor` checks the plugin's manifest health, live MCP runtime health, and agent-discovery health: skill docs must not tell agents to call tools the plugin does not expose. `plugin plan` classifies the plugin as a tool or forge, drafts the Eidos marketplace entry, names the website page path, and reports blockers against the target distribution standard. The Eidos Marketplace still owns the bar through `STANDARD.md`; Felix owns the packaging workflow that targets it.
 
+These commands are not only mechanical checkers. Text output includes an
+`Agentic instruction:` section, and JSON output includes an
+`agentic_instruction` array. The evidence tells the agent what is true; the
+instruction tells the agent how to act without overfitting to a stale plugin
+copy, generated cache, or convenient shim.
+
+Plugin planning must also expose quality and duplicate-code gates. Before
+promoting or repairing a plugin, Felix should identify the canonical source,
+scan for duplicate copies across local plugin roots, marketplace bundles, Codex
+caches, and Eidos plugin stores, keep behavior in one source-owned repo or
+library, and treat generated installs/caches as derived copies. Stale duplicates
+should be retired only after validation passes.
+
 Every agent Felix creates should inherit these tiers.
 
 ### Architectural Commitments
 
+- agentic capability before software artifact: define judgment, memory, tools, coordination, goals, boundaries, and proof before repo/package/CLI shape
+- canonical-source discipline: identify the source-owned repo/plugin before editing generated caches, installed copies, marketplace bundles, or local shims
+- duplicate cleanup discipline: find duplicate plugins/software, choose one canonical owner, sync outward from it, then retire stale copies only after validation
+- no duplicated-code doctrine: shared behavior belongs in a source-owned library/CLI/schema; plugins and MCP shims should stay thin pointers unless they own distinct behavior
 - setup-first discipline: agent setup is the highest-leverage decision in the stack
 - decision records for topology, repo, knowledge, tasks, live state, run mode, coupling, drift, reversibility, and proof
 - AGENTS.md wakeup file that tells a fresh LLM what to read before thinking
@@ -112,10 +159,10 @@ Every agent Felix creates should inherit these tiers.
 
 - north-stars page
 - self-improvement loop
-- tests for core local behavior
+- tests for core agentic behavior and local substrate behavior
 - README with role, boundaries, commands, and safety gates
 - original agent identity image or image prompt that avoids copyright imitation
-- open-source health files when the agent may become reusable public software
+- open-source health files when the agent may become reusable public agentic software
 
 Felix ships with Eidos-flavored defaults because that is where he was born:
 
@@ -133,7 +180,7 @@ Felix should interview the user before creating a new agent:
 felix interview sage --purpose "Sage Intacct maintenance CLI"
 ```
 
-The interview makes the user define the human role being compiled into an agent, what the agent may decide, what it must not own, what existing agents it may overlap, which methods and constraints apply, and what proof shows the new agent is useful rather than duplicative.
+The interview makes the user define the human role being compiled into an agent, what the agent may decide, what it must not own, what existing agents it may overlap, which methods and constraints apply, and what proof shows the new agent is useful rather than duplicative. It should settle the agentic capability before choosing repo, package, CLI, or plugin shape.
 
 The interview is universal. It is not a Sage-specific workflow; Sage is only one example of turning a repeated maintenance job into a CLI-shaped agent. See [`examples/interviews`](examples/interviews) for different agent types.
 
@@ -150,6 +197,46 @@ These are decisions, not fields to fill mechanically. Felix should surface optio
 ## Design Principle
 
 Felix should operate on an agent's observable capabilities, then lower those operations into the concrete repo, wiki, task list, package, or installer shape. In other words: know an agent by what can be done with it, not by where its files happen to live. This is the practical, Yoneda-flavored discipline behind Felix's abstract agent interface.
+
+Software is the substrate. Agentic behavior is the thing being designed.
+
+## Duplicate Cleanup
+
+Felix should assume plugin and agent ecosystems accumulate duplicates unless
+the source-of-truth is made explicit. The cleanup workflow is:
+
+1. Identify the canonical owner: source repo, package, plugin, CLI, or schema.
+2. Inventory derived copies: local plugin folder, marketplace bundle, installed
+   Codex cache, Eidos global/local plugin store, generated package, and old
+   personal/company repos.
+3. Compare behavior, not just filenames: manifests, skills, schemas, CLIs, MCP
+   tool declarations, tests, and docs.
+4. Move shared behavior into the canonical source. Keep plugin wrappers and MCP
+   shims thin.
+5. Sync derived copies from the canonical source.
+6. Validate with tests, `felix plugin doctor`, plugin validation, and any
+   marketplace check.
+7. Retire or overwrite stale copies only after proof is clean.
+
+The goal is top-quality plugins: one owner, clear distribution artifacts,
+validated runtime behavior, no copied business logic, and no stale plugin that
+an agent might route to by accident.
+
+Felix exposes this as a guarded meta-wrapper:
+
+```bash
+felix cleanup scan          # inventory plugin copies and cleanup items
+felix cleanup plan          # prioritized cleanup docket with validation and rollback
+felix cleanup apply <id>    # dry refusal unless --confirm is supplied
+```
+
+`apply` is intentionally narrow. It only auto-applies known safe cleanup items,
+such as identical duplicate live Eidos installs. Everything else remains a plan
+with exact validation and rollback instructions.
+
+Cleanup follows the same CLI method: `scan` inventories surfaces, `plan`
+interprets source/derived relationships and repair order, and the agentic
+instruction keeps mutation behind canonical-source proof.
 
 ## Agentic Intelligence Primitives
 
@@ -171,7 +258,8 @@ The wakeup file should say what to read first, how to frame `have / want / don't
 
 ## FOSS Forge Alignment
 
-Felix follows the FOSS Forge standard for agentic software:
+Felix follows the FOSS Forge standard for agentic software, with the agentic
+layer first:
 
 - human layer: license, changelog, contributing guide, code of conduct, security policy
 - agent layer: clear CLI descriptions, actionable errors, typed public behavior

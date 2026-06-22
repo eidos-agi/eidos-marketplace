@@ -71,10 +71,13 @@ Machine-readable rollup: [proof-status-summary.json](proof-status-summary.json)
    - Evidence: [Conan "Experience Like" fixture](conan-experience-like.md)
    - Evidence: [conan-experience-like-fixture.json](conan-experience-like-fixture.json)
    - Evidence: [conan-experience-comparison-report.json](conan-experience-comparison-report.json)
+   - Evidence: [conan-real-media-review-report.json](conan-real-media-review-report.json)
 22. Conan "That Old Sitcom" Test - `fixture-backed`
-   - Evidence: local Conan overlap reports exist, current reports are rejected, and rejected stems have diagnostic ASR evidence.
+   - Evidence: local Conan overlap reports exist, including an accepted
+     Conan/Kaitlin stem split with trusted stems.
    - Evidence: `docs/conan-diagnostic-stems.md`
    - Evidence: [conan-old-sitcom-report.json](conan-old-sitcom-report.json)
+   - Evidence: [conan-real-media-review-bundle/index.html](conan-real-media-review-bundle/index.html)
 23. New Zealand Accent Slang Test - `fixture-backed`
    - Evidence: `~/Eidos/Pavo/demos/nz-accent-test/`.
    - Evidence: [nz-slang-comparison-report.json](nz-slang-comparison-report.json)
@@ -91,13 +94,6 @@ Machine-readable rollup: [proof-status-summary.json](proof-status-summary.json)
 
 The strongest remaining proof gaps are:
 
-- real-media comparison showing stem ASR recovers words missed by mixed-audio ASR
-  - Evidence: [stem-asr-improvement-report.json](stem-asr-improvement-report.json)
-  - Evidence: [stem-asr-improvement-search-report.json](stem-asr-improvement-search-report.json)
-  - Current result: accepted Conan stem ASR has trusted evidence, but the
-    reviewed expected phrase was already present in same-region mixed ASR. A
-    broader Conan search checked 80 candidate regions across 4 padding settings
-    and found no additional accepted improvement candidate.
 - human-reviewed real Plaud multi-person overlap recording
   - Current result: 2 real Plaud decompose attempts passed the pipeline, but 0
     Plaud overlap regions have accepted stems.
@@ -105,6 +101,36 @@ The strongest remaining proof gaps are:
   - Current blocker: 0 Plaud attempts have human-reviewed speaker anchors.
   - Review packet:
     [plaud-c37-speaker1-anchor-review-packet.json](plaud-c37-speaker1-anchor-review-packet.json)
+  - Review clips:
+    [plaud-c37-speaker1-anchor-review-clips.json](plaud-c37-speaker1-anchor-review-clips.json)
+  - Current result: 20 c37 Speaker 1 candidate clips exist and are ready for
+    human review before corrected Plaud decomposition is rerun.
+  - Review sheet:
+    [plaud-c37-speaker1-anchor-review-sheet.json](plaud-c37-speaker1-anchor-review-sheet.json)
+  - Review page:
+    [plaud-c37-speaker1-anchor-review.html](plaud-c37-speaker1-anchor-review.html)
+  - Review page verification:
+    [plaud-c37-anchor-review-page-report.json](plaud-c37-anchor-review-page-report.json)
+  - Browser-safe review bundle:
+    [plaud-c37-anchor-review-bundle-manifest.json](plaud-c37-anchor-review-bundle-manifest.json)
+  - Serve command:
+    `pavo review anchors serve docs/plaud-c37-anchor-review-bundle --port 9876`
+  - Browser verification:
+    [plaud-c37-anchor-review-browser-report.json](plaud-c37-anchor-review-browser-report.json)
+  - Review gate:
+    [plaud-c37-anchor-review-gate-report.json](plaud-c37-anchor-review-gate-report.json)
+  - Review status:
+    [plaud-c37-anchor-review-status-report.json](plaud-c37-anchor-review-status-report.json)
+  - Current result: the review page embeds all 20 WAV clips, proposed
+    corrections, approve/reject controls, reviewer notes, and JSON export.
+    Pavo now validates and imports that export with `pavo review anchors import`
+    before `--speaker-correction` flags are generated. `pavo review anchors
+    rerun-command` then prints a corrected decompose command from the original
+    Pavo manifest plus approved corrections.
+  - Rerun command report:
+    [plaud-c37-anchor-rerun-command-report.json](plaud-c37-anchor-rerun-command-report.json)
+  - Current result: 20 rows are pending and 0 rows are approved, so no
+    `--speaker-correction` flags are exported yet.
 
 Resolved gap:
 
@@ -114,6 +140,13 @@ Resolved gap:
     with wrong-window leakage checks.
 - real-media two-speaker separation with accepted stems
   - Evidence: [conan-old-sitcom-report.json](conan-old-sitcom-report.json)
+
+- real-media comparison showing stem ASR recovers words missed by mixed-audio
+  ASR
+  - Evidence: [accepted-stem-asr-recovery-report.json](accepted-stem-asr-recovery-report.json)
+  - Current result: accepted New Zealand overlap sweep evidence recovered three
+    words from trusted stem ASR that were absent from same-region mixed ASR.
+    The report is machine-accepted but not human-reviewed.
 
 - reviewed merge policy for when stem ASR can augment or override the canonical
   transcript

@@ -2,9 +2,9 @@
   "passed": false,
   "target_speaker_label": "SPEAKER_01",
   "target_speaker_name": "Speaker 1",
-  "source_audio_wav": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/audio-16k-mono.wav",
-  "signatures_manifest": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/speaker-signatures/speaker-signatures.manifest.json",
-  "attributed_transcript": "/Users/dshanklinbv/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/mfcc-kmeans.verified.attributed.json",
+  "source_audio_wav": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/audio-16k-mono.wav",
+  "signatures_manifest": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/speaker-signatures/speaker-signatures.manifest.json",
+  "attributed_transcript": "/Users/dshanklin/Eidos/Pavo/cache/imports/plaud_c37d65f27fc0cf75c85fd0dadb8a6ba1_generic2_pad025/decompose-transcribe/process-call/speaker-pipeline/mfcc-kmeans.verified.attributed.json",
   "existing_sample_count": 5,
   "existing_sample_seconds": 20.0,
   "existing_samples": [

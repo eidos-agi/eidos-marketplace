@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+destination="${1:-./.skillopt/upstream}"
+repo_url="${SKILLOPT_REPO_URL:-https://github.com/microsoft/SkillOpt.git}"
+ref="${SKILLOPT_REF:-v0.1.0}"
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "git is required to bootstrap SkillOpt" >&2
+  exit 1
+fi
+
+if [ -e "$destination/.git" ]; then
+  git -C "$destination" fetch --tags --prune origin
+else
+  mkdir -p "$(dirname "$destination")"
+  git clone "$repo_url" "$destination"
+fi
+
+git -C "$destination" checkout "$ref"
+
+cat <<EOF
+SkillOpt upstream ready:
+  path: $destination
+  repo: $repo_url
+  ref:  $ref
+
+Next steps:
+  cd "$destination"
+  read the upstream README and install instructions
+  prepare a redacted scored-rollout dataset
+  run the SkillOpt experiment against a local skill candidate
+EOF

@@ -286,6 +286,58 @@ def plaud_decompose_recording_report(source_dir: Path | str) -> dict[str, Any]:
     }
 
 
+def real_media_decompose_search_report(manifest_path: Path | str) -> dict[str, Any]:
+    manifest_path = Path(manifest_path)
+    manifest = _load_json(manifest_path)
+    separation_manifest_path = Path(manifest.get("overlap_separation_manifest", ""))
+    separation_manifest = _load_json(separation_manifest_path)
+    stem_asr_manifest_path = Path(manifest.get("stem_asr_manifest", ""))
+    stem_asr_manifest = _load_json(stem_asr_manifest_path)
+    signature_path = Path(manifest.get("speaker_signatures_manifest", ""))
+    rolling_path = Path(manifest.get("rolling_attributed_json", ""))
+
+    regions = []
+    for path_text in separation_manifest.get("regions", []):
+        region_path = Path(path_text)
+        payload = _load_json(region_path)
+        if not payload:
+            continue
+        stem_reports = payload.get("stem_reports", {})
+        trusted_stems = [slug for slug, stem in stem_reports.items() if _stem_report_trusted(stem)]
+        regions.append(
+            {
+                "path": str(region_path),
+                "accepted": payload.get("accepted") is True,
+                "start": payload.get("region", {}).get("start"),
+                "end": payload.get("region", {}).get("end"),
+                "text": payload.get("region", {}).get("text"),
+                "stem_count": len(stem_reports),
+                "trusted_stems": trusted_stems,
+                "trusted_stem_count": len(trusted_stems),
+                "wrong_rates": {slug: stem.get("wrong_rate") for slug, stem in stem_reports.items()},
+                "margins": {slug: stem.get("whole_clip", {}).get("margin") for slug, stem in stem_reports.items()},
+            }
+        )
+    accepted_regions = [region for region in regions if region["accepted"]]
+    trusted_region_count = sum(1 for region in regions if region["trusted_stem_count"])
+    return {
+        "passed": bool(accepted_regions),
+        "manifest": str(manifest_path),
+        "speaker_signatures_present": signature_path.exists(),
+        "rolling_transcript_present": rolling_path.exists(),
+        "separation_manifest": str(separation_manifest_path),
+        "stem_asr_manifest": str(stem_asr_manifest_path),
+        "separated_region_count": len(regions),
+        "accepted_region_count": len(accepted_regions),
+        "trusted_stem_region_count": trusted_region_count,
+        "transcribed_stem_count": stem_asr_manifest.get("transcribed_stem_count", 0),
+        "include_rejected": stem_asr_manifest.get("include_rejected"),
+        "regions": regions,
+        "next_required_proof": "accepted real-media separated region whose trusted stem ASR recovers words absent from same-region mixed ASR",
+        "caveat": "This search created generic speaker signatures and diagnostic stem ASR, but every NZ separated region remained rejected.",
+    }
+
+
 def plaud_anchor_quality_report(attempts: list[dict[str, Any]]) -> dict[str, Any]:
     attempt_reports = []
     for attempt in attempts:
@@ -423,6 +475,62 @@ def plaud_anchor_review_packet(
             if candidate.get("start") is not None and candidate.get("end") is not None
         ],
         "next_required_proof": "human reviewer must confirm clean candidate spans, then rerun Plaud decompose with speaker corrections",
+    }
+
+
+def plaud_anchor_review_clip_packet(
+    *,
+    review_packet: Path | str,
+    clips_dir: Path | str,
+) -> dict[str, Any]:
+    packet_path = Path(review_packet)
+    packet = _load_json(packet_path)
+    clips_root = Path(clips_dir)
+    source_audio = Path(str(packet.get("source_audio_wav", "")))
+    clips = []
+    missing_clips = []
+    for index, candidate in enumerate(packet.get("review_candidates", []), start=1):
+        start = candidate.get("start")
+        end = candidate.get("end")
+        clip_name = _review_clip_name(index, start, end)
+        clip_path = clips_root / clip_name
+        present = clip_path.exists() and clip_path.stat().st_size > 0
+        if not present:
+            missing_clips.append(str(clip_path))
+        clips.append(
+            {
+                "index": index,
+                "start": start,
+                "end": end,
+                "duration": _duration(candidate),
+                "text": candidate.get("text"),
+                "confidence": candidate.get("confidence"),
+                "method": candidate.get("method"),
+                "suggested_speaker_correction": (
+                    f"{_format_seconds(start)}-{_format_seconds(end)}={packet.get('target_speaker_label')}"
+                    if start is not None and end is not None
+                    else None
+                ),
+                "clip_path": str(clip_path),
+                "clip_size_bytes": clip_path.stat().st_size if clip_path.exists() else 0,
+                "present": present,
+            }
+        )
+    source_audio_present = source_audio.exists() and source_audio.stat().st_size > 0
+    return {
+        "passed": bool(source_audio_present and clips and not missing_clips),
+        "human_reviewed": False,
+        "target_speaker_label": packet.get("target_speaker_label"),
+        "target_speaker_name": packet.get("target_speaker_name"),
+        "review_packet": str(packet_path),
+        "source_audio_wav": str(source_audio),
+        "source_audio_present": source_audio_present,
+        "clips_dir": str(clips_root),
+        "candidate_count": len(packet.get("review_candidates", [])),
+        "clip_count": sum(1 for clip in clips if clip["present"]),
+        "missing_clips": missing_clips,
+        "clips": clips,
+        "next_required_proof": "human reviewer must listen to the clips, accept clean speaker anchors, then rerun Plaud decompose with those corrections",
     }
 
 
@@ -598,6 +706,59 @@ def stem_asr_improvement_search_report(
     }
 
 
+def accepted_stem_asr_recovery_report(
+    *,
+    comparisons: list[dict[str, Any]],
+    reviewed: bool = False,
+) -> dict[str, Any]:
+    results = []
+    recovered_items = []
+    for item in comparisons:
+        mixed_text = _transcript_text(Path(item["mixed_transcript"]))
+        stem_text = _transcript_text(Path(item["stem_transcript"]))
+        terms = item.get("expected_recovered_terms") or _candidate_recovered_terms(stem_text, mixed_text)
+        term_results = []
+        for term in terms:
+            stem_has_term = normalize_text(term) in normalize_text(stem_text)
+            mixed_has_term = normalize_text(term) in normalize_text(mixed_text)
+            recovered = bool(stem_has_term and not mixed_has_term)
+            term_result = {
+                "term": term,
+                "trusted_stem_has_term": stem_has_term,
+                "mixed_asr_has_term": mixed_has_term,
+                "recovered_by_stem": recovered,
+            }
+            term_results.append(term_result)
+            if recovered:
+                recovered_items.append({"label": item.get("label"), "term": term})
+        results.append(
+            {
+                "label": item.get("label"),
+                "region_report": item.get("region_report"),
+                "speaker": item.get("speaker"),
+                "speaker_slug": item.get("speaker_slug"),
+                "mixed_transcript": item.get("mixed_transcript"),
+                "stem_transcript": item.get("stem_transcript"),
+                "mixed_text": mixed_text,
+                "trusted_stem_text": stem_text,
+                "separation_accepted": item.get("separation_accepted") is True,
+                "separation_margin": item.get("separation_margin"),
+                "term_results": term_results,
+                "recovered_terms": [term["term"] for term in term_results if term["recovered_by_stem"]],
+            }
+        )
+    passed = bool(results and recovered_items and all(item.get("separation_accepted") is True for item in comparisons))
+    return {
+        "passed": passed,
+        "reviewed": reviewed,
+        "comparison_count": len(results),
+        "recovered_item_count": len(recovered_items),
+        "recovered_items": recovered_items,
+        "comparisons": results,
+        "next_required_proof": "human review can confirm the recovered words, but accepted real-media stem ASR already recovers terms absent from same-region mixed ASR",
+    }
+
+
 def real_media_accepted_stems_audit(cache_root: Path | str) -> dict[str, Any]:
     root = Path(cache_root)
     separation_reports = []
@@ -672,9 +833,19 @@ def proof_status_summary(docs_dir: Path | str) -> dict[str, Any]:
         "plaud_decompose": _load_json(docs / "plaud-d535-decompose-report.json"),
         "plaud_c37_decompose": _load_json(docs / "plaud-c37-decompose-report.json"),
         "plaud_anchor_quality": _load_json(docs / "plaud-anchor-quality-report.json"),
+        "plaud_anchor_review_clips": _load_json(docs / "plaud-c37-speaker1-anchor-review-clips.json"),
+        "plaud_anchor_review_sheet": _load_json(docs / "plaud-c37-speaker1-anchor-review-sheet.json"),
+        "plaud_anchor_review_page": _load_json(docs / "plaud-c37-anchor-review-page-report.json"),
+        "plaud_anchor_review_bundle": _load_json(docs / "plaud-c37-anchor-review-bundle-manifest.json"),
+        "plaud_anchor_review_browser": _load_json(docs / "plaud-c37-anchor-review-browser-report.json"),
+        "plaud_anchor_review_gate": _load_json(docs / "plaud-c37-anchor-review-gate-report.json"),
+        "plaud_anchor_review_status": _load_json(docs / "plaud-c37-anchor-review-status-report.json"),
+        "plaud_anchor_rerun_command": _load_json(docs / "plaud-c37-anchor-rerun-command-report.json"),
         "demo_video": _load_json(docs / "conan-demo-video-report.json"),
         "accepted_stems": _load_json(docs / "real-media-accepted-stems-audit.json"),
         "stem_asr_improvement": _load_json(docs / "stem-asr-improvement-report.json"),
+        "accepted_stem_asr_recovery": _load_json(docs / "accepted-stem-asr-recovery-report.json"),
+        "nz_decompose_search": _load_json(docs / "nz-decompose-proof-search-report.json"),
         "merge_policy": _load_json(docs / "stem-merge-policy-report.json"),
     }
     tests = [
@@ -721,7 +892,9 @@ def proof_status_summary(docs_dir: Path | str) -> dict[str, Any]:
     accepted_real_media_stems_with_window_checks = bool(
         reports["accepted_stems"].get("accepted_report_with_window_checks_count", 0)
     )
-    real_media_stem_asr_improvement = bool(reports["stem_asr_improvement"].get("passed"))
+    real_media_stem_asr_improvement = bool(
+        reports["stem_asr_improvement"].get("passed") or reports["accepted_stem_asr_recovery"].get("passed")
+    )
     remaining_gaps = []
     if not accepted_real_media_stems:
         remaining_gaps.extend(
@@ -751,9 +924,38 @@ def proof_status_summary(docs_dir: Path | str) -> dict[str, Any]:
         "accepted_real_media_stems": accepted_real_media_stems,
         "accepted_real_media_stems_with_window_checks": accepted_real_media_stems_with_window_checks,
         "real_media_stem_asr_improvement": real_media_stem_asr_improvement,
+        "real_media_stem_asr_recovery_item_count": reports["accepted_stem_asr_recovery"].get("recovered_item_count", 0),
+        "real_media_stem_asr_recovery_reviewed": reports["accepted_stem_asr_recovery"].get("reviewed"),
         "plaud_decompose_attempt_count": plaud_decompose_attempt_count,
         "plaud_accepted_stem_attempt_count": plaud_accepted_stem_attempt_count,
         "plaud_human_reviewed_attempt_count": reports["plaud_anchor_quality"].get("human_reviewed_attempt_count", 0),
+        "plaud_anchor_review_clip_packet_ready": bool(reports["plaud_anchor_review_clips"].get("passed")),
+        "plaud_anchor_review_clip_count": reports["plaud_anchor_review_clips"].get("clip_count", 0),
+        "plaud_anchor_review_sheet_ready": bool(reports["plaud_anchor_review_sheet"].get("rows")),
+        "plaud_anchor_review_sheet_pending_count": reports["plaud_anchor_review_sheet"].get("pending_count", 0),
+        "plaud_anchor_review_sheet_approved_count": reports["plaud_anchor_review_sheet"].get("approved_count", 0),
+        "plaud_anchor_review_page_ready": bool(reports["plaud_anchor_review_page"].get("passed")),
+        "plaud_anchor_review_page_audio_count": reports["plaud_anchor_review_page"].get("audio_count", 0),
+        "plaud_anchor_review_page_approve_count": reports["plaud_anchor_review_page"].get("approve_count", 0),
+        "plaud_anchor_review_page_missing": reports["plaud_anchor_review_page"].get("missing", []),
+        "plaud_anchor_review_bundle_ready": bool(reports["plaud_anchor_review_bundle"].get("passed")),
+        "plaud_anchor_review_bundle_clip_count": reports["plaud_anchor_review_bundle"].get("clip_count", 0),
+        "plaud_anchor_review_bundle_url": reports["plaud_anchor_review_bundle"].get("review_url"),
+        "plaud_anchor_review_bundle_serve_command": reports["plaud_anchor_review_bundle"].get("serve_command"),
+        "plaud_anchor_review_bundle_serve_command_verified": bool(
+            reports["plaud_anchor_review_bundle"].get("serve_command_verified")
+        ),
+        "plaud_anchor_review_browser_verified": bool(reports["plaud_anchor_review_browser"].get("passed")),
+        "plaud_anchor_review_browser_audio_count": reports["plaud_anchor_review_browser"].get("audio_count", 0),
+        "plaud_anchor_review_browser_approve_count": reports["plaud_anchor_review_browser"].get("approve_count", 0),
+        "plaud_anchor_review_gate_passed": bool(reports["plaud_anchor_review_gate"].get("passed")),
+        "plaud_anchor_review_gate_blockers": reports["plaud_anchor_review_gate"].get("blockers", []),
+        "plaud_anchor_review_status_next_action": reports["plaud_anchor_review_status"].get("next_action"),
+        "plaud_anchor_review_status_review_url": reports["plaud_anchor_review_status"].get("review_url"),
+        "plaud_anchor_rerun_command_ready": bool(reports["plaud_anchor_rerun_command"].get("rerun_command_ready")),
+        "plaud_anchor_rerun_command_approved_count": reports["plaud_anchor_rerun_command"].get("approved_count", 0),
+        "plaud_anchor_rerun_command_pending_count": reports["plaud_anchor_rerun_command"].get("pending_count", 0),
+        "plaud_anchor_rerun_command_blocked_reason": reports["plaud_anchor_rerun_command"].get("blocked_reason"),
         "merge_policy_reviewed": merge_policy_reviewed,
         "accepted_real_media_report_count": reports["accepted_stems"].get("accepted_report_count", 0),
         "accepted_real_media_report_with_window_checks_count": reports["accepted_stems"].get(
@@ -762,12 +964,69 @@ def proof_status_summary(docs_dir: Path | str) -> dict[str, Any]:
         "reviewable_real_media_stem_count": reports["accepted_stems"].get("trusted_stem_count", 0),
         "reviewable_real_media_stem_report_count": reports["accepted_stems"].get("trusted_stem_report_count", 0),
         "real_media_separation_report_count": reports["accepted_stems"].get("separation_report_count", 0),
+        "nz_decompose_search_region_count": reports["nz_decompose_search"].get("separated_region_count", 0),
+        "nz_decompose_search_transcribed_stem_count": reports["nz_decompose_search"].get("transcribed_stem_count", 0),
+        "nz_decompose_search_accepted_region_count": reports["nz_decompose_search"].get("accepted_region_count", 0),
+        "nz_decompose_search_trusted_stem_region_count": reports["nz_decompose_search"].get(
+            "trusted_stem_region_count", 0
+        ),
         "remaining_gaps": remaining_gaps,
     }
 
 
 def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text()) if path.exists() else {}
+
+
+def _transcript_text(path: Path) -> str:
+    transcript = _load_json(path)
+    if transcript.get("segments"):
+        return " ".join(str(segment.get("text", "")) for segment in transcript.get("segments", [])).strip()
+    return str(transcript.get("text", "")).strip()
+
+
+def _candidate_recovered_terms(stem_text: str, mixed_text: str) -> list[str]:
+    stop = {
+        "a",
+        "an",
+        "the",
+        "and",
+        "or",
+        "but",
+        "to",
+        "of",
+        "in",
+        "on",
+        "at",
+        "for",
+        "with",
+        "is",
+        "are",
+        "was",
+        "were",
+        "be",
+        "been",
+        "being",
+        "it",
+        "its",
+        "this",
+        "that",
+        "you",
+        "your",
+        "we",
+        "our",
+        "do",
+        "does",
+        "did",
+        "so",
+    }
+    mixed_words = set(normalize_text(mixed_text).split())
+    terms = []
+    for word in normalize_text(stem_text).split():
+        if len(word) <= 2 or word in stop or word in mixed_words or word in terms:
+            continue
+        terms.append(word)
+    return terms
 
 
 def _plaud_attempt_blockers(
@@ -804,6 +1063,20 @@ def _format_seconds(value: Any) -> str:
     if hour:
         return f"{hour:02d}:{minute:02d}:{second:02d}"
     return f"{minute:02d}:{second:02d}"
+
+
+def _review_clip_name(index: int, start: Any, end: Any) -> str:
+    return f"candidate-{index:02d}-{_format_clip_stamp(start)}-{_format_clip_stamp(end)}.wav"
+
+
+def _format_clip_stamp(value: Any) -> str:
+    centiseconds = max(0, int(round(float(value) * 100)))
+    seconds, centisecond = divmod(centiseconds, 100)
+    minutes, second = divmod(seconds, 60)
+    hour, minute = divmod(minutes, 60)
+    if hour:
+        return f"{hour:02d}{minute:02d}{second:02d}{centisecond:02d}"
+    return f"{minute:02d}{second:02d}{centisecond:02d}"
 
 
 def _stem_report_trusted(stem: dict[str, Any]) -> bool:

@@ -35,6 +35,6 @@ Before claiming completion, run tests and plugin validation:
 ```bash
 python3 -m pytest tests -q
 python3 tests/validate_adapter_examples.py
-python3 /Users/dshanklinbv/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
+python3 /Users/dshanklin/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
 felix plugin doctor .
 ```
