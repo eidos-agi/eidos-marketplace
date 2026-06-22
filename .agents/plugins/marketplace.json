@@ -125,6 +125,18 @@
       "category": "Productivity"
     },
     {
+      "name": "eidos-skills-hub",
+      "source": {
+        "source": "local",
+        "path": "./plugins/eidos-skills-hub"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    },
+    {
       "name": "eidos-storemetheus",
       "source": {
         "source": "local",

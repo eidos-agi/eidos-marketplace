@@ -1,0 +1,53 @@
+{
+  "name": "eidos-skills-hub",
+  "version": "1.1.1+codex.20260622190738",
+  "description": "Discover, rank, cache, install, and update Codex skills across live, local, trusted, and Eidos sources.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "hello@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-skills-hub",
+  "repository": "https://github.com/eidos-agi/eidos-skills-hub",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "agent-skills",
+    "codex",
+    "mcp",
+    "search",
+    "registry"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Eidos Skills Hub",
+    "shortDescription": "Find the right agent skill\u2014and keep it trusted.",
+    "longDescription": "Search Skills.sh, Eidos catalogs, installed Codex skills, trusted libraries, and GitHub in parallel. Compare candidates with explainable source-aware ranking, inspect complete git-backed snapshots, and keep Codex skills current without surrendering control.",
+    "developerName": "Eidos AGI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Skill Search",
+      "Parallel Multi-library Search",
+      "Preference-aware Ranking",
+      "Installed Skill Discovery",
+      "Agent Skills Registry",
+      "MCP Server",
+      "skills.sh Integration",
+      "Eidos Ecosystem",
+      "Codex Skill Updates",
+      "Git-backed Snapshot Cache"
+    ],
+    "websiteURL": "https://github.com/eidos-agi/eidos-skills-hub",
+    "privacyPolicyURL": "https://github.com/eidos-agi/eidos-skills-hub",
+    "termsOfServiceURL": "https://github.com/eidos-agi/eidos-skills-hub",
+    "defaultPrompt": [
+      "Find the best current skill for this task.",
+      "Search every configured skill library in parallel.",
+      "Audit my installed Codex skills for drift."
+    ],
+    "brandColor": "#4F46E5",
+    "composerIcon": "./assets/plugin-icon.svg",
+    "logo": "./assets/plugin-logo.svg"
+  }
+}
