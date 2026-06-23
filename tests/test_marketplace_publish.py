@@ -106,7 +106,9 @@ def test_zoltar_documents_preflight_and_assumption_contract() -> None:
 
 
 def test_zoltar_readme_includes_worked_examples() -> None:
-    readme = (REPO_ROOT / "plugins" / "zoltar" / "README.md").read_text()
+    plugin_root = REPO_ROOT / "plugins" / "zoltar"
+    readme = (plugin_root / "README.md").read_text()
+    casebook = (plugin_root / "docs" / "foresight-cases.md").read_text()
 
     assert "## Worked Examples" in readme
     assert "Dual-host marketplace packaging" in readme
@@ -114,6 +116,11 @@ def test_zoltar_readme_includes_worked_examples() -> None:
     assert "Usage assumptions" in readme
     assert "AIC Omni freshness check" in readme
     assert "false-green Director answer" in readme
+    assert "docs/foresight-cases.md" in readme
+    assert "## Case 1: Dual-Host Marketplace Packaging" in casebook
+    assert "## Case 4: AIC Omni Freshness And Director False-Green Risk" in casebook
+    assert "doubter_verdict" in casebook
+    assert "handoff_to_checker" in casebook
 
 
 def test_storemetheus_ships_dual_host_maintenance_skill() -> None:
