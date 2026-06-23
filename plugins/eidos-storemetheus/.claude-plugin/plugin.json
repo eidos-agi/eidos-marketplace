@@ -1,7 +1,7 @@
 {
   "name": "eidos-storemetheus",
-  "version": "0.1.0",
-  "description": "Build governed Codex plugin stores for companies that need trusted AI operating layers.",
+  "version": "0.1.1",
+  "description": "Build and maintain governed Claude Code and Codex plugin stores for companies that need trusted AI operating layers.",
   "author": {
     "name": "Eidos AGI",
     "email": "hello@eidosagi.com",
@@ -14,6 +14,8 @@
     "eidos",
     "plugin-store",
     "codex",
+    "claude-code",
+    "dual-host",
     "marketplace",
     "governance",
     "enterprise",

@@ -88,6 +88,23 @@ def test_zoltar_is_dual_host_and_host_neutral() -> None:
     assert "interface" not in claude_manifest
 
 
+def test_storemetheus_ships_dual_host_maintenance_skill() -> None:
+    plugin_root = REPO_ROOT / "plugins" / "eidos-storemetheus"
+    skill = plugin_root / "skills" / "maintain-dual-host-marketplace" / "SKILL.md"
+    assert skill.exists()
+
+    codex_manifest = json.loads((plugin_root / ".codex-plugin" / "plugin.json").read_text())
+    claude_manifest = json.loads((plugin_root / ".claude-plugin" / "plugin.json").read_text())
+    assert codex_manifest["version"] == claude_manifest["version"] == "0.1.1"
+    assert codex_manifest["skills"] == "./skills/"
+
+    body = skill.read_text()
+    assert ".claude-plugin/plugin.json" in body
+    assert ".codex-plugin/plugin.json" in body
+    assert ".claude-plugin/marketplace.json" in body
+    assert ".agents/plugins/marketplace.json" in body
+
+
 def test_published_bundles_do_not_include_runtime_or_proof_noise() -> None:
     blocked_parts = {".git", ".venv", ".pytest_cache", ".ruff_cache", "__pycache__"}
     tracked = subprocess.check_output(

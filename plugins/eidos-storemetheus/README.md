@@ -1,25 +1,26 @@
 # Eidos Storemetheus
 
-Eidos Storemetheus is a forge for building governed Codex plugin stores.
+Eidos Storemetheus is a forge for building and maintaining governed Claude Code and Codex plugin stores.
 
 It exists for organizations that want AI agents to carry durable company know-how without turning that know-how into scattered prompts, private chat memory, or one-off scripts. A plugin store is the distribution surface. The store owner is accountable for trust.
 
 ## Use It When
 
-- A company wants a private Codex plugin store.
+- A company wants a private Claude Code or Codex plugin store.
 - A team needs reusable skills, runbooks, and authority routing across agents.
 - A plugin store needs review gates, install proof, and ownership rules.
 - A public or private marketplace must separate source, store, cache, and runtime visibility.
+- A plugin must stay host-neutral while shipping through both `.claude-plugin` and `.codex-plugin` packaging.
 - A client wants AI operating leverage without giving every plugin broad permission.
 
 ## What It Builds
 
 Storemetheus helps an agent create:
 
-- A marketplace repo with `.agents/plugins/marketplace.json`.
+- A marketplace repo with `.claude-plugin/marketplace.json` and/or `.agents/plugins/marketplace.json`.
 - One or more scoped plugin bundles under `plugins/<plugin-name>/`.
 - Manifest, README, skill, review, and audit artifacts for each plugin.
-- Install and verification instructions for Codex.
+- Install and verification instructions for Claude Code and Codex.
 - A store governance model: owner, review cadence, private/public boundary, update path, and removal policy.
 
 ## Principles
@@ -40,4 +41,9 @@ Storemetheus helps an agent create:
 5. Validate manifests, marketplace JSON, cache/config alignment, and install visibility.
 6. Write a short operating guide and re-review schedule.
 
-See `skills/build-plugin-stores/SKILL.md` for the full Codex workflow.
+## Skills
+
+- `build-plugin-stores`: create governed plugin stores and first useful plugin bundles.
+- `maintain-dual-host-marketplace`: check that plugins remain host-neutral while working in both Claude Code and Codex.
+
+See `skills/build-plugin-stores/SKILL.md` and `skills/maintain-dual-host-marketplace/SKILL.md` for the full workflows.

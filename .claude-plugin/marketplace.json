@@ -481,13 +481,21 @@
     },
     {
       "name": "eidos-storemetheus",
-      "description": "Build governed Codex plugin stores for companies that need trusted AI operating layers.",
+      "description": "Build and maintain governed Claude Code and Codex plugin stores for companies that need trusted AI operating layers.",
       "source": "./plugins/eidos-storemetheus",
       "category": "development",
       "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/eidos-storemetheus",
       "license": "MIT",
-      "version": "0.1.0",
-      "tags": ["eidos", "plugin-store", "codex", "marketplace", "governance"],
+      "version": "0.1.1",
+      "tags": [
+        "eidos",
+        "plugin-store",
+        "codex",
+        "claude-code",
+        "dual-host",
+        "marketplace",
+        "governance"
+      ],
       "x-eidos": {
         "kind": {"type": "forge", "signals": ["ships_skills", "opinionated_workflow"]},
         "audit": {
@@ -611,7 +619,6 @@
       "license": "MIT",
       "version": "0.3.1",
       "tags": [
-        "claude-code",
         "emux",
         "codex",
         "worktrees",

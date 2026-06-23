@@ -1,7 +1,7 @@
 {
   "name": "eidos-storemetheus",
-  "version": "0.1.0",
-  "description": "Build governed Codex plugin stores for companies that need trusted AI operating layers.",
+  "version": "0.1.1",
+  "description": "Build and maintain governed Claude Code and Codex plugin stores for companies that need trusted AI operating layers.",
   "author": {
     "name": "Eidos AGI",
     "email": "hello@eidosagi.com",
@@ -14,6 +14,8 @@
     "eidos",
     "plugin-store",
     "codex",
+    "claude-code",
+    "dual-host",
     "marketplace",
     "governance",
     "enterprise",
@@ -22,14 +24,16 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Storemetheus",
-    "shortDescription": "Build governed company plugin stores.",
-    "longDescription": "Eidos Storemetheus helps Codex design and build private or public plugin stores for organizations. It treats a plugin store as a governed trust surface: scoped plugins, manifests, review gates, install proof, cache/config visibility, operating cadence, and owner accountability.",
+    "shortDescription": "Build and check governed company plugin stores.",
+    "longDescription": "Eidos Storemetheus helps agents design, build, and maintain private or public plugin stores for organizations across Claude Code and Codex. It treats a plugin store as a governed trust surface: scoped plugins, host-specific manifests, review gates, install proof, cache/config visibility, operating cadence, and owner accountability.",
     "developerName": "Eidos AGI",
     "category": "Developer Tools",
     "capabilities": [
       "Plugin Store Design",
       "Marketplace Governance",
       "Codex Plugins",
+      "Claude Code Plugins",
+      "Dual-Host Marketplace Checks",
       "Enterprise AI Controls",
       "Review Gates"
     ],
@@ -39,7 +43,8 @@
     "defaultPrompt": [
       "Design a governed plugin store for this company.",
       "Audit this plugin store before I share it.",
-      "Create the first plugin-store operating model."
+      "Create the first plugin-store operating model.",
+      "Check this marketplace plugin works in both Claude Code and Codex."
     ],
     "brandColor": "#6D5EF5"
   }
