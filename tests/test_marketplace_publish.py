@@ -88,6 +88,23 @@ def test_zoltar_is_dual_host_and_host_neutral() -> None:
     assert "interface" not in claude_manifest
 
 
+def test_zoltar_documents_preflight_and_assumption_contract() -> None:
+    plugin_root = REPO_ROOT / "plugins" / "zoltar"
+    readme = (plugin_root / "README.md").read_text()
+    research_skill = (plugin_root / "skills" / "research-futures" / "SKILL.md").read_text()
+    predict_skill = (plugin_root / "skills" / "predict-futures" / "SKILL.md").read_text()
+
+    assert "## Use As A Preflight" in readme
+    assert "## Minimum Evidence Pack" in readme
+    assert "## Usage Assumptions" in readme
+    assert "ship" in readme and "revise" in readme and "block" in readme
+    assert "assumption-backed" in readme
+    assert "## Preflight Mode" in research_skill
+    assert "Do not imply Zoltar ran automatically" in research_skill
+    assert "## Assumption Check" in predict_skill
+    assert "Do not convert an unchecked assumption into a confident future" in predict_skill
+
+
 def test_storemetheus_ships_dual_host_maintenance_skill() -> None:
     plugin_root = REPO_ROOT / "plugins" / "eidos-storemetheus"
     skill = plugin_root / "skills" / "maintain-dual-host-marketplace" / "SKILL.md"

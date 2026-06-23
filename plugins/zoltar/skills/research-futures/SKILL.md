@@ -18,6 +18,18 @@ Inspect the smallest useful evidence surface before predicting:
 
 If evidence cannot be inspected, mark the prediction as assumption-backed and lower confidence.
 
+## Preflight Mode
+
+When Zoltar is used before shipping work, treat it as a preflight:
+
+1. Name the decision or change being judged.
+2. Name the authority surface: source repo, marketplace, cache/config, runtime target, current session, or external system.
+3. Inspect the minimum evidence pack available.
+4. Return one verdict: `ship`, `revise`, or `block`.
+5. Convert `revise` or `block` into changes the doer can make today and checks the checker can verify.
+
+Do not imply Zoltar ran automatically. If the user or agent did not invoke it, call that out as a durability risk.
+
 ## Decision Question
 
 Answer:
@@ -41,6 +53,7 @@ Also answer when market, category, competitor, plugin, or UX precedent matters:
 - Convert vague risks into concrete changes.
 - Keep the packet compact. No long speculative essays.
 - End in action for the doer/checker.
+- In preflight mode, include `ship`, `revise`, or `block` in the answer.
 - Include a Challenger Matrix when the decision depends on market patterns, category framing, competitor precedent, plugin conventions, or current UX assumptions.
 - Name at least one non-consensus possibility before the final answer when market or category context is involved.
 

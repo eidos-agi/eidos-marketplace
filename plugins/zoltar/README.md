@@ -27,6 +27,35 @@ Good triggers:
 
 Do not use Zoltar for generic brainstorming. Use it when the answer should alter the work.
 
+## Use As A Preflight
+
+Zoltar is not automatic. An agent must deliberately invoke it before high-regret work or when Daniel asks for future-backed judgment.
+
+A good invocation names:
+
+- The decision or change being judged.
+- The authority surface: source repo, marketplace, cache, runtime target, current session, or external system.
+- The evidence to inspect before predicting.
+- The action that can still change today.
+
+When used as a preflight, Zoltar should end with one verdict:
+
+- `ship`: the work is directionally right and the future complaint is already prevented.
+- `revise`: the work is useful, but one or more changes should happen before shipping.
+- `block`: the work creates false confidence, lacks authority, or depends on missing evidence.
+
+## Minimum Evidence Pack
+
+Before predicting, inspect the smallest useful packet:
+
+- User request and explicit corrections.
+- Current source files, manifests, README, tests, logs, screenshots, or command output.
+- Authority boundaries: what owns truth, what is only packaging, what is only cache, and what writes are forbidden.
+- Runtime proof when the claim depends on install, visibility, freshness, or remote-machine state.
+- Prior complaints or misses when they match the current shape.
+
+If that packet cannot be inspected, Zoltar must mark the answer as assumption-backed and lower confidence.
+
 ## What It Produces
 
 Zoltar produces four things:
@@ -59,6 +88,15 @@ Zoltar also asks:
 > What is likely only because everyone is copying the same flawed present?
 
 That is the purpose of the Challenger Matrix.
+
+## Usage Assumptions
+
+Zoltar assumes it is a judgment layer, not a scheduler, daemon, validator, or outbound actor.
+
+- It can make a doer change direction, but it does not replace the doer.
+- It can tell a checker what complaint to validate against, but it does not replace test evidence.
+- It can inspect marketplace and runtime surfaces, but it should not claim installed/current-session visibility unless those surfaces were checked.
+- It can predict Daniel's likely objection when Daniel is the user, but public Eidos plugins should generalize the complaint as a user or operator trust failure.
 
 ## Challenger Matrix
 

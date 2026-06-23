@@ -18,13 +18,16 @@ The Doubter asks: "Are we copying a flawed present, or redefining the category a
 ## Answer Process
 
 1. Rewrite the question as a decision.
-2. Inspect evidence before answering when possible.
-3. State the answer in one sentence.
-4. Support the answer with current truth and likely futures.
-5. Name the likely user complaint being prevented.
-6. If market/category/tool precedent shapes the decision, produce the Challenger Matrix.
-7. Give concrete changes for today.
-8. Give doer/checker handoff bullets.
+2. Identify whether this is a quick answer, researched decision, preflight verdict, or Challenger Matrix.
+3. Inspect evidence before answering when possible.
+4. Name any unchecked assumption that affects confidence.
+5. State the answer in one sentence.
+6. If this is a preflight, include `ship`, `revise`, or `block`.
+7. Support the answer with current truth and likely futures.
+8. Name the likely user complaint being prevented.
+9. If market/category/tool precedent shapes the decision, produce the Challenger Matrix.
+10. Give concrete changes for today.
+11. Give doer/checker handoff bullets.
 
 ## Output
 

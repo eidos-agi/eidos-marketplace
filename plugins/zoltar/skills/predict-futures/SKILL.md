@@ -19,6 +19,17 @@ Use this as the broad Zoltar entrypoint, but do not behave like a passive prompt
 
 For the full workflow, follow the `research-futures` skill behavior.
 
+## Assumption Check
+
+Before answering, ask whether the request needs Zoltar as:
+
+- A quick complaint prediction.
+- A researched decision answer.
+- A preflight verdict before shipping.
+- A Challenger Matrix against market/category overfit.
+
+If the answer depends on install state, runtime visibility, freshness, remote-machine state, or marketplace packaging, inspect that surface or mark the prediction as assumption-backed. Do not convert an unchecked assumption into a confident future.
+
 ## Default Question
 
 Answer:
