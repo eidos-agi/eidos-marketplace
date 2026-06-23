@@ -105,6 +105,17 @@ def test_zoltar_documents_preflight_and_assumption_contract() -> None:
     assert "Do not convert an unchecked assumption into a confident future" in predict_skill
 
 
+def test_zoltar_readme_includes_worked_examples() -> None:
+    readme = (REPO_ROOT / "plugins" / "zoltar" / "README.md").read_text()
+
+    assert "## Worked Examples" in readme
+    assert "Dual-host marketplace packaging" in readme
+    assert "Progressive README reveal" in readme
+    assert "Usage assumptions" in readme
+    assert "AIC Omni freshness check" in readme
+    assert "false-green Director answer" in readme
+
+
 def test_storemetheus_ships_dual_host_maintenance_skill() -> None:
     plugin_root = REPO_ROOT / "plugins" / "eidos-storemetheus"
     skill = plugin_root / "skills" / "maintain-dual-host-marketplace" / "SKILL.md"

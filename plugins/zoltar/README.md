@@ -138,6 +138,15 @@ The Doubter verdict is one of:
 }
 ```
 
+## Worked Examples
+
+These repo examples show Zoltar changing the action:
+
+- Dual-host marketplace packaging (`144b01f`): predicted the complaint that Zoltar was coupled to Claude Code, so the plugin moved to shared `README.md`, `skills/`, and `assets/` with separate Claude and Codex manifests plus a host-neutral test.
+- Progressive README reveal (`8b3caf1`): predicted the README would feel too dense, so it was reordered from first-use framing to compact examples, then the full packet.
+- Usage assumptions (`7009970`): predicted agents would forget to invoke Zoltar or treat unchecked assumptions as facts, so the README and skills gained preflight verdicts, a minimum evidence pack, and regression coverage.
+- AIC Omni freshness check (`2026-06-23`): predicted Daniel would object to a false-green Director answer; live evidence showed `aic_mail` stale at `76 / 5033` indexed and `aic_teams` stale despite `696 / 696` indexed because the cache had no `last_sweep_at` and newest Teams evidence was `2026-06-10`. The changed action was to treat Omni as `revise`, surface Mail.app and Teams refresh blockers, and avoid claiming Director-ready comms freshness.
+
 ## Full Packet
 
 Agents should use this packet when Zoltar output needs to be consumed by another agent:
