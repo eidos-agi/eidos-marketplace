@@ -1,60 +1,38 @@
 # Zoltar
 
-Zoltar is an Eidos foresight research subagent. It investigates current context, predicts likely future outcomes and user objections, challenges market overfit, answers decision questions, and emits concrete changes for doer/checker agents.
+<p align="center">
+  <img src="assets/zoltar-github-mark.png" alt="Zoltar logo" width="180">
+</p>
 
-Zoltar is useful only if it changes the action: preventing a likely complaint, turning vague risk into a concrete change, finding an architectural inconsistency before shipping, producing a structured packet another agent can consume, or learning from a missed prediction.
+Zoltar is an Eidos foresight research subagent.
 
-## Role Boundary
+It investigates the current situation, predicts what is likely to happen next, challenges whether that prediction is too shaped by the existing market, and turns the answer into concrete changes for doer/checker agents.
 
-- Checker asks: "Does this work?"
-- Zoltar asks: "Even if this works, is it the right thing, in the right place, with the right authority, based on what is likely to happen next?"
-- Doubter asks: "Are we copying a flawed present, or redefining the category around what frontier users will need?"
+Zoltar is useful only when it changes the action.
 
-Zoltar has three internal voices:
+## What It Answers
 
-- Researcher: "What does the evidence say?"
-- Forecaster: "What futures are likely?"
-- Doubter: "Are these futures too constrained by what already exists?"
+Zoltar answers one practical question:
 
-## Owner
+> What is likely to go wrong, what evidence supports that, what future complaint or failure are we preventing, and what should change today?
 
-- Store: Eidos AGI
-- Plugin owner: Eidos AGI
-- Visibility: private Eidos Store plugin unless explicitly promoted to a public marketplace.
+It also asks the harder second question:
 
-## Authority Surfaces
+> What is likely only because everyone is copying the same flawed present?
 
-- Reads local context, source files, command output, tests, docs, and store manifests when useful for evidence.
-- Does not own external systems, outbound communication, provider auth, production changes, money movement, or credential handling.
-- Routes implementation changes back to the active repo/tool owner.
+## How It Thinks
 
-## Skills
+Zoltar uses three voices:
 
-- `research-futures`: inspect evidence first, then predict futures and concrete changes.
-- `answer-foresight-question`: answer a specific decision question with evidence-backed judgment.
-- `predict-complaints`: predict the user complaint or future regret a change is likely to trigger.
-- `challenge-market-overfit`: produce the Challenger Matrix and challenge derivative market/category assumptions.
-- `handoff-to-doer-checker`: split foresight findings into doer instructions and checker validation.
-- `self-improve-zoltar`: compare predictions to outcomes and update Zoltar's rules.
-- `predict-futures`: compatibility entrypoint that now routes to researched foresight behavior.
+- `Researcher`: What does the evidence say?
+- `Forecaster`: What futures are likely?
+- `Doubter`: Are these futures too constrained by what already exists?
 
-## Safe Actions
+The Doubter does not replace research. It attacks lazy extrapolation, derivative product thinking, weak assumptions, and category overfit.
 
-- Inspect local evidence and summarize what was checked.
-- Predict likely futures, complaints, early warnings, and preventive changes.
-- Produce structured packets for other agents.
-- Prepare local implementation plans or patches when explicitly requested.
-- Compare predictions against observed outcomes and propose Zoltar rule changes.
+## Output Contract
 
-## Approval Required
-
-- Sending messages, comments, drafts, or external communications.
-- Mutating Linear, GitHub, Slack, Gmail, Teams, production systems, provider auth, credentials, or money-related systems.
-- Publishing the plugin publicly.
-
-## Structured Packet
-
-Zoltar's default machine-readable packet is:
+Zoltar emits a compact packet that another agent can use:
 
 ```json
 {
@@ -91,41 +69,64 @@ Zoltar's default machine-readable packet is:
 }
 ```
 
-The Challenger Matrix is required when market, category, competitor, plugin, or UX precedent shapes the decision. It answers: "What is likely only because everyone is copying the same flawed present?"
+The `challenger_matrix` is required when market, category, competitor, plugin, or UX precedent shapes the decision.
 
-## Visual Identity
+## Skills
 
-Zoltar is not a mystical fortune teller. Its visual identity is a researched foresight system: a search lens over a branching future cone, with warning and check nodes. The message is grounded prediction plus constructive challenge.
+- `research-futures`: inspect evidence first, then predict likely futures and concrete changes.
+- `answer-foresight-question`: answer a decision question with a judgment, not a possibility cloud.
+- `predict-complaints`: name the future complaint before it happens.
+- `challenge-market-overfit`: challenge consensus, category overfit, and derivative market patterns.
+- `handoff-to-doer-checker`: split foresight into implementation instructions and validation checks.
+- `self-improve-zoltar`: update Zoltar's rules when predictions miss.
+- `predict-futures`: compatibility entrypoint for broad Zoltar requests.
 
-## GitHub Images
+## Good Zoltar
 
-- [Zoltar GitHub preview](assets/zoltar-github-preview.png): square preview image with the Zoltar machine motif.
-- [Zoltar GitHub mark](assets/zoltar-github-mark.png): simplified square `Z` mark for avatar/icon use.
+```json
+{
+  "likely_user_complaint": "Daniel will object that this works but is still just a prompt-style risk checklist.",
+  "evidence_checked": [
+    "The plugin is described as a foresight subagent.",
+    "The output schema includes doer/checker handoff.",
+    "Daniel asked for market-overfit challenge, not consensus prediction."
+  ],
+  "answer": "Revise the framing so Zoltar acts as an anti-overfit foresight governor, not a passive prediction lens.",
+  "change_today": [
+    "Require the Challenger Matrix for market-shaped decisions.",
+    "Make the Doubter name a non-consensus alternative before final recommendation.",
+    "Give the checker a concrete anti-overfit validation step."
+  ]
+}
+```
+
+## Safety
+
+Zoltar is read-first. It may inspect files, docs, tests, command output, and store manifests.
+
+It does not send messages, create drafts, post comments, mutate Linear/GitHub/Slack/Gmail/Teams, handle credentials, move money, or touch production systems without explicit approval for that exact action.
+
+## Images
+
+<p align="center">
+  <img src="assets/zoltar-github-preview.png" alt="Zoltar GitHub preview" width="360">
+</p>
+
+- `assets/zoltar-github-mark.png`: square mark for avatar/icon use.
+- `assets/zoltar-github-preview.png`: square preview image for GitHub and store surfaces.
 
 ## Verification
 
 ```bash
-uv run --with pyyaml python /Users/dshanklinbv/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/zoltar/skills/research-futures
-uv run --with pyyaml python /Users/dshanklinbv/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/zoltar/skills/answer-foresight-question
-uv run --with pyyaml python /Users/dshanklinbv/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/zoltar/skills/predict-complaints
-uv run --with pyyaml python /Users/dshanklinbv/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/zoltar/skills/challenge-market-overfit
-uv run --with pyyaml python /Users/dshanklinbv/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/zoltar/skills/handoff-to-doer-checker
-uv run --with pyyaml python /Users/dshanklinbv/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/zoltar/skills/self-improve-zoltar
 uv run --with pyyaml python /Users/dshanklinbv/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/zoltar
 python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
 ```
 
-## Update Procedure
+For full skill validation, run `quick_validate.py` against each directory under `plugins/zoltar/skills/`.
 
-1. Edit `plugins/zoltar/.codex-plugin/plugin.json` or a skill under `plugins/zoltar/skills/`.
-2. Run the verification commands.
-3. Sync to the Mac mini with Conduit.
-4. Reinstall `zoltar@eidos-agi` from the Mac mini Codex CLI.
+## Ownership
 
-## Rollback
-
-Remove or revert `plugins/zoltar/` and its `.agents/plugins/marketplace.json` entry before release. If already installed, uninstall or reinstall from the previous marketplace revision.
-
-## Review Cadence
-
-Review monthly, or sooner if Zoltar produces generic risk commentary, fails to inspect evidence, does not emit concrete changes, misses a user complaint that should have been predicted, or gives a researched answer that is still too derivative.
+- Store: Eidos AGI
+- Plugin owner: Eidos AGI
+- Visibility: private Eidos Store plugin unless explicitly promoted.
+- Review cadence: monthly, or sooner if Zoltar becomes generic, misses predictable complaints, or gives researched answers that are still too derivative.
