@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180" role="img" aria-labelledby="title desc">
+  <title id="title">Zoltar researched foresight system</title>
+  <desc id="desc">Zoltar wordmark with a search lens, branching future cone, warning node, and check node.</desc>
+  <rect width="640" height="180" rx="28" fill="#082F2A"/>
+  <g transform="translate(46 32)">
+    <path d="M46 72c24-28 50-42 92-50" fill="none" stroke="#5EEAD4" stroke-width="8" stroke-linecap="round"/>
+    <path d="M58 88c30-7 58-2 88 16" fill="none" stroke="#A7F3D0" stroke-width="7" stroke-linecap="round"/>
+    <path d="M66 48c30 8 55 26 76 59" fill="none" stroke="#FACC15" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="58" cy="66" r="34" fill="none" stroke="#CCFBF1" stroke-width="10"/>
+    <path d="M82 90l45 45" stroke="#CCFBF1" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="146" cy="22" r="10" fill="#22C55E"/>
+    <path d="M142 22l3 4 8-10" fill="none" stroke="#052E16" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="150" cy="105" r="10" fill="#F97316"/>
+    <path d="M150 98v9" stroke="#431407" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="150" cy="112" r="2" fill="#431407"/>
+  </g>
+  <text x="235" y="82" fill="#ECFEFF" font-family="Inter, Helvetica, Arial, sans-serif" font-size="42" font-weight="800">Zoltar</text>
+  <text x="236" y="122" fill="#A7F3D0" font-family="Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="600">researched foresight for doer/checker agents</text>
+</svg>

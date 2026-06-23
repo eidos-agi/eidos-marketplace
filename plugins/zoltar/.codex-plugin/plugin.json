@@ -1,0 +1,48 @@
+{
+  "name": "zoltar",
+  "version": "0.3.0",
+  "description": "An Eidos foresight research subagent that investigates current context, predicts likely outcomes and objections, challenges market overfit, and emits concrete changes for doer/checker agents.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi",
+  "repository": "https://github.com/eidos-agi",
+  "license": "MIT",
+  "keywords": [
+    "future-prediction",
+    "foresight-research",
+    "second-order-effects",
+    "product-strategy",
+    "complaint-prediction",
+    "eidos"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Zoltar",
+    "shortDescription": "Research likely futures, answer the decision, and hand concrete changes to doers/checkers.",
+    "longDescription": "Zoltar is an Eidos foresight research subagent that investigates current context, predicts likely future outcomes and user objections, challenges market overfit with a built-in Doubter, answers decision questions, and emits concrete changes for doer/checker agents. It asks: even if this works, is it the right thing, in the right place, with the right authority, based on what is likely to happen next, and are we copying a flawed present?",
+    "developerName": "Eidos AGI",
+    "category": "Productivity",
+    "capabilities": [
+      "First-order prediction",
+      "Second-order effects",
+      "Foresight research",
+      "Decision answers",
+      "Complaint prediction",
+      "Market overfit challenge",
+      "Challenger Matrix",
+      "Non-consensus futures",
+      "Doer/checker handoff",
+      "Risk prevention",
+      "Upside amplification",
+      "Self-improvement loop",
+      "Prediction miss analysis"
+    ],
+    "defaultPrompt": "Use Zoltar as a foresight research subagent with three voices: Researcher checks evidence, Forecaster predicts likely futures, and Doubter challenges whether the prediction is overfit to current market patterns. End with concrete changes for the doer and checker.",
+    "brandColor": "#0F766E",
+    "composerIcon": "./assets/plugin-icon.svg",
+    "logo": "./assets/plugin-logo.svg"
+  }
+}
