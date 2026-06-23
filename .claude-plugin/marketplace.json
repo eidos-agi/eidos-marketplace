@@ -1185,6 +1185,57 @@
           "audit_doc": "AUDITS/visionlog.md"
         }
       }
+    },
+    {
+      "name": "zoltar",
+      "description": "An Eidos foresight research subagent that investigates current context, predicts likely outcomes and objections, challenges market overfit, and emits concrete changes for doer/checker agents.",
+      "source": "./plugins/zoltar",
+      "category": "productivity",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/zoltar",
+      "license": "MIT",
+      "version": "0.3.0",
+      "tags": [
+        "future-prediction",
+        "foresight-research",
+        "second-order-effects",
+        "product-strategy",
+        "complaint-prediction",
+        "market-overfit",
+        "claude-code",
+        "eidos"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ]
+        },
+        "audit": {
+          "audited_by": "Codex plugin validator + skill quick validation + dual-host marketplace checks",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-06-23",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/zoltar.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "product-strategy",
+            "architecture-review",
+            "marketplace-entry",
+            "agent-workflow",
+            "high-impact-change"
+          ],
+          "pairs_with": [
+            "foreman",
+            "converge",
+            "canon",
+            "eidos-storemetheus"
+          ],
+          "preflight_check": "/zoltar"
+        }
+      }
     }
   ]
 }

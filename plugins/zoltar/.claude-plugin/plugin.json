@@ -1,0 +1,25 @@
+{
+  "name": "zoltar",
+  "version": "0.3.0",
+  "description": "An Eidos foresight research subagent that investigates current context, predicts likely outcomes and objections, challenges market overfit, and emits concrete changes for doer/checker agents.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/zoltar",
+  "repository": "https://github.com/eidos-agi/eidos-marketplace",
+  "license": "MIT",
+  "category": "productivity",
+  "keywords": [
+    "future-prediction",
+    "foresight-research",
+    "second-order-effects",
+    "product-strategy",
+    "complaint-prediction",
+    "market-overfit",
+    "claude-code",
+    "eidos"
+  ],
+  "skills": "./skills/"
+}

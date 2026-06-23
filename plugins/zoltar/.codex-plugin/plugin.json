@@ -7,8 +7,8 @@
     "email": "daniel@eidosagi.com",
     "url": "https://github.com/eidos-agi"
   },
-  "homepage": "https://github.com/eidos-agi",
-  "repository": "https://github.com/eidos-agi",
+  "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/zoltar",
+  "repository": "https://github.com/eidos-agi/eidos-marketplace",
   "license": "MIT",
   "keywords": [
     "future-prediction",
@@ -16,6 +16,8 @@
     "second-order-effects",
     "product-strategy",
     "complaint-prediction",
+    "market-overfit",
+    "codex",
     "eidos"
   ],
   "skills": "./skills/",

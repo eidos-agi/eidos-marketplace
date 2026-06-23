@@ -1,10 +1,10 @@
 # Eidos Marketplace
 
-The plugin marketplace for [Claude Code](https://docs.claude.com/en/docs/claude-code), by [Eidos AGI](https://eidosagi.com).
+The plugin marketplace for Claude Code and Codex, by [Eidos AGI](https://eidosagi.com).
 
 > **A portfolio of how we ship.** Every plugin here is built or vouched for by Eidos AGI, audited against a public [standard](STANDARD.md), and removed if it falls below the bar. Visibility is the moat.
 >
-> **Three layers, one bar.** Onboarding via `/eidos-install` (a progressive-reveal forge that asks what you're doing and recommends a starter set). Discovery via `marketplace.json` and `/forge recommend-for` (a forge-specific recommender). Installation via `claude plugins install <name>` (the normal Claude Code path). Each layer can fail without breaking the others.
+> **Three layers, one bar.** Onboarding via `/eidos-install` or Codex starter plugins. Discovery via host marketplace files and `/forge recommend-for` where available. Installation via the host-native plugin command. Each layer can fail without breaking the others.
 >
 > **The marketplace is its own first customer.** Audits run via `foss-forge`. Releases via `ship-forge`. Security checks via `security-forge`. Each is itself a plugin in this marketplace. If our own tools can't run our own operations, they don't belong here. See [Dogfooding](STANDARD.md#dogfooding--the-marketplace-maintains-itself-with-its-own-plugins).
 
@@ -79,7 +79,7 @@ Every plugin is directly installable. The recommenders (`eidos-install`, `forge-
 
 ## Publishing from source repos
 
-Source repos remain canonical for code, tests, package releases, skills, and MCP implementation. This marketplace owns the public store surface: plugin bundles, `marketplace.json`, audit docs, and recommendation metadata.
+Source repos remain canonical for code, tests, package releases, skills, and MCP implementation. This marketplace owns the public store surface: plugin bundles, host marketplace files, audit docs, and recommendation metadata.
 
 Publish a source-owned plugin into the marketplace with:
 
@@ -88,7 +88,27 @@ python tools/marketplace_publish.py publish /path/to/source-repo
 python tools/marketplace_publish.py check <plugin-name> --source /path/to/source-repo
 ```
 
-The publisher copies store-facing files into `plugins/<name>/`, normalizes local MCP paths to `${CLAUDE_PLUGIN_ROOT}`, upserts `.claude-plugin/marketplace.json`, and creates a pending audit doc when one does not exist. The source-aware check compares generated bundle files back to the source repo, ignoring local cache artifacts such as `__pycache__`. Run the source repo's own doctor/checks first, then run the marketplace checks before shipping.
+The publisher copies store-facing files into `plugins/<name>/`, normalizes local MCP paths to `${CLAUDE_PLUGIN_ROOT}`, upserts both host marketplace files when possible, and creates a pending audit doc when one does not exist. The source-aware check compares generated bundle files back to the source repo, ignoring local cache artifacts such as `__pycache__`. Run the source repo's own doctor/checks first, then run the marketplace checks before shipping.
+
+## Host-neutral plugin shape
+
+Eidos plugins should not be "Claude plugins" or "Codex plugins" at the product layer. The shared plugin payload lives in `README.md`, `skills/`, `assets/`, `.mcp.json`, scripts, docs, and tests. Host-specific files are adapters:
+
+```text
+plugins/<name>/
+├── README.md
+├── assets/
+├── skills/
+├── .claude-plugin/plugin.json
+└── .codex-plugin/plugin.json
+```
+
+The root marketplaces are separate because the hosts read different schemas:
+
+- `.claude-plugin/marketplace.json` is the Claude Code listing.
+- `.agents/plugins/marketplace.json` is the Codex listing.
+
+Keep descriptions, versions, authority boundaries, and skill paths aligned across both manifests. Put rich Codex UI metadata in `.codex-plugin/plugin.json`; keep Claude metadata portable and minimal in `.claude-plugin/plugin.json`. The product definition should remain visible in the plugin README and audit doc so neither host becomes the source of truth.
 
 ## What's in here
 
@@ -120,7 +140,7 @@ The publisher copies store-facing files into `plugins/<name>/`, normalizes local
 | **forge-forge** | Forge-specific recommender; reads the marketplace's `x-eidos.recommend` blocks | (Phase 3) |
 | **probe-forge** | Probing tools | (audit pending) |
 
-Per-plugin scorecards live in [AUDITS/](AUDITS/). Audit metadata is also published machine-readably under each plugin's `x-eidos.audit` block in `marketplace.json`. Claude Code ignores `x-eidos` at install time; Eidos tooling reads it for audits, recommendations, and source-to-store checks.
+Per-plugin scorecards live in [AUDITS/](AUDITS/). Audit metadata is also published machine-readably under each plugin's `x-eidos.audit` block in the Claude marketplace. Claude Code ignores `x-eidos` at install time; Eidos tooling reads it for audits, recommendations, and source-to-store checks.
 
 ## How it works
 

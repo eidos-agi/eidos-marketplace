@@ -63,6 +63,31 @@ def test_marketplace_entries_resolve_to_bundles() -> None:
             )
 
 
+def test_zoltar_is_dual_host_and_host_neutral() -> None:
+    codex_marketplace = json.loads(
+        (REPO_ROOT / ".agents" / "plugins" / "marketplace.json").read_text()
+    )
+    claude_marketplace = json.loads(
+        (REPO_ROOT / ".claude-plugin" / "marketplace.json").read_text()
+    )
+    plugin_root = REPO_ROOT / "plugins" / "zoltar"
+
+    codex_names = {entry["name"] for entry in codex_marketplace["plugins"]}
+    claude_names = {entry["name"] for entry in claude_marketplace["plugins"]}
+    assert "zoltar" in codex_names
+    assert "zoltar" in claude_names
+    assert (plugin_root / ".codex-plugin" / "plugin.json").exists()
+    assert (plugin_root / ".claude-plugin" / "plugin.json").exists()
+
+    codex_manifest = json.loads((plugin_root / ".codex-plugin" / "plugin.json").read_text())
+    claude_manifest = json.loads((plugin_root / ".claude-plugin" / "plugin.json").read_text())
+    assert codex_manifest["name"] == claude_manifest["name"] == "zoltar"
+    assert codex_manifest["version"] == claude_manifest["version"]
+    assert codex_manifest["skills"] == claude_manifest["skills"] == "./skills/"
+    assert "interface" in codex_manifest
+    assert "interface" not in claude_manifest
+
+
 def test_published_bundles_do_not_include_runtime_or_proof_noise() -> None:
     blocked_parts = {".git", ".venv", ".pytest_cache", ".ruff_cache", "__pycache__"}
     tracked = subprocess.check_output(
