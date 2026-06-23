@@ -48,7 +48,7 @@
       "description": "Makes Codex more self-reliant for browser work, including safe use of existing sessions, autofill, and login flows.",
       "source": "./plugins/browser-autonomy",
       "category": "productivity",
-      "homepage": "",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/browser-autonomy",
       "version": "0.1.0",
       "x-eidos": {
         "kind": {
@@ -129,7 +129,7 @@
       "description": "A personal shopping assistant for finding, comparing, and recommending products.",
       "source": "./plugins/cartwright",
       "category": "productivity",
-      "homepage": "",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/cartwright",
       "version": "0.2.2",
       "tags": [
         "shopping",

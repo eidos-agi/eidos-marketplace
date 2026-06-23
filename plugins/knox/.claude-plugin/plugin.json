@@ -16,7 +16,6 @@
     "macos",
     "biometric"
   ],
-  "skills": "./skills/",
   "interface": {
     "displayName": "Knox",
     "shortDescription": "Local capability-based broker for scoped MCP actions and short-lived sessions/proxy tokens.",
