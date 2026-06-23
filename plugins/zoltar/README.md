@@ -6,33 +6,103 @@
 
 Zoltar is an Eidos foresight research subagent.
 
-It investigates the current situation, predicts what is likely to happen next, challenges whether that prediction is too shaped by the existing market, and turns the answer into concrete changes for doer/checker agents.
+It helps an agent answer a practical question before work ships:
+
+> What is likely to go wrong, what evidence supports that, what future complaint are we preventing, and what should change today?
 
 Zoltar is useful only when it changes the action.
 
-## What It Answers
+## When To Use It
 
-Zoltar answers one practical question:
+Use Zoltar before a decision, implementation, plugin, architecture change, or workflow is likely to be regretted later.
 
-> What is likely to go wrong, what evidence supports that, what future complaint or failure are we preventing, and what should change today?
+Good triggers:
 
-It also asks the harder second question:
+- "What will Daniel complain about?"
+- "What is this missing?"
+- "What are the second-order effects?"
+- "Is this technically working but still the wrong move?"
+- "Are we copying the market instead of building the better future?"
+- "What should the doer and checker change today?"
 
-> What is likely only because everyone is copying the same flawed present?
+Do not use Zoltar for generic brainstorming. Use it when the answer should alter the work.
+
+## What It Produces
+
+Zoltar produces four things:
+
+1. Evidence: what was inspected and what is currently true.
+2. Judgment: the likely future, complaint, or failure.
+3. Challenge: whether the judgment is overfit to current market/category patterns.
+4. Handoff: concrete instructions for the doer and checker.
+
+The output should usually end with a specific change, not a caveat.
 
 ## How It Thinks
 
-Zoltar uses three voices:
+Zoltar has three voices:
 
 - `Researcher`: What does the evidence say?
 - `Forecaster`: What futures are likely?
 - `Doubter`: Are these futures too constrained by what already exists?
 
-The Doubter does not replace research. It attacks lazy extrapolation, derivative product thinking, weak assumptions, and category overfit.
+The Doubter does not reject novelty for sport. It challenges lazy extrapolation, derivative product thinking, weak assumptions, and category overfit.
 
-## Output Contract
+## The Harder Question
 
-Zoltar emits a compact packet that another agent can use:
+Most foresight stops at:
+
+> What is likely?
+
+Zoltar also asks:
+
+> What is likely only because everyone is copying the same flawed present?
+
+That is the purpose of the Challenger Matrix.
+
+## Challenger Matrix
+
+Use the Challenger Matrix when market, category, competitor, plugin, or UX precedent shapes the decision.
+
+It forces Zoltar to separate:
+
+- What the market already rewards.
+- What the market currently misunderstands.
+- What users say they want.
+- What users will need later.
+- What existing tools make easy.
+- What a genuinely better future requires.
+
+The Doubter verdict is one of:
+
+- `proceed`
+- `revise`
+- `invert`
+- `delay`
+- `reject`
+
+## Good Zoltar
+
+```json
+{
+  "likely_user_complaint": "Daniel will object that this works but is still just a prompt-style risk checklist.",
+  "evidence_checked": [
+    "The plugin is described as a foresight subagent.",
+    "The output schema includes doer/checker handoff.",
+    "Daniel asked for market-overfit challenge, not consensus prediction."
+  ],
+  "answer": "Revise the framing so Zoltar acts as an anti-overfit foresight governor, not a passive prediction lens.",
+  "change_today": [
+    "Require the Challenger Matrix for market-shaped decisions.",
+    "Make the Doubter name a non-consensus alternative before final recommendation.",
+    "Give the checker a concrete anti-overfit validation step."
+  ]
+}
+```
+
+## Full Packet
+
+Agents should use this packet when Zoltar output needs to be consumed by another agent:
 
 ```json
 {
@@ -69,8 +139,6 @@ Zoltar emits a compact packet that another agent can use:
 }
 ```
 
-The `challenger_matrix` is required when market, category, competitor, plugin, or UX precedent shapes the decision.
-
 ## Skills
 
 - `research-futures`: inspect evidence first, then predict likely futures and concrete changes.
@@ -80,25 +148,6 @@ The `challenger_matrix` is required when market, category, competitor, plugin, o
 - `handoff-to-doer-checker`: split foresight into implementation instructions and validation checks.
 - `self-improve-zoltar`: update Zoltar's rules when predictions miss.
 - `predict-futures`: compatibility entrypoint for broad Zoltar requests.
-
-## Good Zoltar
-
-```json
-{
-  "likely_user_complaint": "Daniel will object that this works but is still just a prompt-style risk checklist.",
-  "evidence_checked": [
-    "The plugin is described as a foresight subagent.",
-    "The output schema includes doer/checker handoff.",
-    "Daniel asked for market-overfit challenge, not consensus prediction."
-  ],
-  "answer": "Revise the framing so Zoltar acts as an anti-overfit foresight governor, not a passive prediction lens.",
-  "change_today": [
-    "Require the Challenger Matrix for market-shaped decisions.",
-    "Make the Doubter name a non-consensus alternative before final recommendation.",
-    "Give the checker a concrete anti-overfit validation step."
-  ]
-}
-```
 
 ## Safety
 
@@ -118,11 +167,18 @@ It does not send messages, create drafts, post comments, mutate Linear/GitHub/Sl
 ## Verification
 
 ```bash
+claude plugins validate plugins/zoltar
 uv run --with pyyaml python /Users/dshanklinbv/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/zoltar
-python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
+python3 tools/marketplace_publish.py check zoltar
 ```
 
-For full skill validation, run `quick_validate.py` against each directory under `plugins/zoltar/skills/`.
+For full skill validation:
+
+```bash
+for d in plugins/zoltar/skills/*; do
+  uv run --with pyyaml python /Users/dshanklinbv/.codex/skills/.system/skill-creator/scripts/quick_validate.py "$d" || exit 1
+done
+```
 
 ## Ownership
 
