@@ -1,7 +1,7 @@
 # Zoltar
 
 <p align="center">
-  <img src="assets/zoltar-github-mark.png" alt="Zoltar logo" width="180">
+  <img src="assets/zoltar-github-preview.png" alt="Zoltar GitHub preview" width="420">
 </p>
 
 Zoltar is an Eidos foresight research subagent.
@@ -109,11 +109,11 @@ It does not send messages, create drafts, post comments, mutate Linear/GitHub/Sl
 ## Images
 
 <p align="center">
-  <img src="assets/zoltar-github-preview.png" alt="Zoltar GitHub preview" width="360">
+  <img src="assets/zoltar-github-mark.png" alt="Zoltar mark" width="180">
 </p>
 
-- `assets/zoltar-github-mark.png`: square mark for avatar/icon use.
 - `assets/zoltar-github-preview.png`: square preview image for GitHub and store surfaces.
+- `assets/zoltar-github-mark.png`: square mark for avatar/icon use.
 
 ## Verification
 
