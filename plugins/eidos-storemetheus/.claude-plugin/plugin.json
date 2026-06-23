@@ -20,5 +20,6 @@
     "governance",
     "enterprise",
     "private-plugins"
-  ]
+  ],
+  "skills": "./skills/"
 }

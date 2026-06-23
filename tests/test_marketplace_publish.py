@@ -96,7 +96,7 @@ def test_storemetheus_ships_dual_host_maintenance_skill() -> None:
     codex_manifest = json.loads((plugin_root / ".codex-plugin" / "plugin.json").read_text())
     claude_manifest = json.loads((plugin_root / ".claude-plugin" / "plugin.json").read_text())
     assert codex_manifest["version"] == claude_manifest["version"] == "0.1.1"
-    assert codex_manifest["skills"] == "./skills/"
+    assert codex_manifest["skills"] == claude_manifest["skills"] == "./skills/"
 
     body = skill.read_text()
     assert ".claude-plugin/plugin.json" in body
