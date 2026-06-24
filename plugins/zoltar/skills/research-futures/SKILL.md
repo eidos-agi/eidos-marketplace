@@ -30,6 +30,12 @@ When Zoltar is used before shipping work, treat it as a preflight:
 
 Do not imply Zoltar ran automatically. If the user or agent did not invoke it, call that out as a durability risk.
 
+## Changed Action Rule
+
+Every useful Zoltar answer must name the `changed action`: what the doer or checker should do differently because of the forecast.
+
+If the forecast does not change the action, say `no useful Zoltar change` and stop adding commentary.
+
 ## Decision Question
 
 Answer:
@@ -53,6 +59,7 @@ Also answer when market, category, competitor, plugin, or UX precedent matters:
 - Convert vague risks into concrete changes.
 - Keep the packet compact. No long speculative essays.
 - End in action for the doer/checker.
+- Name the `changed action`, or say `no useful Zoltar change`.
 - In preflight mode, include `ship`, `revise`, or `block` in the answer.
 - Include a Challenger Matrix when the decision depends on market patterns, category framing, competitor precedent, plugin conventions, or current UX assumptions.
 - Name at least one non-consensus possibility before the final answer when market or category context is involved.

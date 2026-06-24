@@ -27,6 +27,20 @@ Good triggers:
 
 Do not use Zoltar for generic brainstorming. Use it when the answer should alter the work.
 
+## Zoltar Preflight
+
+Use this when you need the fast version:
+
+```text
+Use Zoltar on: <decision/change>
+Authority surface: <repo/store/runtime/source>
+Evidence to inspect: <files/commands/status>
+Question: What will go wrong, what complaint are we preventing, and what should change today?
+Return: ship | revise | block
+```
+
+The answer must name the `changed action`. If Zoltar does not change what the doer or checker will do, say `no useful Zoltar change` and stop.
+
 ## Use As A Preflight
 
 Zoltar is not automatic. An agent must deliberately invoke it before high-regret work or when Daniel asks for future-backed judgment.

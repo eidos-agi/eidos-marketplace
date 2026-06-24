@@ -94,12 +94,19 @@ def test_zoltar_documents_preflight_and_assumption_contract() -> None:
     research_skill = (plugin_root / "skills" / "research-futures" / "SKILL.md").read_text()
     predict_skill = (plugin_root / "skills" / "predict-futures" / "SKILL.md").read_text()
 
+    assert "## Zoltar Preflight" in readme
+    assert "Use Zoltar on: <decision/change>" in readme
+    assert "Return: ship | revise | block" in readme
+    assert "changed action" in readme
+    assert "no useful Zoltar change" in readme
     assert "## Use As A Preflight" in readme
     assert "## Minimum Evidence Pack" in readme
     assert "## Usage Assumptions" in readme
     assert "ship" in readme and "revise" in readme and "block" in readme
     assert "assumption-backed" in readme
     assert "## Preflight Mode" in research_skill
+    assert "## Changed Action Rule" in research_skill
+    assert "Name the `changed action`" in research_skill
     assert "Do not imply Zoltar ran automatically" in research_skill
     assert "## Assumption Check" in predict_skill
     assert "Do not convert an unchecked assumption into a confident future" in predict_skill
