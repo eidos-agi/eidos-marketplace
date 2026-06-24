@@ -10,3 +10,7 @@ tags:
   - convergence
   - testing
   - repair-loop
+faculty:
+  role: measurable completion faculty
+  invoke_as: converge
+  handoff: build target/probe rows, score evidence, and identify the smallest repair loop

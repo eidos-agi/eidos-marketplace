@@ -63,6 +63,8 @@ The architecture is intentionally CLI-first. Codex plugins and MCP shims should 
 ## Eidos AGI Plugin Family
 
 - `eidos@eidos-agi`: CLI-first gateway into the Eidos AGI platform and specialist systems.
+- `cept@eidos-agi`: outside-in agent proprioception faculty for stuck, looping, low-confidence, or architecture/debug steering moments.
+- `converge@eidos-agi`: measurable completion faculty for target/probe rows, evidence scoreboards, drift, regressions, and repair loops.
 - `felix@eidos-agi`: routing layer for the live Felix agent-builder CLI.
 - `rhea@eidos-agi`: sovereign model routing, debate, pairing, and image tools.
 - `foreman@eidos-agi`: multi-agent coding delegation and git worktree execution.

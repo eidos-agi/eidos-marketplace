@@ -81,6 +81,8 @@ eidos vault keys --help
 
 After Eidos gives the operating picture, route to the specialist surface that owns the work:
 
+- Use Cept for outside-in agent proprioception, stuck-loop debugging, low-confidence trajectory review, and architecture steering.
+- Use Converge for measurable completion: target/probe rows, evidence scoreboards, drift, regressions, and repair loops.
 - Use Zoltar for foresight research, second-order effects, likely future complaints, architectural regret prediction, and doer/checker handoffs.
 - Use Rhea for sovereign model routing, model debate, long-lived Rhea sessions, pairing, and image generation.
 - Use Felix for agent-building, pre-scaffold interviews, agent standards, maintainer loops, `AGENTS.md` wakeup files, and repo-health checks.
