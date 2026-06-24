@@ -45,6 +45,8 @@ eidos vault list
 
 The first `eidos do` invocation runs PERCEIVE and CARDINALITY, writes a context bundle and continuation envelope, then returns control to the substrate. After Codex acts and writes evidence, the continue invocation verifies evidence, writes the praxis turn, routes the system-of-record update, and can create plugin-learning candidates.
 
+When the CLI output or context bundle includes `recommended_faculties`, treat it as the routing answer. Invoke the named specialist/subagent, pass along the handoff and required evidence, then return to `eidos do --continue` with the proof bundle.
+
 `eidos closeout` is the final cleanup gate. It is read-only and checks for dirty repos, unpushed commits, and dangling Codex marketplace plugin entries before the agent says the mission is closed.
 
 ## Non-Goal
@@ -59,6 +61,7 @@ The architecture is intentionally CLI-first. Codex plugins and MCP shims should 
 - `felix@eidos-agi`: routing layer for the live Felix agent-builder CLI.
 - `rhea@eidos-agi`: sovereign model routing, debate, pairing, and image tools.
 - `foreman@eidos-agi`: multi-agent coding delegation and git worktree execution.
+- `zoltar@eidos-agi`: foresight research, second-order effects, likely complaint prediction, and doer/checker handoffs.
 - `reeves@eidos-agi`: routing layer for the live Reeves CLI.
 - `surfari@eidos-agi`: routing layer for the live Surfari CLI and browser-agent improvement loop.
 - `forge-forge@eidos-agi`: routing layer for Eidos forge discovery and forge creation patterns.

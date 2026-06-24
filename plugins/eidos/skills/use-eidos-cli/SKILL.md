@@ -29,6 +29,7 @@ Operationally:
 - Start with `eidos guide` for broad orientation.
 - Use `eidos status` or `eidos health` for current operating state.
 - Use `eidos do <task-id>` when the user is asking to work a docket task through the Eidos loop.
+- If `eidos do` emits `recommended_faculties`, treat that as the specialist routing decision. Invoke the named faculty/subagent with the stated handoff and preserve its required evidence for the checker.
 - Use `eidos closeout` before claiming the mission is closed.
 - Let Eidos identify the relevant domain or specialist.
 - Run that specialist CLI's smallest useful command.
@@ -79,6 +80,7 @@ eidos vault keys --help
 
 After Eidos gives the operating picture, route to the specialist surface that owns the work:
 
+- Use Zoltar for foresight research, second-order effects, likely future complaints, architectural regret prediction, and doer/checker handoffs.
 - Use Rhea for sovereign model routing, model debate, long-lived Rhea sessions, pairing, and image generation.
 - Use Felix for agent-building, pre-scaffold interviews, agent standards, maintainer loops, `AGENTS.md` wakeup files, and repo-health checks.
 - Use Foreman for parallel coding delegation to AI engineer workers in isolated git worktrees.
