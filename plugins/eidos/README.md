@@ -49,6 +49,11 @@ When the CLI output or context bundle includes `recommended_faculties`, treat it
 
 `eidos closeout` is the final cleanup gate. It is read-only and checks for dirty repos, unpushed commits, and dangling Codex marketplace plugin entries before the agent says the mission is closed.
 
+External workflow CLIs such as Taskr or `skillflow_execute` are optional
+surfaces for this plugin unless they are installed and expose a live smoke
+command. Missing optional tools should be reported as warnings, then replaced
+with runnable Eidos gates: `eidos health`, `eidos ship`, and `eidos closeout`.
+
 ## Non-Goal
 
 This plugin does not do the work itself. It starts and closes the loop around the work.
