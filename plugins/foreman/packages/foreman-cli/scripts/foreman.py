@@ -37,8 +37,21 @@ DAEMON_LOG_PATH = LOGS_HOME / "daemon.log"
 CONTROL_PLANE_PATH = STATE_HOME / "control-plane.json"
 CONTROL_PLANE_LOG_PATH = LOGS_HOME / "control-plane.log"
 MAX_TAIL_BYTES = 2_000_000
-ENGINES = ("claude", "claude-emux", "codex", "gemini", "aider", "opencode", "gemma4", "smoke")
-LOCAL_ENGINE_RESOURCE_GROUPS = {"opencode": "local-agent", "gemma4": "local-agent"}
+ENGINES = ("claude", "claude-emux", "codex", "gemini", "aider", "opencode", "gemma4", "grok-emux", "smoke")
+LOCAL_ENGINE_RESOURCE_GROUPS = {"opencode": "local-agent", "gemma4": "local-agent", "grok-emux": "local-agent"}
+DEFAULT_EMUX_PLUGIN_ROOT = "/Users/rentamac/repos-eidos-agi/eidos-marketplace/plugins/emux"
+DEFAULT_GROK_BIN = "/Users/rentamac/.grok/bin/grok"
+GROK_OUTPUT_FORMATS = {"plain", "json", "streaming-json"}
+GROK_REQUIRED_FLAGS = ("--cwd", "--prompt-file", "--output-format", "--max-turns", "--permission-mode", "--disable-web-search")
+LOCAL_ENGINE_ENV_KEYS = (
+    "OMP_NUM_THREADS",
+    "OPENBLAS_NUM_THREADS",
+    "MKL_NUM_THREADS",
+    "VECLIB_MAXIMUM_THREADS",
+    "NUMEXPR_NUM_THREADS",
+    "OLLAMA_NUM_PARALLEL",
+    "OLLAMA_MAX_LOADED_MODELS",
+)
 DEFAULT_TIMEOUT_SEC = 900
 DEFAULT_DAEMON_PORT = 53631
 DEFAULT_CONTROL_PLANE_PORT = 53640
@@ -584,7 +597,11 @@ def delegate_command_for_control_job(row: sqlite3.Row) -> list[str]:
 
 
 def control_status_from_worker_status(status: str) -> str:
-    return "done" if status in {"done", "merged", "pr_opened"} else "failed"
+    if status in {"done", "merged", "pr_opened"}:
+        return "done"
+    if status in {"interrupted", "discarded"}:
+        return status
+    return "failed"
 
 
 def run_control_job(row: sqlite3.Row, wait: bool, poll_interval_sec: float) -> dict[str, Any]:
@@ -663,6 +680,9 @@ def interrupt_worker(worker_id: str, reason: str = "", actor: str = "operator") 
     append_worker_log(worker_id, f"[operator] {ts} {actor}: HARD STOP requested. Reason: {reason}")
     if status != "running":
         return {"worker_id": worker_id, "action": "interrupt", "status": status, "stopped": False, "reason": reason}
+    if row["engine"] == "grok-emux":
+        for line in cleanup_grok_emux_session(worker_id, interrupt=True, kill=True, unregister=True):
+            append_worker_log(worker_id, line)
     pid = row["pid"]
     stopped = False
     if pid:
@@ -719,6 +739,10 @@ def preflight(repo: Path, base_ref: str, engine: str, allow_dirty: bool) -> None
         dirty = run_git(repo, ["status", "--porcelain"], check=False).stdout.strip()
         if dirty:
             failures.append("repo has uncommitted changes; commit/stash them or pass --allow-dirty")
+    if engine == "grok-emux":
+        failures.extend(grok_emux_preflight_failures())
+    elif engine == "claude-emux":
+        failures.extend(emux_runtime_preflight_failures())
     for exe in engine_required_executables(engine):
         if Path(exe).is_absolute():
             if not Path(exe).exists():
@@ -749,11 +773,15 @@ def engine_resource_group(engine: str) -> str | None:
     return LOCAL_ENGINE_RESOURCE_GROUPS.get(engine)
 
 
+def engine_env_key(engine: str) -> str:
+    return engine.upper().replace("-", "_")
+
+
 def engine_resource_limit(engine: str) -> int:
     group = engine_resource_group(engine)
     if not group:
         return 0
-    engine_specific = os.environ.get(f"FOREMAN_ENGINE_{engine.upper()}_MAX_RUNNING")
+    engine_specific = os.environ.get(f"FOREMAN_ENGINE_{engine_env_key(engine)}_MAX_RUNNING")
     if engine_specific is not None:
         try:
             return max(1, int(engine_specific))
@@ -821,7 +849,7 @@ def engine_env(engine: str) -> dict[str, str]:
 def low_impact_command(engine: str, argv: list[str]) -> list[str]:
     if not engine_resource_group(engine):
         return argv
-    nice_value = env_int(f"FOREMAN_ENGINE_{engine.upper()}_NICE", env_int("FOREMAN_LOCAL_ENGINE_NICE", DEFAULT_LOCAL_ENGINE_NICE))
+    nice_value = env_int(f"FOREMAN_ENGINE_{engine_env_key(engine)}_NICE", env_int("FOREMAN_LOCAL_ENGINE_NICE", DEFAULT_LOCAL_ENGINE_NICE))
     if nice_value <= 0 or shutil.which("nice") is None:
         return argv
     return ["nice", "-n", str(nice_value), *argv]
@@ -833,8 +861,57 @@ def engine_required_executables(engine: str) -> list[str]:
         parts = shlex.split(override)
         return [parts[0]] if parts else []
     if engine == "claude-emux":
-        return ["emux", "tmux", "claude"]
+        return ["tmux", "claude"]
+    if engine == "grok-emux":
+        return []
     return [engine_command(engine, "preflight")[0]]
+
+
+def emux_plugin_root() -> Path:
+    return Path(os.environ.get("FOREMAN_EMUX_PLUGIN_ROOT", DEFAULT_EMUX_PLUGIN_ROOT)).expanduser()
+
+
+def emux_command(args: list[str]) -> list[str]:
+    return ["uv", "run", "--directory", str(emux_plugin_root()), "emux", *args]
+
+
+def grok_bin_path() -> Path:
+    return Path(os.environ.get("FOREMAN_GROK_BIN", DEFAULT_GROK_BIN)).expanduser()
+
+
+def emux_runtime_preflight_failures() -> list[str]:
+    failures: list[str] = []
+    if shutil.which("tmux") is None:
+        failures.append("tmux executable not on PATH; install tmux for Emux-backed workers")
+    if shutil.which("uv") is None:
+        failures.append("uv executable not on PATH; Emux-backed workers use uv to run Emux")
+    emux_root = emux_plugin_root()
+    if not emux_root.exists():
+        failures.append(f"Emux plugin root does not exist: {emux_root}")
+    return failures
+
+
+def grok_emux_preflight_failures() -> list[str]:
+    failures: list[str] = emux_runtime_preflight_failures()
+    grok_bin = grok_bin_path()
+    if not grok_bin.exists():
+        failures.append(f"Grok CLI executable not found: {grok_bin}")
+    else:
+        output_format = os.environ.get("FOREMAN_GROK_OUTPUT_FORMAT", "plain")
+        if output_format not in GROK_OUTPUT_FORMATS:
+            failures.append(f"FOREMAN_GROK_OUTPUT_FORMAT must be one of {sorted(GROK_OUTPUT_FORMATS)}")
+        try:
+            help_cp = subprocess.run([str(grok_bin), "--help"], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10)
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            failures.append(f"could not run Grok CLI help for flag preflight: {exc}")
+        else:
+            help_text = (help_cp.stdout or "") + (help_cp.stderr or "")
+            missing = [flag for flag in GROK_REQUIRED_FLAGS if flag not in help_text]
+            if help_cp.returncode != 0:
+                failures.append(f"Grok CLI help returned {help_cp.returncode}")
+            if missing:
+                failures.append(f"Grok CLI missing required flags: {', '.join(missing)}")
+    return failures
 
 
 def safe_id(value: str) -> str:
@@ -2331,6 +2408,11 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
             report = json.loads(result_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
             report = {"error": "result json could not be parsed"}
+    grok_emux_output = None
+    if row["engine"] == "grok-emux":
+        grok_log_path = worktree / ".foreman" / "grok-emux-output.log"
+        if grok_log_path.exists():
+            grok_emux_output = tail_text_file(grok_log_path)
     return {
         "worker_id": args.worker_id,
         "engine": row["engine"],
@@ -2344,7 +2426,20 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         "diff": diff_cp.stdout,
         "diff_stderr": diff_cp.stderr,
         "worker_result": report,
+        "grok_emux_output": grok_emux_output,
     }
+
+
+def tail_text_file(path: Path, max_bytes: int = MAX_TAIL_BYTES) -> str:
+    try:
+        with path.open("rb") as handle:
+            handle.seek(0, os.SEEK_END)
+            size = handle.tell()
+            handle.seek(max(0, size - max_bytes))
+            data = handle.read()
+        return data.decode("utf-8", errors="replace")
+    except OSError as exc:
+        return f"[foreman] could not read {path}: {exc}"
 
 
 def changed_files_from_status(status_output: str) -> list[str]:
@@ -2366,7 +2461,16 @@ def finalize(args: argparse.Namespace) -> dict[str, Any]:
     repo = Path(row["repo_path"])
     worktree = Path(row["worktree_path"])
     status = worker_status(row)
+    if status == "running":
+        if action != "discard":
+            raise SystemExit(f"worker {args.worker_id} is still running; interrupt or wait before {action}")
+        interrupt_worker(args.worker_id, reason="finalize discard requested while worker was still running", actor="foreman")
+        row = db_row(args.worker_id)
+        status = worker_status(row)
     if action == "discard":
+        if row["engine"] == "grok-emux":
+            for line in cleanup_grok_emux_session(args.worker_id, interrupt=False, kill=True, unregister=True):
+                append_worker_log(args.worker_id, line)
         run_git(repo, ["worktree", "remove", "--force", str(worktree)], check=False)
         run_git(repo, ["branch", "-D", row["branch"]], check=False)
         update_worker(args.worker_id, status="discarded", finished_at=now())
@@ -2443,8 +2547,7 @@ def ensure_emux_tmux_session(registry_name: str, session_name: str, worktree: Pa
     )
     if live.returncode != 0:
         run_checked(["tmux", "new-session", "-d", "-s", session_name, "-c", str(worktree), "zsh"])
-    run_checked([
-        "emux",
+    run_checked(emux_command([
         "register",
         registry_name,
         session_name,
@@ -2454,7 +2557,147 @@ def ensure_emux_tmux_session(registry_name: str, session_name: str, worktree: Pa
         "foreman",
         "claude",
         "worker",
-    ])
+    ]))
+
+
+def grok_emux_worker_name(worker_id: str) -> str:
+    return f"{emux_worker_name(worker_id)}-grok"
+
+
+def cleanup_grok_emux_session(worker_id: str, *, interrupt: bool, kill: bool, unregister: bool) -> list[str]:
+    registry_name = grok_emux_worker_name(worker_id)
+    session_name = registry_name
+    lines: list[str] = []
+    if interrupt:
+        cp = subprocess.run(emux_command(["interrupt", registry_name]), text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+        lines.append(f"[foreman:grok-emux] cleanup emux-interrupt returncode={cp.returncode}")
+        if cp.stderr:
+            lines.append(f"[foreman:grok-emux] cleanup emux-interrupt stderr={cp.stderr.strip()}")
+    if kill:
+        cp = subprocess.run(["tmux", "kill-session", "-t", session_name], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+        lines.append(f"[foreman:grok-emux] cleanup tmux-kill-session returncode={cp.returncode}")
+        if cp.stderr:
+            lines.append(f"[foreman:grok-emux] cleanup tmux-kill-session stderr={cp.stderr.strip()}")
+    if unregister:
+        cp = subprocess.run(emux_command(["unregister", registry_name]), text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+        lines.append(f"[foreman:grok-emux] cleanup emux-unregister returncode={cp.returncode}")
+        if cp.stderr:
+            lines.append(f"[foreman:grok-emux] cleanup emux-unregister stderr={cp.stderr.strip()}")
+    return lines
+
+
+def grok_prompt_argv(worktree: Path, prompt_path: Path) -> list[str]:
+    argv = [
+        str(grok_bin_path()),
+        "--cwd",
+        str(worktree),
+        "--prompt-file",
+        str(prompt_path),
+        "--output-format",
+        os.environ.get("FOREMAN_GROK_OUTPUT_FORMAT", "plain"),
+        "--max-turns",
+        str(env_int("FOREMAN_GROK_MAX_TURNS", 12, minimum=1, maximum=100)),
+        "--permission-mode",
+        os.environ.get("FOREMAN_GROK_PERMISSION_MODE", "dontAsk"),
+    ]
+    if os.environ.get("FOREMAN_GROK_DISABLE_WEB_SEARCH", "1") != "0":
+        argv.append("--disable-web-search")
+    return argv
+
+
+def write_grok_emux_script(row: sqlite3.Row, grok_output_path: Path, exit_path: Path) -> Path:
+    worktree = Path(row["worktree_path"])
+    prompt_path = Path(row["prompt_path"])
+    script_path = worktree / ".foreman" / "grok-emux-run.sh"
+    script_path.parent.mkdir(parents=True, exist_ok=True)
+    grok_argv = grok_prompt_argv(worktree, prompt_path)
+    nice_value = env_int(f"FOREMAN_ENGINE_{engine_env_key('grok-emux')}_NICE", env_int("FOREMAN_LOCAL_ENGINE_NICE", DEFAULT_LOCAL_ENGINE_NICE))
+    if nice_value > 0 and shutil.which("nice") is not None:
+        grok_argv = ["nice", "-n", str(nice_value), *grok_argv]
+    throttled_env = engine_env("grok-emux")
+    export_lines = [
+        f"export {key}={shlex.quote(str(throttled_env[key]))}"
+        for key in LOCAL_ENGINE_ENV_KEYS
+        if key in throttled_env
+    ]
+    body_lines = [
+        "#!/usr/bin/env zsh",
+        "set -o pipefail",
+        f"cd {shlex.quote(str(worktree))}",
+        *export_lines,
+        f"OUTPUT_FILE={shlex.quote(str(grok_output_path))}",
+        f"EXIT_FILE={shlex.quote(str(exit_path))}",
+        'rm -f "$EXIT_FILE"',
+        "{",
+        '  echo "[foreman:grok-emux] start $(date -Iseconds)"',
+        f"  {shlex.join(grok_argv)}",
+        "  exit_code=$?",
+        '  echo "[foreman:grok-emux] exit $exit_code at $(date -Iseconds)"',
+        '  echo "$exit_code" > "$EXIT_FILE"',
+        '  exit "$exit_code"',
+        '} 2>&1 | tee -a "$OUTPUT_FILE"',
+        'exit ${pipestatus[1]}',
+    ]
+    script_path.write_text("\n".join(body_lines) + "\n", encoding="utf-8")
+    script_path.chmod(0o700)
+    return script_path
+
+
+def print_grok_emux_output(grok_output_path: Path) -> None:
+    if not grok_output_path.exists():
+        print(f"[foreman:grok-emux] output log missing: {grok_output_path}", flush=True)
+        return
+    print("[foreman:grok-emux] output_log_begin", flush=True)
+    print(tail_text_file(grok_output_path).rstrip(), flush=True)
+    print("[foreman:grok-emux] output_log_end", flush=True)
+
+
+def run_grok_emux_worker(row: sqlite3.Row) -> tuple[int, bool]:
+    worker_id = row["id"]
+    registry_name = grok_emux_worker_name(worker_id)
+    session_name = registry_name
+    worktree = Path(row["worktree_path"])
+    grok_output_path = worktree / ".foreman" / "grok-emux-output.log"
+    exit_path = worktree / ".foreman" / "grok-emux.exit"
+    exit_path.unlink(missing_ok=True)
+    script_path = write_grok_emux_script(row, grok_output_path, exit_path)
+    preserve_session = os.environ.get("FOREMAN_GROK_EMUX_PRESERVE_SESSION", "0") == "1"
+
+    try:
+        ensure_emux_tmux_session(registry_name, session_name, worktree, worker_id)
+        print(f"[foreman:grok-emux] registry_name={registry_name}", flush=True)
+        print(f"[foreman:grok-emux] head_command=emux head {registry_name}", flush=True)
+        print(f"[foreman:grok-emux] capture_command=emux capture {registry_name} --lines 120", flush=True)
+        print(f"[foreman:grok-emux] interrupt_command=emux interrupt {registry_name}", flush=True)
+        run_checked(emux_command(["send", registry_name, shlex.quote(str(script_path))]))
+        deadline = time.time() + int(row["timeout_sec"])
+        last_capture = 0.0
+        timed_out = False
+        while not exit_path.exists():
+            if time.time() >= deadline:
+                timed_out = True
+                print(f"[foreman:grok-emux] worker timed out after {row['timeout_sec']} seconds; interrupting {registry_name}", flush=True)
+                subprocess.run(emux_command(["interrupt", registry_name]), text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
+                break
+            if time.time() - last_capture >= 30:
+                capture = subprocess.run(emux_command(["capture", registry_name, "--lines", "80"]), text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
+                print("[foreman:grok-emux] tmux_capture_begin", flush=True)
+                print(capture.stdout, end="" if capture.stdout.endswith("\n") else "\n", flush=True)
+                print("[foreman:grok-emux] tmux_capture_end", flush=True)
+                last_capture = time.time()
+            time.sleep(1)
+
+        print_grok_emux_output(grok_output_path)
+        if timed_out:
+            return 124, True
+        try:
+            return int(exit_path.read_text(encoding="utf-8").strip()), False
+        except (OSError, ValueError):
+            return 1, False
+    finally:
+        if not preserve_session:
+            for line in cleanup_grok_emux_session(worker_id, interrupt=False, kill=True, unregister=True):
+                print(line, flush=True)
 
 
 def claude_emux_command_line() -> str:
@@ -2556,7 +2799,7 @@ def wait_for_claude_emux_ready(registry_name: str) -> bool:
     ready = False
     while time.time() < deadline:
         capture = subprocess.run(
-            ["emux", "capture", registry_name, "--lines", "80"],
+            emux_command(["capture", registry_name, "--lines", "80"]),
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
@@ -2569,7 +2812,7 @@ def wait_for_claude_emux_ready(registry_name: str) -> bool:
             and "Yes, I trust this folder" in capture.stdout
         ):
             print("[foreman-emux] trust_prompt=accepting_foreman_worktree", flush=True)
-            run_checked(["emux", "send", registry_name, "1"])
+            run_checked(emux_command(["send", registry_name, "1"]))
             time.sleep(1.0)
             continue
         if capture.returncode == 0 and (
@@ -2594,7 +2837,7 @@ def paste_prompt_into_claude_emux(registry_name: str, session_name: str, prompt_
         "Read .foreman/claude-prompt.md and complete the Foreman worker task. "
         "Run the requested verification. When finished, exit Claude Code."
     )
-    run_checked(["emux", "send", registry_name, prompt_text])
+    run_checked(emux_command(["send", registry_name, prompt_text]))
 
 
 def run_claude_emux_worker(row: sqlite3.Row, prompt: str) -> tuple[int, bool]:
@@ -2617,7 +2860,7 @@ def run_claude_emux_worker(row: sqlite3.Row, prompt: str) -> tuple[int, bool]:
     print(f"[foreman-emux] head_command=emux head {registry_name}", flush=True)
     print(f"[foreman-emux] capture_command=emux capture {registry_name} --lines 120", flush=True)
     print(f"[foreman-emux] interrupt_command=emux interrupt {registry_name}", flush=True)
-    run_checked(["emux", "send", registry_name, shlex.quote(str(script_path))])
+    run_checked(emux_command(["send", registry_name, shlex.quote(str(script_path))]))
     prompt_mode = claude_emux_prompt_mode()
     if prompt_mode == "interactive-send":
         print(f"[foreman-emux] prompt_delivery=emux send after Claude prompt readiness", flush=True)
@@ -2632,7 +2875,7 @@ def run_claude_emux_worker(row: sqlite3.Row, prompt: str) -> tuple[int, bool]:
     while not exit_path.exists():
         if claude_emux_prompt_mode() == "interactive-argument" and not exit_requested:
             capture = subprocess.run(
-                ["emux", "capture", registry_name, "--lines", "80"],
+                emux_command(["capture", registry_name, "--lines", "80"]),
                 text=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -2640,12 +2883,12 @@ def run_claude_emux_worker(row: sqlite3.Row, prompt: str) -> tuple[int, bool]:
             )
             if capture.returncode == 0 and ("Worked for " in capture.stdout or "Open questions:" in capture.stdout):
                 print(f"[foreman-emux] auto_exit=completion_detected", flush=True)
-                subprocess.run(["emux", "send", registry_name, "/exit"], text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
+                subprocess.run(emux_command(["send", registry_name, "/exit"]), text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
                 exit_requested = True
         if time.time() >= deadline:
             timed_out = True
             print(f"[foreman-emux] worker timed out after {row['timeout_sec']} seconds; interrupting {registry_name}", flush=True)
-            subprocess.run(["emux", "interrupt", registry_name], text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
+            subprocess.run(emux_command(["interrupt", registry_name]), text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
             break
         time.sleep(1)
 
@@ -2654,7 +2897,7 @@ def run_claude_emux_worker(row: sqlite3.Row, prompt: str) -> tuple[int, bool]:
         print(emux_output_path.read_text(encoding="utf-8", errors="replace"), end="", flush=True)
         print("[foreman-emux] captured_output_end", flush=True)
     capture = subprocess.run(
-        ["emux", "capture", registry_name, "--lines", "120"],
+        emux_command(["capture", registry_name, "--lines", "120"]),
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -2677,7 +2920,10 @@ def run_worker(args: argparse.Namespace) -> None:
     prompt = Path(row["prompt_path"]).read_text(encoding="utf-8")
     started = now()
     if row["engine"] == "claude-emux":
-        argv = ["emux", "send", emux_worker_name(args.worker_id), "<claude prompt runner>"]
+        argv = emux_command(["send", emux_worker_name(args.worker_id), "<claude prompt runner>"])
+        run_argv = argv
+    elif row["engine"] == "grok-emux":
+        argv = emux_command(["send", grok_emux_worker_name(args.worker_id), "<grok prompt runner>"])
         run_argv = argv
     else:
         argv = engine_command(row["engine"], prompt)
@@ -2694,6 +2940,9 @@ def run_worker(args: argparse.Namespace) -> None:
     try:
         if row["engine"] == "claude-emux":
             exit_code, timed_out = run_claude_emux_worker(row, prompt)
+        elif row["engine"] == "grok-emux":
+            with engine_resource_slot(row["engine"]):
+                exit_code, timed_out = run_grok_emux_worker(row)
         else:
             with engine_resource_slot(row["engine"]):
                 proc = subprocess.run(
@@ -2749,6 +2998,8 @@ def engine_command(engine: str, prompt: str) -> list[str]:
     if engine == "gemma4":
         model = os.environ.get("FOREMAN_GEMMA4_MODEL", "ollama/gemma3n:e4b")
         return ["opencode", "run", "--model", model, "--format", "json", prompt]
+    if engine == "grok-emux":
+        return emux_command(["send", "foreman-grok-emux", "<grok prompt runner>"])
     if engine == "smoke":
         return [sys.executable, str(Path(__file__).resolve().parent / "smoke_engineer.py"), "-p", prompt]
     raise SystemExit(f"unknown engine: {engine}")
