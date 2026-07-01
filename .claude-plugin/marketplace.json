@@ -497,7 +497,13 @@
         "governance"
       ],
       "x-eidos": {
-        "kind": {"type": "forge", "signals": ["ships_skills", "opinionated_workflow"]},
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ]
+        },
         "audit": {
           "audited_by": "pending",
           "audit_version": "STANDARD.md",
@@ -876,9 +882,22 @@
       "homepage": "https://github.com/eidos-agi/linearplus",
       "license": "MIT",
       "version": "0.1.0",
-      "tags": ["linear", "graphql", "initiatives", "projects", "cli", "eidos-agi"],
+      "tags": [
+        "linear",
+        "graphql",
+        "initiatives",
+        "projects",
+        "cli",
+        "eidos-agi"
+      ],
       "x-eidos": {
-        "kind": {"type": "tool", "signals": ["ships_skills", "cli_first"]},
+        "kind": {
+          "type": "tool",
+          "signals": [
+            "ships_skills",
+            "cli_first"
+          ]
+        },
         "audit": {
           "audited_by": "pending",
           "audit_version": "STANDARD.md",
@@ -1194,6 +1213,43 @@
       }
     },
     {
+      "name": "tool-doctor",
+      "description": "Read-only local auditor for stale, malformed, shadowed, and drifted AI coding-tool configs across adapters.",
+      "source": "./plugins/tool-doctor",
+      "category": "developer-tools",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/tool-doctor",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "codex",
+        "claude-code",
+        "grok",
+        "gemini",
+        "cursor",
+        "mcp",
+        "config-drift",
+        "eidos"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "tool",
+          "signals": [
+            "single_capability",
+            "cli_first",
+            "ships_skills",
+            "host_neutral"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-06-24",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/tool-doctor.md"
+        }
+      }
+    },
+    {
       "name": "zoltar",
       "description": "An Eidos foresight research subagent that investigates current context, predicts likely outcomes and objections, challenges market overfit, and emits concrete changes for doer/checker agents.",
       "source": "./plugins/zoltar",
@@ -1241,6 +1297,54 @@
             "eidos-storemetheus"
           ],
           "preflight_check": "/zoltar"
+        }
+      }
+    },
+    {
+      "name": "medical-school",
+      "description": "Eidos Medical School \u2014 teaches an AI to give itself a doctor that works well: real vitals, a usage chart, root-cause triage, and honest blind spots, on whatever stack it runs.",
+      "source": "./plugins/medical-school",
+      "category": "agent-tools",
+      "homepage": "https://github.com/eidos-agi/medical-school-forge",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "eidos",
+        "self-diagnosis",
+        "health-check",
+        "observability",
+        "curriculum",
+        "fleet",
+        "agent"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "opinionated_workflow",
+            "ships_skills",
+            "curriculum"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-07-01",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/medical-school.md"
+        },
+        "recommend": {
+          "for_projects": [
+            "fleet-health",
+            "self-diagnosis",
+            "observability-bootstrap"
+          ],
+          "pairs_with": [
+            "apple-a-day",
+            "nightingale",
+            "conduit"
+          ],
+          "preflight_check": "/medschool rounds"
         }
       }
     }
