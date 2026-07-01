@@ -1,0 +1,22 @@
+{
+  "name": "medical-school",
+  "version": "0.1.0",
+  "description": "Eidos Medical School — teaches an AI to give itself a doctor that works well: real vitals, a usage chart, root-cause triage, and honest blind spots, on whatever stack it runs.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/medical-school-forge",
+  "repository": "https://github.com/eidos-agi/medical-school-forge",
+  "license": "MIT",
+  "keywords": [
+    "eidos",
+    "self-diagnosis",
+    "health-check",
+    "observability",
+    "curriculum",
+    "fleet",
+    "agent"
+  ]
+}
