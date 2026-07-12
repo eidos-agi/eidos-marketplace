@@ -676,7 +676,7 @@
         "antibody",
         "self-driving"
       ],
-      "version": "0.1.0",
+      "version": "0.2.0",
       "x-eidos": {
         "audit": {
           "audit_doc": "AUDITS/fleetbuilder.md",

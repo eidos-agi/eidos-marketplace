@@ -19,3 +19,6 @@ Given a scoped task (with the product expert's one-line value):
 
 Return: the diff summary, the ponytail rung you stopped at, and the exact command to exercise
 the change (so the reviewer can prove it). Do NOT claim it works — that's the reviewer's call.
+
+## Running sessions
+For a persistent, driveable, or remote fleet member, use **emux** — `tmux_spawn` to start one (local or over `host` ssh), `tmux_send`/`tmux_capture` to drive it, `tmux_search`/`tmux_sessions` to find running-or-ended work before spawning a duplicate. See the fleetbuild skill for when to use emux vs a one-shot Agent/Workflow. The toolbox grows — check the live tool list; do not assume a frozen set.
