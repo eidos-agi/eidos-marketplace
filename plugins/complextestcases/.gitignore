@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.telos/*
+!.telos/north_stars/
+.telos/north_stars/*
+!.telos/north_stars/*/
+.telos/north_stars/*/*
+!.telos/north_stars/*/charter.md
+!.telos/north_stars/*/amendments.jsonl
+!.telos/north_stars/*/caseruns.jsonl
+tools/*.egg-info/
+*.egg-info/
+build/
+dist/
+runs.sealed.tmp

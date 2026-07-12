@@ -255,6 +255,29 @@
       }
     },
     {
+      "category": "testing",
+      "description": "The case authority. A case must have been observed RED at least once \u2014 a test that has never failed has never been tested.",
+      "homepage": "https://github.com/eidos-agi/complextestcases",
+      "license": "MIT",
+      "name": "complextestcases",
+      "source": "./plugins/complextestcases",
+      "tags": [
+        "testing",
+        "falsifiability",
+        "adversarial",
+        "acceptance-criteria",
+        "agent-accountability"
+      ],
+      "version": "0.1.0",
+      "x-eidos": {
+        "audit": {
+          "audit_doc": "AUDITS/complextestcases.md",
+          "audited_by": "pending Forge-Forge release packet",
+          "grade": "PENDING"
+        }
+      }
+    },
+    {
       "category": "agent-tools",
       "description": "Registry-backed CLI for reaching personal-infrastructure machines: model machines, access paths, workloads, and append-only reachability proofs.",
       "homepage": "https://github.com/dshanklin-bv/conduit",
@@ -635,6 +658,30 @@
             "mcp-forge"
           ],
           "preflight_check": "/felix"
+        }
+      }
+    },
+    {
+      "category": "agent-tools",
+      "description": "Studies your Claude Code transcripts to learn what Fleet you need, then builds it one honest cycle at a time as a team (product/engineer/reviewer/historian) \u2014 workflows fan out, hooks keep it moving, wins bank in staircase.",
+      "homepage": "https://github.com/eidos-agi/fleetbuilder",
+      "license": "MIT",
+      "name": "fleetbuilder",
+      "source": "./plugins/fleetbuilder",
+      "tags": [
+        "fleet",
+        "build-loop",
+        "multi-agent",
+        "cadence",
+        "antibody",
+        "self-driving"
+      ],
+      "version": "0.1.0",
+      "x-eidos": {
+        "audit": {
+          "audit_doc": "AUDITS/fleetbuilder.md",
+          "audited_by": "pending Forge-Forge release packet",
+          "grade": "PENDING"
         }
       }
     },
@@ -1208,6 +1255,30 @@
             "ships_skills"
           ],
           "type": "tool"
+        }
+      }
+    },
+    {
+      "category": "agent-tools",
+      "description": "Bank verified wins, release on a steady cadence, keep Work \u00b7 Promise \u00b7 Production \u00b7 Mission aligned \u2014 with agent accountability built in.",
+      "homepage": "https://github.com/eidos-agi/staircase",
+      "license": "MIT",
+      "name": "staircase",
+      "source": "./plugins/staircase",
+      "tags": [
+        "delivery",
+        "reporting",
+        "expectations",
+        "cadence",
+        "ledger",
+        "agent-accountability"
+      ],
+      "version": "0.10.0",
+      "x-eidos": {
+        "audit": {
+          "audit_doc": "AUDITS/staircase.md",
+          "audited_by": "pending Forge-Forge release packet",
+          "grade": "PENDING"
         }
       }
     },

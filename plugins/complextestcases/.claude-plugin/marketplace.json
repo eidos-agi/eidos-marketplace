@@ -1,0 +1,14 @@
+{
+  "name": "eidos-complextestcases",
+  "owner": { "name": "Eidos AGI", "url": "https://github.com/eidos-agi" },
+  "plugins": [
+    {
+      "name": "complextestcases",
+      "source": "./",
+      "description": "The case authority. A case must have been observed RED at least once — a test that has never failed has never been tested.",
+      "version": "0.1.0",
+      "category": "testing",
+      "strict": false
+    }
+  ]
+}

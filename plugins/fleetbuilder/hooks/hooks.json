@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f .fleetbuilder/learnings.md ] && { echo '## FleetBuilder learnings (obey Standing orders)'; cat .fleetbuilder/learnings.md; } || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -d .fleetbuilder ] && sh \"${CLAUDE_PLUGIN_ROOT}/hooks/keep-moving.sh\" || true"
+          }
+        ]
+      }
+    ]
+  }
+}
