@@ -1,0 +1,37 @@
+asmp: "0.1"
+kind: plugin
+name: eidos-personality
+description: "How Eidos talks. Always-on plain speech: say the true thing in simple words, lead with the fact, define shorthand before using it, one clear ask at the end — even when the AI understands far more underneath."
+version: 0.1.0
+created_by: agent://claude/ship
+owner: eidos-agi
+section: tools
+
+runtime:
+  style: plugin
+  host_app: claude-code
+
+capabilities:
+  provides:
+    - output.plainspeech
+    - personality.voice
+  requires:
+    - claude-code
+
+infra:
+  repo: https://github.com/eidos-agi/eidos-personality
+  install:
+    - "/plugin marketplace add eidos-agi/eidos-personality"
+    - "/plugin install eidos-personality@eidos-personality"
+
+# asmp now KNOWS about shipr: this block says how the product goes to the store.
+ships:
+  via: shipr
+  store: eidos-agi/eidos-marketplace
+  marketplace_path: ../eidos-marketplace
+  command: "shipr store --project ."
+
+display:
+  icon: chat
+  label: Eidos Personality
+  section: tools

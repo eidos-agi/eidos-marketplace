@@ -6,6 +6,7 @@ import datetime as dt
 import json
 import re
 import shlex
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -650,3 +651,103 @@ def release_frontier(project: Path) -> dict[str, Any]:
         "recurring_blockers": _recurring_blockers(loaded_attempts),
         "next_actions": next_actions,
     }
+
+
+# --- store: the missing step. Shipr can now put a plugin INTO the eidos store, ---
+# --- not just remember that someone tried. asmp's `ships` block says where. ---
+
+_COPY_IGNORE = shutil.ignore_patterns(
+    ".git", "node_modules", ".shipr", "dist", "build", "*.egg-info", ".DS_Store",
+    ".pytest_cache", "__pycache__",
+)
+
+
+def read_asmp_marketplace_path(project: Path) -> str | None:
+    """Read where a product ships from its asmp manifest's `ships` block.
+    This is how asmp KNOWS about shipr: `ships.marketplace_path` names the local
+    store checkout. Minimal stdlib read — the asmp files are flat YAML."""
+    asmp = Path(project) / "asmp.yaml"
+    if not asmp.exists():
+        return None
+    m = re.search(r'^\s*marketplace_path:\s*"?([^"\n]+)"?', asmp.read_text(), re.M)
+    return m.group(1).strip() if m else None
+
+
+def store_to_marketplace(project: Path, marketplace: Path, record: bool = True) -> dict[str, Any]:
+    """Put a plugin into the eidos store: copy its files under plugins/<name>/ and
+    add its entry to the store manifest. This is the step shipr was missing."""
+    project = Path(project).resolve()
+    marketplace = Path(marketplace).resolve()
+
+    self_listing_path = project / ".claude-plugin" / "marketplace.json"
+    if not self_listing_path.exists():
+        raise SystemExit(f"no .claude-plugin/marketplace.json in {project} — not a listable plugin")
+    self_listing = _read_json(self_listing_path)
+    entry_src = (self_listing.get("plugins") or [{}])[0]
+    name = entry_src.get("name") or project.name
+
+    store_manifest_path = marketplace / ".claude-plugin" / "marketplace.json"
+    if not store_manifest_path.exists():
+        raise SystemExit(f"no store manifest at {store_manifest_path}")
+    store = _read_json(store_manifest_path)
+
+    # copy the plugin's files into the store
+    dest = marketplace / "plugins" / name
+    if dest.exists():
+        shutil.rmtree(dest)
+    shutil.copytree(project, dest, ignore=_COPY_IGNORE)
+
+    plugin_json_path = project / ".claude-plugin" / "plugin.json"
+    plugin_json = _read_json(plugin_json_path) if plugin_json_path.exists() else {}
+
+    entry = {
+        "name": name,
+        "description": entry_src.get("description") or plugin_json.get("description", ""),
+        "source": f"./plugins/{name}",
+        "category": entry_src.get("category") or "agent-tools",
+        "homepage": f"https://github.com/eidos-agi/{name}",
+        "license": plugin_json.get("license", "MIT"),
+        "version": entry_src.get("version") or plugin_json.get("version", "0.1.0"),
+        "tags": plugin_json.get("keywords") or entry_src.get("tags") or [],
+        "x-eidos": {
+            "audit": {
+                "audited_by": "pending Forge-Forge release packet",
+                "grade": "PENDING",
+                "audit_doc": f"AUDITS/{name}.md",
+            }
+        },
+    }
+    plugins = [p for p in store.get("plugins", []) if p.get("name") != name]
+    plugins.append(entry)
+    store["plugins"] = sorted(plugins, key=lambda p: p.get("name", ""))
+    _write_json(store_manifest_path, store)
+
+    audits = marketplace / "AUDITS"
+    audits.mkdir(exist_ok=True)
+    audit_doc = audits / f"{name}.md"
+    if not audit_doc.exists():
+        audit_doc.write_text(
+            f"# Audit — {name}\n\nStatus: PENDING\n\nAdded to the eidos store by "
+            "`shipr store`. Audit not yet run.\n"
+        )
+
+    result = {
+        "stored": name,
+        "store": marketplace.name,
+        "files_at": str(dest),
+        "manifest": str(store_manifest_path),
+        "store_plugin_count": len(store["plugins"]),
+    }
+    if record:
+        try:
+            _, attempt = record_attempt(
+                project,
+                goal=f"ship {name} into the eidos store",
+                status="shipped",
+                notes="shipr store: copied files + added store manifest entry",
+                proofs=[f"test -d {dest}", f"grep -q '\"{name}\"' {store_manifest_path}"],
+            )
+            result["attempt"] = attempt.get("id", "")
+        except Exception as exc:  # recording is memory, never block the ship
+            result["attempt_error"] = str(exc)[:120]
+    return result

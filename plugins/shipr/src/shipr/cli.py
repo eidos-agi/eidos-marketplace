@@ -10,9 +10,11 @@ from pathlib import Path
 from . import __version__
 from .core import (
     detect_release_model,
+    read_asmp_marketplace_path,
     record_attempt,
     record_eidos_ship_attempt,
     release_frontier,
+    store_to_marketplace,
     write_release_model,
 )
 
@@ -65,6 +67,20 @@ def _cmd_frontier(args: argparse.Namespace) -> None:
     _print(release_frontier(args.project), args.json)
 
 
+def _cmd_store(args: argparse.Namespace) -> None:
+    marketplace = args.marketplace
+    if marketplace is None:
+        rel = read_asmp_marketplace_path(args.project)
+        if rel:
+            marketplace = (Path(args.project) / rel).resolve()
+        else:
+            raise SystemExit(
+                "shipr store needs --marketplace <store path>, or a "
+                "`ships:\\n  marketplace_path:` line in the project's asmp.yaml"
+            )
+    _print(store_to_marketplace(args.project, marketplace), args.json)
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
         prog="shipr",
@@ -104,11 +120,20 @@ def main(argv: list[str] | None = None) -> None:
     p_frontier.add_argument("--project", type=Path, default=Path.cwd(), help="Project root")
     p_frontier.add_argument("--json", action="store_true", help="Output JSON")
 
+    p_store = sub.add_parser("store", help="Put a plugin INTO the eidos store (copy files + add manifest entry)")
+    p_store.add_argument("--project", type=Path, default=Path.cwd(), help="Plugin project root")
+    p_store.add_argument(
+        "--marketplace", type=Path, default=None,
+        help="Path to the eidos-marketplace checkout. Omit to read ships.marketplace_path from asmp.yaml.",
+    )
+    p_store.add_argument("--json", action="store_true", help="Output JSON")
+
     args = parser.parse_args(argv)
     handlers = {
         "model": _cmd_model,
         "attempt": _cmd_attempt,
         "frontier": _cmd_frontier,
+        "store": _cmd_store,
     }
     handlers[args.command](args)
 

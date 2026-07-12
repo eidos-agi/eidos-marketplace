@@ -1,22 +1,20 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "eidos-marketplace",
-  "version": "0.1.0",
   "description": "The plugin marketplace for Claude Code, by Eidos AGI. Curated agent-first plugins, audited to a public standard.",
+  "name": "eidos-marketplace",
   "owner": {
-    "name": "Eidos AGI",
     "email": "hello@eidosagi.com",
+    "name": "Eidos AGI",
     "url": "https://eidosagi.com"
   },
   "plugins": [
     {
-      "name": "apple-a-day",
-      "description": "Agent-native Mac health toolkit for read-only diagnostics, vitals monitoring, and cleanup recommendations.",
-      "source": "./plugins/apple-a-day",
       "category": "agent-tools",
+      "description": "Agent-native Mac health toolkit for read-only diagnostics, vitals monitoring, and cleanup recommendations.",
       "homepage": "https://github.com/eidos-agi/apple-a-day",
       "license": "MIT",
-      "version": "0.3.1",
+      "name": "apple-a-day",
+      "source": "./plugins/apple-a-day",
       "tags": [
         "macos",
         "diagnostics",
@@ -26,44 +24,45 @@
         "agent-native",
         "claude-code"
       ],
+      "version": "0.3.1",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-12",
+          "audit_doc": "AUDITS/apple-a-day.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending Forge-Forge release packet",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "tool",
           "signals": [
             "single_capability",
             "uvx_shim"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending Forge-Forge release packet",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-12",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/apple-a-day.md"
+          ],
+          "type": "tool"
         }
       }
     },
     {
-      "name": "browser-autonomy",
-      "description": "Makes Codex more self-reliant for browser work, including safe use of existing sessions, autofill, and login flows.",
-      "source": "./plugins/browser-autonomy",
       "category": "productivity",
+      "description": "Makes Codex more self-reliant for browser work, including safe use of existing sessions, autofill, and login flows.",
       "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/browser-autonomy",
+      "name": "browser-autonomy",
+      "source": "./plugins/browser-autonomy",
       "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-25",
+          "audit_doc": "AUDITS/browser-autonomy.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-25",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/browser-autonomy.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -81,33 +80,33 @@
       }
     },
     {
-      "name": "canon",
-      "description": "Canonical agent standards, verification gates, and repo contracts for durable software work.",
-      "source": "./plugins/canon",
       "category": "developer-tools",
+      "description": "Canonical agent standards, verification gates, and repo contracts for durable software work.",
       "homepage": "https://github.com/eidos-agi/canon",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "canon",
+      "source": "./plugins/canon",
       "tags": [
         "agents",
         "standards",
         "verification",
         "codex"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-25",
+          "audit_doc": "AUDITS/canon.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-25",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/canon.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -125,12 +124,11 @@
       }
     },
     {
-      "name": "cartwright",
-      "description": "A personal shopping assistant for finding, comparing, and recommending products.",
-      "source": "./plugins/cartwright",
       "category": "productivity",
+      "description": "A personal shopping assistant for finding, comparing, and recommending products.",
       "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/cartwright",
-      "version": "0.2.2",
+      "name": "cartwright",
+      "source": "./plugins/cartwright",
       "tags": [
         "shopping",
         "personal-shopper",
@@ -138,21 +136,22 @@
         "comparison",
         "research"
       ],
+      "version": "0.2.2",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-25",
+          "audit_doc": "AUDITS/cartwright.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow",
             "mcp_server"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-25",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/cartwright.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -170,13 +169,12 @@
       }
     },
     {
-      "name": "cept",
-      "description": "Proprioception for coding agents: slice recent Claude Code transcript, redact it, and ask for outside-in steering.",
-      "source": "./plugins/cept",
       "category": "agent-tools",
+      "description": "Proprioception for coding agents: slice recent Claude Code transcript, redact it, and ask for outside-in steering.",
       "homepage": "https://github.com/eidos-agi/cept",
       "license": "MIT",
-      "version": "0.4.1",
+      "name": "cept",
+      "source": "./plugins/cept",
       "tags": [
         "mcp",
         "claude-code",
@@ -185,33 +183,33 @@
         "openrouter",
         "steering"
       ],
+      "version": "0.4.1",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-23",
+          "audit_doc": "AUDITS/cept.md",
+          "audit_version": "STANDARD.md@2026-05-23",
+          "audited_by": "Felix plugin doctor + Codex plugin validator + marketplace MCP smoke test",
+          "grade": "A",
+          "next_audit": "2026-08-23"
+        },
         "kind": {
-          "type": "tool",
           "signals": [
             "single_capability",
             "mcp_server",
             "human_authorized_writes"
-          ]
-        },
-        "audit": {
-          "audited_by": "Felix plugin doctor + Codex plugin validator + marketplace MCP smoke test",
-          "audit_version": "STANDARD.md@2026-05-23",
-          "audit_date": "2026-05-23",
-          "grade": "A",
-          "audit_doc": "AUDITS/cept.md",
-          "next_audit": "2026-08-23"
+          ],
+          "type": "tool"
         }
       }
     },
     {
-      "name": "clawdflare",
-      "description": "Opinionated Cloudflare management CLI and MCP server for auditing and fixing zones.",
-      "source": "./plugins/clawdflare",
       "category": "developer-tools",
+      "description": "Opinionated Cloudflare management CLI and MCP server for auditing and fixing zones.",
       "homepage": "https://github.com/eidos-agi/clawdflare",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "clawdflare",
+      "source": "./plugins/clawdflare",
       "tags": [
         "cloudflare",
         "mcp",
@@ -221,21 +219,22 @@
         "cache",
         "eidos-agi"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-13",
+          "audit_doc": "AUDITS/clawdflare.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "Clawdflare CLI tests + Eidos marketplace checks",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "tool",
           "signals": [
             "single_capability",
             "uvx_shim",
             "mcp_server"
-          ]
-        },
-        "audit": {
-          "audited_by": "Clawdflare CLI tests + Eidos marketplace checks",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-13",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/clawdflare.md"
+          ],
+          "type": "tool"
         },
         "recommend": {
           "for_projects": [
@@ -256,13 +255,12 @@
       }
     },
     {
-      "name": "conduit",
-      "description": "Registry-backed CLI for reaching personal-infrastructure machines: model machines, access paths, workloads, and append-only reachability proofs.",
-      "source": "./plugins/conduit",
       "category": "agent-tools",
+      "description": "Registry-backed CLI for reaching personal-infrastructure machines: model machines, access paths, workloads, and append-only reachability proofs.",
       "homepage": "https://github.com/dshanklin-bv/conduit",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "conduit",
+      "source": "./plugins/conduit",
       "tags": [
         "ssh",
         "tailscale",
@@ -272,43 +270,21 @@
         "cli-first",
         "machine-mesh"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-13",
+          "audit_doc": "AUDITS/conduit.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-13",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/conduit.md"
-        },
-        "site": {
-          "slug": "conduit",
-          "icon": "CD",
-          "tagline": "Reach your machines through verified conduits.",
-          "shape": "Machine-mesh CLI",
-          "status": "ready",
-          "hosts": [
-            "codex",
-            "claude-code"
           ],
-          "codex": "codex-package",
-          "claude": "claude-marketplace",
-          "install": {
-            "codex": "Install from the Eidos plugin store.",
-            "claude": "claude plugins install conduit@eidos-marketplace"
-          },
-          "start": "Run `conduit check-macs` to prove the mesh is reachable.",
-          "requires": [
-            "Python 3.11+",
-            "Tailscale",
-            "SSH access to targets"
-          ]
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -322,17 +298,39 @@
             "mcp-forge"
           ],
           "preflight_check": "/conduit"
+        },
+        "site": {
+          "claude": "claude-marketplace",
+          "codex": "codex-package",
+          "hosts": [
+            "codex",
+            "claude-code"
+          ],
+          "icon": "CD",
+          "install": {
+            "claude": "claude plugins install conduit@eidos-marketplace",
+            "codex": "Install from the Eidos plugin store."
+          },
+          "requires": [
+            "Python 3.11+",
+            "Tailscale",
+            "SSH access to targets"
+          ],
+          "shape": "Machine-mesh CLI",
+          "slug": "conduit",
+          "start": "Run `conduit check-macs` to prove the mesh is reachable.",
+          "status": "ready",
+          "tagline": "Reach your machines through verified conduits."
         }
       }
     },
     {
-      "name": "converge",
-      "description": "Target tables, drift monitors, regression memory, and repair loops that help AI agents converge on software goals.",
-      "source": "./plugins/converge",
       "category": "agent-tools",
+      "description": "Target tables, drift monitors, regression memory, and repair loops that help AI agents converge on software goals.",
       "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/converge",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "converge",
+      "source": "./plugins/converge",
       "tags": [
         "convergence",
         "agent",
@@ -342,32 +340,32 @@
         "regression",
         "eidos"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-25",
+          "audit_doc": "AUDITS/converge.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "Converge verify hook + adapter tests + Eidos marketplace check",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "tool",
           "signals": [
             "single_capability",
             "evidence_row_aggregator",
             "repair_queue"
-          ]
-        },
-        "audit": {
-          "audited_by": "Converge verify hook + adapter tests + Eidos marketplace check",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-25",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/converge.md"
+          ],
+          "type": "tool"
         }
       }
     },
     {
-      "name": "eidos",
-      "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then verify, learn, and close out cleanly.",
-      "source": "./plugins/eidos",
       "category": "productivity",
+      "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then verify, learn, and close out cleanly.",
       "homepage": "https://github.com/eidos-agi/eidos-cli",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "eidos",
+      "source": "./plugins/eidos",
       "tags": [
         "eidos",
         "cli",
@@ -378,21 +376,22 @@
         "routing",
         "progressive-reveal"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-23",
+          "audit_doc": "AUDITS/eidos.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow",
             "cli_gateway"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-23",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/eidos.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -411,35 +410,57 @@
       }
     },
     {
-      "name": "eidos-mail",
-      "description": "Email for Claude Code - read, search, send, reply, forward, and manage your inbox.",
-      "source": "./plugins/eidos-mail",
       "category": "productivity",
+      "description": "Email for Claude Code - read, search, send, reply, forward, and manage your inbox.",
       "homepage": "https://github.com/eidos-agi/eidos-mail",
+      "name": "eidos-mail",
+      "source": "./plugins/eidos-mail",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-25",
+          "audit_doc": "AUDITS/eidos-mail.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "tool",
           "signals": [
             "mcp_server"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-25",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/eidos-mail.md"
+          ],
+          "type": "tool"
         }
       }
     },
     {
-      "name": "eidos-plugin-store",
-      "description": "Discover and bootstrap Eidos Codex plugins from the Eidos AGI catalog.",
-      "source": "./plugins/eidos-plugin-store",
+      "category": "productivity",
+      "description": "How Eidos talks. Always-on plain speech: say the true thing in simple words, lead with the fact, define shorthand before using it, one clear ask at the end.",
+      "homepage": "https://github.com/eidos-agi/eidos-personality",
+      "license": "MIT",
+      "name": "eidos-personality",
+      "source": "./plugins/eidos-personality",
+      "tags": [
+        "personality",
+        "plain-speech",
+        "communication",
+        "always-on",
+        "voice"
+      ],
+      "version": "0.1.0",
+      "x-eidos": {
+        "audit": {
+          "audit_doc": "AUDITS/eidos-personality.md",
+          "audited_by": "pending Forge-Forge release packet",
+          "grade": "PENDING"
+        }
+      }
+    },
+    {
       "category": "developer-tools",
+      "description": "Discover and bootstrap Eidos Codex plugins from the Eidos AGI catalog.",
       "homepage": "https://eidosagi.com/plugins",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "eidos-plugin-store",
+      "source": "./plugins/eidos-plugin-store",
       "tags": [
         "eidos",
         "plugin-store",
@@ -449,20 +470,21 @@
         "bootstrap",
         "eidos-agi"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-25",
+          "audit_doc": "AUDITS/eidos-plugin-store.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-25",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/eidos-plugin-store.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -480,13 +502,12 @@
       }
     },
     {
-      "name": "eidos-storemetheus",
-      "description": "Build and maintain governed Claude Code and Codex plugin stores for companies that need trusted AI operating layers.",
-      "source": "./plugins/eidos-storemetheus",
       "category": "development",
+      "description": "Build and maintain governed Claude Code and Codex plugin stores for companies that need trusted AI operating layers.",
       "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/eidos-storemetheus",
       "license": "MIT",
-      "version": "0.1.1",
+      "name": "eidos-storemetheus",
+      "source": "./plugins/eidos-storemetheus",
       "tags": [
         "eidos",
         "plugin-store",
@@ -496,25 +517,31 @@
         "marketplace",
         "governance"
       ],
+      "version": "0.1.1",
       "x-eidos": {
-        "kind": {"type": "forge", "signals": ["ships_skills", "opinionated_workflow"]},
         "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
           "audit_date": "2026-06-08",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/eidos-storemetheus.md"
+          "audit_doc": "AUDITS/eidos-storemetheus.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
+        "kind": {
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ],
+          "type": "forge"
         }
       }
     },
     {
-      "name": "emux",
-      "description": "Eidos mux: TUI picker and MCP server for named tmux sessions.",
-      "source": "./plugins/emux",
       "category": "agent-tools",
+      "description": "Eidos mux: TUI picker and MCP server for named tmux sessions.",
       "homepage": "https://github.com/eidos-agi/emux",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "emux",
+      "source": "./plugins/emux",
       "tags": [
         "mcp",
         "tmux",
@@ -523,54 +550,54 @@
         "session-control",
         "automation"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-31",
+          "audit_doc": "AUDITS/emux.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "tool",
           "signals": [
             "single_capability",
             "uvx_shim",
             "mcp_server"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-31",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/emux.md"
+          ],
+          "type": "tool"
         },
         "site": {
-          "slug": "emux",
-          "icon": "MX",
-          "tagline": "Pick up where you left off in tmux.",
-          "shape": "Session registry + MCP",
-          "status": "ready",
+          "claude": "claude-marketplace",
+          "codex": "codex-package",
           "hosts": [
             "codex",
             "claude-code"
           ],
-          "codex": "codex-package",
-          "claude": "claude-marketplace",
+          "icon": "MX",
           "install": {
-            "codex": "Install from the Eidos plugin store.",
-            "claude": "claude plugins install emux@eidos-marketplace"
+            "claude": "claude plugins install emux@eidos-marketplace",
+            "codex": "Install from the Eidos plugin store."
           },
-          "start": "Register a tmux session, then drive it with send/run/capture.",
           "requires": [
             "tmux",
             "Python 3.11+"
-          ]
+          ],
+          "shape": "Session registry + MCP",
+          "slug": "emux",
+          "start": "Register a tmux session, then drive it with send/run/capture.",
+          "status": "ready",
+          "tagline": "Pick up where you left off in tmux."
         }
       }
     },
     {
-      "name": "felix",
-      "description": "Use the live Felix CLI to build, assess, and maintain agent ecosystems.",
-      "source": "./plugins/felix",
       "category": "productivity",
+      "description": "Use the live Felix CLI to build, assess, and maintain agent ecosystems.",
       "homepage": "https://github.com/eidos-agi/felix",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "felix",
+      "source": "./plugins/felix",
       "tags": [
         "felix",
         "cli",
@@ -580,20 +607,21 @@
         "eidos-agi",
         "progressive-reveal"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-23",
+          "audit_doc": "AUDITS/felix.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-23",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/felix.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -611,13 +639,12 @@
       }
     },
     {
-      "name": "foreman",
-      "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees, including Emux-headed interactive Claude Code workers.",
-      "source": "./plugins/foreman",
       "category": "development",
+      "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees, including Emux-headed interactive Claude Code workers.",
       "homepage": "https://github.com/eidos-agi/foreman",
       "license": "MIT",
-      "version": "0.3.1",
+      "name": "foreman",
+      "source": "./plugins/foreman",
       "tags": [
         "emux",
         "codex",
@@ -626,21 +653,22 @@
         "parallel-agents",
         "ai-fleet"
       ],
+      "version": "0.3.1",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-31",
+          "audit_doc": "AUDITS/foreman.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow",
             "mcp_server"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-31",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/foreman.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -658,13 +686,12 @@
       }
     },
     {
-      "name": "forge-forge",
-      "description": "Route agents to the right Eidos forge and use forge-forge as the source of truth for forge discovery.",
-      "source": "./plugins/forge-forge",
       "category": "developer-tools",
+      "description": "Route agents to the right Eidos forge and use forge-forge as the source of truth for forge discovery.",
       "homepage": "https://github.com/eidos-agi/forge-forge",
       "license": "MIT",
-      "version": "0.2.0",
+      "name": "forge-forge",
+      "source": "./plugins/forge-forge",
       "tags": [
         "forge-forge",
         "forges",
@@ -674,21 +701,22 @@
         "routing",
         "mcp"
       ],
+      "version": "0.2.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-25",
+          "audit_doc": "AUDITS/forge-forge.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow",
             "mcp_server"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-25",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/forge-forge.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -706,36 +734,35 @@
       }
     },
     {
-      "name": "ike",
-      "description": "Task and project management \u2014 create tasks, track milestones, manage documents, and execute within visionlog contracts",
-      "source": "./plugins/ike",
       "category": "productivity",
+      "description": "Task and project management \u2014 create tasks, track milestones, manage documents, and execute within visionlog contracts",
       "homepage": "https://github.com/eidos-agi/ike.md",
+      "name": "ike",
+      "source": "./plugins/ike",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-15",
+          "audit_doc": "AUDITS/ike.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-15",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/ike.md"
+          ],
+          "type": "forge"
         }
       }
     },
     {
-      "name": "kai",
-      "description": "Route Eidos founder-ops and company-building work through the local Kai CLI.",
-      "source": "./plugins/kai",
       "category": "productivity",
+      "description": "Route Eidos founder-ops and company-building work through the local Kai CLI.",
       "homepage": "https://github.com/eidos-agi/kai",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "kai",
+      "source": "./plugins/kai",
       "tags": [
         "kai",
         "founder-ops",
@@ -746,20 +773,21 @@
         "eidos-agi",
         "progressive-reveal"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-15",
+          "audit_doc": "AUDITS/kai.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-15",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/kai.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -777,13 +805,12 @@
       }
     },
     {
-      "name": "knox",
-      "description": "Knox local MCP secret broker with capability-scoped sessions and proxy tokens.",
-      "source": "./plugins/knox",
       "category": "productivity",
+      "description": "Knox local MCP secret broker with capability-scoped sessions and proxy tokens.",
       "homepage": "https://github.com/eidos-agi/knox",
       "license": "MIT",
-      "version": "0.2.0",
+      "name": "knox",
+      "source": "./plugins/knox",
       "tags": [
         "mcp",
         "agent",
@@ -792,21 +819,22 @@
         "macos",
         "biometric"
       ],
+      "version": "0.2.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-25",
+          "audit_doc": "AUDITS/knox.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow",
             "mcp_server"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-25",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/knox.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -824,13 +852,12 @@
       }
     },
     {
-      "name": "lever",
-      "description": "Self-learning leverage agent that finds constraints, kills weak loops, and turns durable corrections into better agent behavior.",
-      "source": "./plugins/lever",
       "category": "productivity",
+      "description": "Self-learning leverage agent that finds constraints, kills weak loops, and turns durable corrections into better agent behavior.",
       "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/lever",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "lever",
+      "source": "./plugins/lever",
       "tags": [
         "leverage",
         "agent",
@@ -838,20 +865,21 @@
         "decision-framing",
         "eidos"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-08",
+          "audit_doc": "AUDITS/lever.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-08",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/lever.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -869,33 +897,45 @@
       }
     },
     {
-      "name": "linearplus",
-      "description": "Use the LinearPlus CLI for Linear GraphQL initiative workflows missing from connector surfaces.",
-      "source": "./plugins/linearplus",
       "category": "agent-tools",
+      "description": "Use the LinearPlus CLI for Linear GraphQL initiative workflows missing from connector surfaces.",
       "homepage": "https://github.com/eidos-agi/linearplus",
       "license": "MIT",
+      "name": "linearplus",
+      "source": "./plugins/linearplus",
+      "tags": [
+        "linear",
+        "graphql",
+        "initiatives",
+        "projects",
+        "cli",
+        "eidos-agi"
+      ],
       "version": "0.1.0",
-      "tags": ["linear", "graphql", "initiatives", "projects", "cli", "eidos-agi"],
       "x-eidos": {
-        "kind": {"type": "tool", "signals": ["ships_skills", "cli_first"]},
         "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
           "audit_date": "2026-06-08",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/linearplus.md"
+          "audit_doc": "AUDITS/linearplus.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
+        "kind": {
+          "signals": [
+            "ships_skills",
+            "cli_first"
+          ],
+          "type": "tool"
         }
       }
     },
     {
-      "name": "pavo",
-      "description": "Manifest Anything: data-science-led transcription for real audio, speaker identification, dictionaries, routing, and tasks.",
-      "source": "./plugins/pavo",
       "category": "development",
+      "description": "Manifest Anything: data-science-led transcription for real audio, speaker identification, dictionaries, routing, and tasks.",
       "homepage": "https://github.com/eidos-agi/pavo",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "pavo",
+      "source": "./plugins/pavo",
       "tags": [
         "audio",
         "codex",
@@ -903,20 +943,21 @@
         "plaud",
         "transcription"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-10",
+          "audit_doc": "AUDITS/pavo.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-10",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/pavo.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -934,82 +975,81 @@
       }
     },
     {
-      "name": "probe-forge",
-      "description": "Agentic testing forge \u2014 point at anything, say test this. Runs THE-LOOP to investigate targets intelligently",
-      "source": "./plugins/probe-forge",
       "category": "development",
+      "description": "Agentic testing forge \u2014 point at anything, say test this. Runs THE-LOOP to investigate targets intelligently",
       "homepage": "https://github.com/eidos-agi/test-forge",
+      "name": "probe-forge",
+      "source": "./plugins/probe-forge",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-15",
+          "audit_doc": "AUDITS/probe-forge.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-15",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/probe-forge.md"
+          ],
+          "type": "forge"
         }
       }
     },
     {
-      "name": "research-md",
+      "category": "productivity",
       "description": "Evidence-graded, phase-gated research decisions \u2014 candidates, findings, scoring matrices, and peer review",
-      "source": "./plugins/research-md",
-      "category": "productivity",
       "homepage": "https://github.com/eidos-agi/research.md",
+      "name": "research-md",
+      "source": "./plugins/research-md",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-15",
+          "audit_doc": "AUDITS/research-md.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-15",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/research-md.md"
+          ],
+          "type": "forge"
         }
       }
     },
     {
-      "name": "resume-resume",
+      "category": "productivity",
       "description": "Post-crash session recovery, dirty repos inventory, and session search across your full Claude Code history",
-      "source": "./plugins/resume-resume",
-      "category": "productivity",
       "homepage": "https://github.com/eidos-agi/resume-resume",
+      "name": "resume-resume",
+      "source": "./plugins/resume-resume",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-15",
+          "audit_doc": "AUDITS/resume-resume.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-15",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/resume-resume.md"
+          ],
+          "type": "forge"
         }
       }
     },
     {
-      "name": "rhea",
-      "description": "Rhea workflow guidance for sovereign model routing, Socratic debate, sessions, pairing, and image generation.",
-      "source": "./plugins/rhea",
       "category": "productivity",
+      "description": "Rhea workflow guidance for sovereign model routing, Socratic debate, sessions, pairing, and image generation.",
       "homepage": "https://github.com/eidos-agi/rhea",
       "license": "CC-BY-NC-SA-4.0",
-      "version": "0.1.0",
+      "name": "rhea",
+      "source": "./plugins/rhea",
       "tags": [
         "rhea",
         "mcp",
@@ -1019,20 +1059,21 @@
         "orchestration",
         "model-routing"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-05-25",
+          "audit_doc": "AUDITS/rhea.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-05-25",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/rhea.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -1050,12 +1091,12 @@
       }
     },
     {
-      "name": "scridos",
-      "description": "The Eidos scribe \u2014 persistent, compounding knowledge bases using the Karpathy LLM Wiki pattern. Ingest sources, query synthesized knowledge, lint for gaps. Fork of ekadetov/llm-wiki under Eidos AGI maintenance, rebrand-in-progress.",
-      "source": "./plugins/scridos",
       "category": "productivity",
+      "description": "The Eidos scribe \u2014 persistent, compounding knowledge bases using the Karpathy LLM Wiki pattern. Ingest sources, query synthesized knowledge, lint for gaps. Fork of ekadetov/llm-wiki under Eidos AGI maintenance, rebrand-in-progress.",
       "homepage": "https://github.com/eidos-agi/scridos",
       "license": "MIT",
+      "name": "scridos",
+      "source": "./plugins/scridos",
       "tags": [
         "knowledge-base",
         "obsidian",
@@ -1066,30 +1107,29 @@
         "scribe"
       ],
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-15",
+          "audit_doc": "AUDITS/scridos.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-15",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/scridos.md"
+          ],
+          "type": "forge"
         }
       }
     },
     {
-      "name": "shipr",
-      "description": "Persistent Eidos shipping operator that learns how each product ships.",
-      "source": "./plugins/shipr",
       "category": "development",
+      "description": "Persistent Eidos shipping operator that learns how each product ships.",
       "homepage": "https://github.com/eidos-agi/shipr",
       "license": "MIT",
-      "version": "0.2.0",
+      "name": "shipr",
+      "source": "./plugins/shipr",
       "tags": [
         "shipping",
         "release",
@@ -1098,21 +1138,22 @@
         "eidos",
         "claude-code"
       ],
+      "version": "0.2.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-15",
+          "audit_doc": "AUDITS/shipr.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "Shipr self-release packet + Eidos marketplace checks",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow",
             "coordinates_with_other_forges"
-          ]
-        },
-        "audit": {
-          "audited_by": "Shipr self-release packet + Eidos marketplace checks",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-15",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/shipr.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -1136,13 +1177,12 @@
       }
     },
     {
-      "name": "skillopt",
-      "description": "Use Microsoft SkillOpt to train reusable agent skill documents from scored rollouts.",
-      "source": "./plugins/skillopt",
       "category": "agent-tools",
+      "description": "Use Microsoft SkillOpt to train reusable agent skill documents from scored rollouts.",
       "homepage": "https://github.com/microsoft/SkillOpt",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "skillopt",
+      "source": "./plugins/skillopt",
       "tags": [
         "skillopt",
         "agent-skills",
@@ -1152,55 +1192,55 @@
         "eidos",
         "claude-code"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-11",
+          "audit_doc": "AUDITS/skillopt.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "Upstream GitHub metadata + Eidos marketplace checks",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "tool",
           "signals": [
             "single_capability",
             "upstream_wrapper",
             "ships_skills"
-          ]
-        },
-        "audit": {
-          "audited_by": "Upstream GitHub metadata + Eidos marketplace checks",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-11",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/skillopt.md"
+          ],
+          "type": "tool"
         }
       }
     },
     {
-      "name": "visionlog",
-      "description": "Vision, goals, guardrails, SOPs, and ADRs \u2014 the contracts all execution must honor",
-      "source": "./plugins/visionlog",
       "category": "productivity",
+      "description": "Vision, goals, guardrails, SOPs, and ADRs \u2014 the contracts all execution must honor",
       "homepage": "https://github.com/eidos-agi/visionlog.md",
+      "name": "visionlog",
+      "source": "./plugins/visionlog",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-15",
+          "audit_doc": "AUDITS/visionlog.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-15",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/visionlog.md"
+          ],
+          "type": "forge"
         }
       }
     },
     {
-      "name": "zoltar",
-      "description": "An Eidos foresight research subagent that investigates current context, predicts likely outcomes and objections, challenges market overfit, and emits concrete changes for doer/checker agents.",
-      "source": "./plugins/zoltar",
       "category": "productivity",
+      "description": "An Eidos foresight research subagent that investigates current context, predicts likely outcomes and objections, challenges market overfit, and emits concrete changes for doer/checker agents.",
       "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/zoltar",
       "license": "MIT",
-      "version": "0.3.0",
+      "name": "zoltar",
+      "source": "./plugins/zoltar",
       "tags": [
         "future-prediction",
         "foresight-research",
@@ -1211,20 +1251,21 @@
         "claude-code",
         "eidos"
       ],
+      "version": "0.3.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-06-23",
+          "audit_doc": "AUDITS/zoltar.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "Codex plugin validator + skill quick validation + dual-host marketplace checks",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "forge",
           "signals": [
             "ships_skills",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "Codex plugin validator + skill quick validation + dual-host marketplace checks",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-06-23",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/zoltar.md"
+          ],
+          "type": "forge"
         },
         "recommend": {
           "for_projects": [
@@ -1244,5 +1285,6 @@
         }
       }
     }
-  ]
+  ],
+  "version": "0.1.0"
 }
