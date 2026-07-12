@@ -1,6 +1,6 @@
 {
   "name": "eidos-personality",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "How Eidos talks. An always-on personality plugin that shapes every response. Trait one is plain speech: it makes the AI translate what it understands down into simple, honest language instead of dumping its dense internal shorthand.",
   "author": {
     "name": "Eidos AGI",

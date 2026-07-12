@@ -1,0 +1,16 @@
+{
+  "_note": "Tools fleetbuilder knows about per organ. check-organ-growth.py compares this to each organ's LIVE tool surface and flags what has grown. Update this after folding a new tool into the skill.",
+  "emux": [
+    "tmux_ask",
+    "tmux_capture",
+    "tmux_goal",
+    "tmux_navigate",
+    "tmux_register",
+    "tmux_run",
+    "tmux_search",
+    "tmux_send",
+    "tmux_sessions",
+    "tmux_spawn",
+    "tmux_unregister"
+  ]
+}

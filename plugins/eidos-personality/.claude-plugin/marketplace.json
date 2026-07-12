@@ -1,12 +1,15 @@
 {
   "name": "eidos-personality",
-  "owner": { "name": "Eidos AGI", "url": "https://github.com/eidos-agi" },
+  "owner": {
+    "name": "Eidos AGI",
+    "url": "https://github.com/eidos-agi"
+  },
   "plugins": [
     {
       "name": "eidos-personality",
       "source": "./",
       "description": "How Eidos talks. Always-on plain speech: say the true thing in simple words, lead with the fact, define shorthand before using it, one clear ask at the end.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "category": "productivity",
       "strict": false
     }

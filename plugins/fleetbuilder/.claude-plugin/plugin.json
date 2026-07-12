@@ -1,7 +1,7 @@
 {
   "name": "fleetbuilder",
   "description": "The learning work clothes for building Fleet. FleetBuilder studies your Claude Code transcripts to learn, over time, what Fleet you need and how you build it \u2014 distilling a living learnings.md the loop reads every cycle. When you say 'build Fleet', it runs one honest build cycle the way a small team would: a product expert states the value from the user's chair, an engineer builds the laziest change that works, a reviewer adversarially verifies it and mints an antibody (a runnable check) from any failure \u2014 then the win is banked in staircase and the loop advances. A historian mines your sessions between cycles so the team gets smarter about YOUR Fleet. Workflows fan the team out; hooks keep it moving. No asking, just building.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "Eidos AGI"
   },

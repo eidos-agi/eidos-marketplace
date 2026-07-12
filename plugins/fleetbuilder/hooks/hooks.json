@@ -6,6 +6,10 @@
           {
             "type": "command",
             "command": "[ -f .fleetbuilder/learnings.md ] && { echo '## FleetBuilder learnings (obey Standing orders)'; cat .fleetbuilder/learnings.md; } || true"
+          },
+          {
+            "type": "command",
+            "command": "echo '## Organ growth check (the ecosystem grows — this is the live truth, not the skill snapshot)'; python3 \"${CLAUDE_PLUGIN_ROOT}/tools/check-organ-growth.py\" 2>/dev/null || true"
           }
         ]
       }

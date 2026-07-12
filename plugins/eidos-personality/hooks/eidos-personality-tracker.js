@@ -46,6 +46,21 @@ process.stdin.on('end', () => {
       );
       return;
     }
+
+    // Every other turn: if the personality is on (the default), re-inject a
+    // SHORT reminder. SessionStart loads the full rules once; on a long session
+    // they fade as later context piles up. This puts them back in front of the
+    // model before each reply — the per-turn reinforcement the startup load alone
+    // could not give. Cheap (~30 words) and the whole point.
+    let state = 'on';
+    try { state = (fs.readFileSync(statePath, 'utf8').trim() || 'on'); } catch (e) {}
+    if (state !== 'off' && process.env.EIDOS_PERSONALITY !== 'off') {
+      process.stdout.write(
+        'EIDOS PERSONALITY (plain speech, active): lead with the fact, define' +
+        ' shorthand before use, plain before metaphor, short sentences, one clear' +
+        ' ask, translate down. Plain is not vague — keep every caveat.'
+      );
+    }
   } catch (e) {
     // Silent fail — never block the prompt.
   }
