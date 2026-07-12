@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "complex-test-cases"
-version = "0.1.0"
+version = "0.2.0"
 description = "The case authority. A case must have been observed RED at least once — a test that has never failed has never been tested."
 readme = "README.md"
 requires-python = ">=3.10"

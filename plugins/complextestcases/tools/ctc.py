@@ -150,7 +150,13 @@ DEFAULT_CONFIG = {
 #
 # So BROKEN is its own verdict, it NEVER counts as red history, and a suite that
 # contains one cannot be redchecked.
-NOT_EXECUTABLE = (126, 127)
+# Exit codes that mean the case DID NOT RUN — its failure is ABSENT, not RED, and
+# must never mint falsifiability. 127 = command not found, 126 = not executable
+# (the prose-case class in the comment above). 2 = the interpreter/shell could not
+# run the command at all: python "can't open file 'x'", argparse usage error, and
+# a shell parse error (an unbalanced quote) all exit 2 — none of them ran the
+# case's logic. A case signals a genuine red with exit 1.
+NOT_EXECUTABLE = (2, 126, 127)
 
 
 def _fail(msg: str) -> SystemExit:
@@ -233,7 +239,15 @@ class Suite:
             # shell=True is the CONTRACT here, not an oversight: a case IS a shell
             # command, authored in-repo by the owner, exactly like a pytest node id
             # or a Makefile target. There is no untrusted input path into this.
-            p = subprocess.run(c["run"], shell=True, capture_output=True, text=True)
+            # Run from the REPO ROOT (the dir that holds .complextestcases), not
+            # from wherever the ctc process happens to sit. A case is authored
+            # against its repo — `python3 tests/ctc_checks.py x`, `pytest tests/…`
+            # — so a relative command only means anything from the repo root.
+            # Without this, `ctc --dir <repo> run` from elsewhere makes every
+            # relative case fail to open its file (exit 2) — a false red that,
+            # worse, used to MINT falsifiability. See NOT_EXECUTABLE.
+            p = subprocess.run(c["run"], shell=True, cwd=self.dir.parent,
+                               capture_output=True, text=True)
             results.append({
                 "name": name, "dim": c["dim"], "run": c["run"],
                 "status": "green" if p.returncode == 0 else "red",

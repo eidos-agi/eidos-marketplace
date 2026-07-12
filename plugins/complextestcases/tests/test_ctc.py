@@ -177,3 +177,31 @@ def test_a_broken_case_never_earns_red_history(tmp_path):
         "exit 127 must NOT count as red history — otherwise a typo certifies a "
         "claim"
     )
+
+
+def test_a_case_runs_from_the_repo_root_not_the_ctc_cwd(tmp_path, monkeypatch):
+    """A case is authored against its repo — a relative command must resolve from
+    the repo root, not from wherever the ctc process sits. The bug this closes:
+    `ctc --dir <repo> run` from another directory made every relative case fail
+    to find its file, a false red that then minted falsifiability."""
+    (tmp_path / "marker.txt").write_text("here")     # at the repo root
+    s = _add(_suite(tmp_path), "t", "rel", "negative", "cat marker.txt")
+    monkeypatch.chdir(tmp_path.parent)               # run ctc from somewhere else
+    res = s.execute("t")
+    assert res[0]["status"] == "green", (
+        "a relative case must run from the repo root, not the ctc cwd"
+    )
+
+
+def test_a_case_that_cannot_execute_is_broken_not_red(tmp_path):
+    """The exit-2 sibling of the prose-case attack: a command the interpreter
+    cannot run at all (python can't open the file, a shell parse error) exits 2 —
+    it never ran the case logic, so it must be BROKEN, never red history."""
+    s = _add(_suite(tmp_path), "t", "cannot_run", "negative",
+             "python3 this_script_does_not_exist_xyz.py")
+    res = s.execute("t")
+    assert res[0]["exit"] == 2 and res[0]["exit"] in ctc.NOT_EXECUTABLE
+    assert ctc.Suite(s.dir).status("t")["cases"][0]["verdict"] == "BROKEN"
+    assert "cannot_run" not in ctc.Suite(s.dir).falsifiable("t"), (
+        "exit 2 must NOT mint falsifiability — the case never executed"
+    )
