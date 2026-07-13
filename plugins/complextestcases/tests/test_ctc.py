@@ -205,3 +205,54 @@ def test_a_case_that_cannot_execute_is_broken_not_red(tmp_path):
     assert "cannot_run" not in ctc.Suite(s.dir).falsifiable("t"), (
         "exit 2 must NOT mint falsifiability — the case never executed"
     )
+
+
+def test_a_hung_case_is_broken_not_a_hang(tmp_path):
+    """A case that hangs must be killed and marked BROKEN — never block the whole
+    run forever. (case_timeout_sec, exit 124.)"""
+    import time
+    d = tmp_path / ctc.DIRNAME
+    d.mkdir()
+    cfg = dict(ctc.DEFAULT_CONFIG)
+    cfg["case_timeout_sec"] = 1
+    (d / "config.json").write_text(json.dumps(cfg))
+    s = ctc.Suite(d)
+    s.append("cases.jsonl", {"target": "t", "name": "hang", "dim": "negative",
+                             "run": "sleep 30", "why": "hangs"})
+    s = ctc.Suite(d)
+    t0 = time.time()
+    res = s.execute("t")
+    assert time.time() - t0 < 10, "the timeout must kill the case, not wait 30s"
+    assert res[0]["exit"] == ctc.TIMEOUT_EXIT
+    assert ctc.Suite(d).status("t")["cases"][0]["verdict"] == "BROKEN"
+
+
+def test_env_unavailable_case_is_skipped_not_red(tmp_path):
+    """A case may report exit 77 to SKIP when its environment is absent — that is
+    SKIPPED, never a false RED, does not fail the suite, and mints no history."""
+    s = _add(_suite(tmp_path), "t", "needs_env", "negative", "exit 77")
+    s.execute("t")
+    assert ctc.Suite(s.dir).status("t")["cases"][0]["verdict"] == "SKIPPED"
+    assert "needs_env" not in ctc.Suite(s.dir).falsifiable("t"), (
+        "a skipped case never ran — it must not mint falsifiability"
+    )
+
+
+def test_changing_the_judge_drops_earned_red_history(tmp_path):
+    """Anchor: a case that names its judge keeps earned red-history ONLY while
+    that judge is unchanged. Weaken the judge but keep the command identical, and
+    the earned red no longer counts — the deepest tamper vector, closed for cases
+    that opt in."""
+    judge = tmp_path / "judge.sh"
+    judge.write_text("exit 1\n")             # the thing isn't built yet -> RED
+    s = _suite(tmp_path)
+    s.append("cases.jsonl", {"target": "t", "name": "anchored", "dim": "negative",
+                             "run": "sh judge.sh", "anchor": "judge.sh", "why": "x"})
+    s = ctc.Suite(s.dir)
+    s.execute("t")
+    assert "anchored" in ctc.Suite(s.dir).falsifiable("t"), "red should be earned"
+    judge.write_text("exit 0\n")             # weaken the judge; command unchanged
+    ctc.Suite(s.dir).execute("t")            # now green
+    assert "anchored" not in ctc.Suite(s.dir).falsifiable("t"), (
+        "earned red-history must NOT survive a changed judge"
+    )

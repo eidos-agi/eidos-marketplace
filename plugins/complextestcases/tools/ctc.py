@@ -59,6 +59,7 @@ test.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
@@ -135,6 +136,10 @@ DEFAULT_CONFIG = {
     # Cases that have stopped catching anything are retired, not accumulated — a
     # suite that only grows becomes a suite nobody runs.
     "retire_after_green_runs": 50,
+    # A case that hangs blocks the whole run forever. Kill it after this many
+    # seconds and treat it as BROKEN (it did not complete). Generous by default;
+    # a real case finishes in seconds.
+    "case_timeout_sec": 300,
 }
 
 
@@ -155,8 +160,17 @@ DEFAULT_CONFIG = {
 # (the prose-case class in the comment above). 2 = the interpreter/shell could not
 # run the command at all: python "can't open file 'x'", argparse usage error, and
 # a shell parse error (an unbalanced quote) all exit 2 — none of them ran the
-# case's logic. A case signals a genuine red with exit 1.
-NOT_EXECUTABLE = (2, 126, 127)
+# case's logic. A case signals a genuine red with exit 1. 124 = the case ran but
+# was killed by the timeout (below): it did not complete, so it did not fail —
+# BROKEN, never red.
+NOT_EXECUTABLE = (2, 124, 126, 127)
+
+# A case may report exit 77 to SKIP: its environment is not available here (a gui
+# case on a headless box, a case needing a service that is not running). SKIP is
+# NOT a fail — a false red in CI is worse than an honest "not run here". A skipped
+# case is reported, counts neither green nor vacuous, and never fails the suite.
+SKIP_EXIT = 77
+TIMEOUT_EXIT = 124
 
 
 def _fail(msg: str) -> SystemExit:
@@ -214,16 +228,42 @@ class Suite:
 
         Keying on the command text is the whole tamper-resistance property: weaken
         a case to make it pass and it becomes, to this function, a new case with
-        no red history."""
-        live = {n: c["run"] for n, c in self.suite(target).items()}
-        return {
-            r["name"]
-            for run in self.runs if run.get("target") == target
-            for r in run["results"]
-            if r["status"] == "red"
-            and r.get("exit") not in NOT_EXECUTABLE
-            and live.get(r["name"]) == r["run"]
-        }
+        no red history. A case may go further and declare an `anchor` — the path
+        to the file(s) that ARE its judge — in which case the red is only trusted
+        while the judge's content hash still matches, so weakening the judge
+        (while keeping the command identical) also drops the earned history."""
+        suite = self.suite(target)
+        live = {n: c["run"] for n, c in suite.items()}
+        cur_anchor = {n: self._anchor_hash(c) for n, c in suite.items()}
+        out: set[str] = set()
+        for run in self.runs:
+            if run.get("target") != target:
+                continue
+            for r in run["results"]:
+                name = r["name"]
+                if r["status"] != "red" or r.get("exit") in NOT_EXECUTABLE:
+                    continue
+                if live.get(name) != r["run"]:
+                    continue
+                anchor = cur_anchor.get(name)
+                if anchor is not None and r.get("anchor_hash") != anchor:
+                    continue          # judge changed since this red — history void
+                out.add(name)
+        return out
+
+    def _anchor_hash(self, case: dict) -> str | None:
+        """Content hash of the file(s) a case declares as its judge (`anchor`),
+        relative to the repo root. None when the case declares no anchor."""
+        anchor = case.get("anchor")
+        if not anchor:
+            return None
+        paths = [anchor] if isinstance(anchor, str) else list(anchor)
+        h = hashlib.sha256()
+        for rel in sorted(paths):
+            f = self.dir.parent / rel
+            h.update(rel.encode())
+            h.update(f.read_bytes() if f.is_file() else b"\0MISSING\0")
+        return h.hexdigest()[:16]
 
     def execute(self, target: str, ledger: bool = True) -> list[dict]:
         s = self.suite(target)
@@ -233,6 +273,7 @@ class Suite:
                 "the only moment a redcheck is possible, and a case that was "
                 "never red is a case that never worked."
             )
+        timeout = self.config.get("case_timeout_sec", DEFAULT_CONFIG["case_timeout_sec"])
         results = []
         for name in sorted(s):
             c = s[name]
@@ -246,14 +287,30 @@ class Suite:
             # Without this, `ctc --dir <repo> run` from elsewhere makes every
             # relative case fail to open its file (exit 2) — a false red that,
             # worse, used to MINT falsifiability. See NOT_EXECUTABLE.
-            p = subprocess.run(c["run"], shell=True, cwd=self.dir.parent,
-                               capture_output=True, text=True)
-            results.append({
+            try:
+                p = subprocess.run(c["run"], shell=True, cwd=self.dir.parent,
+                                   capture_output=True, text=True, timeout=timeout)
+                code = p.returncode
+                tail = (p.stderr or p.stdout or "").strip()[-200:]
+            except subprocess.TimeoutExpired:
+                code = TIMEOUT_EXIT      # BROKEN: it did not complete, so it did not fail
+                tail = f"case exceeded case_timeout_sec={timeout}s — killed, treated as BROKEN"
+            status = "skip" if code == SKIP_EXIT else "green" if code == 0 else "red"
+            rec = {
                 "name": name, "dim": c["dim"], "run": c["run"],
-                "status": "green" if p.returncode == 0 else "red",
-                "exit": p.returncode,
-                "tail": (p.stderr or p.stdout or "").strip()[-200:],
-            })
+                "status": status,
+                "exit": code,
+                "tail": tail,
+            }
+            # Anchor the red-history to the case's JUDGE, not just its command
+            # string. A case that declares `anchor` (a path to the file(s) that
+            # ARE its check) records their content hash on every run; falsifiable()
+            # then only trusts a red whose anchor still matches. Weaken the judge
+            # and keep the command identical — the earned red no longer counts.
+            ah = self._anchor_hash(c)
+            if ah is not None:
+                rec["anchor_hash"] = ah
+            results.append(rec)
         if ledger:
             self.append("runs.jsonl", {"target": target, "results": results})
             self.runs = self._read("runs.jsonl")
@@ -273,6 +330,8 @@ class Suite:
             r = last.get(name)
             if r is None:
                 v = "UNTESTED"
+            elif r.get("exit") == SKIP_EXIT or r.get("status") == "skip":
+                v = "SKIPPED"
             elif r.get("exit") in NOT_EXECUTABLE:
                 v = "BROKEN"
             elif r["status"] == "red":
@@ -288,6 +347,8 @@ class Suite:
         broken = [r for r in rows if r["verdict"] == "BROKEN"]
         vac = [r for r in rows if r["verdict"] in ("VACUOUS", "UNTESTED")]
         green = [r for r in rows if r["verdict"] == "GREEN"]
+        skipped = [r for r in rows if r["verdict"] == "SKIPPED"]
+        scored = len(rows) - len(skipped)
         dims = {c["dim"] for c in s.values()}
         need = [d for d in self.config["require_dimensions"] if d not in dims]
         short = len(s) < int(self.config["min_cases"])
@@ -302,13 +363,13 @@ class Suite:
                 bits.append(f"{len(s)} case(s), floor is {self.config['min_cases']}")
             if need:
                 bits.append("missing dimension(s): " + ", ".join(need))
-            return {**_agg(target, rows, green, red, vac, sorted(dims)),
+            return {**_agg(target, rows, sorted(dims)),
                     "verdict": "SHALLOW", "ok": False,
                     "reason": "; ".join(bits) + " — a suite that does not span "
                               "dimensions proves one path, not the claim. "
                               + "; ".join(f"{d}: {DIMENSIONS[d]}" for d in need)}
         if broken:
-            return {**_agg(target, rows, green, red, vac, sorted(dims)),
+            return {**_agg(target, rows, sorted(dims)),
                     "verdict": "BROKEN", "ok": False,
                     "reason": f"{len(broken)} case(s) could not be EXECUTED "
                               "(exit 126/127): "
@@ -319,32 +380,41 @@ class Suite:
                                 "exactly like an honest failure; a typo would "
                                 "certify a claim. Write a real command."}
         if red:
-            return {**_agg(target, rows, green, red, vac, sorted(dims)),
+            return {**_agg(target, rows, sorted(dims)),
                     "verdict": "RED", "ok": False,
                     "reason": f"{len(red)} case(s) failing: "
                               + ", ".join(r["name"] for r in red)}
         if vac:
-            return {**_agg(target, rows, green, red, vac, sorted(dims)),
+            return {**_agg(target, rows, sorted(dims)),
                     "verdict": "VACUOUS", "ok": False,
                     "reason": f"{len(vac)} case(s) never observed RED: "
                               + ", ".join(r["name"] for r in vac)
                               + " — a check that has never caught anything has "
                                 "not earned the right to certify anything. Run "
                                 "`ctc redcheck` BEFORE the work."}
-        return {**_agg(target, rows, green, red, vac, sorted(dims)),
+        return {**_agg(target, rows, sorted(dims)),
                 "verdict": "GREEN", "ok": True,
-                "reason": f"{len(green)}/{len(rows)} green, all proven "
-                          f"falsifiable, spanning {', '.join(sorted(dims))}"}
+                "reason": f"{len(green)}/{scored} green, all proven falsifiable, "
+                          f"spanning {', '.join(sorted(dims))}"
+                          + (f" ({len(skipped)} skipped — env not available here)"
+                             if skipped else "")}
 
 
-def _agg(target, rows, green, red, vac, dims) -> dict:
+def _agg(target, rows, dims) -> dict:
+    def n(*v):
+        return sum(r["verdict"] in v for r in rows)
+    green = n("GREEN")
+    skipped = n("SKIPPED")
+    scored = len(rows) - skipped          # a skipped case is not evaluated here
     return {
         "target": target, "cases": rows, "dims": dims,
-        "green": len(green), "red": len(red), "vacuous": len(vac),
-        "total": len(rows),
+        "green": green, "red": n("RED"), "vacuous": n("VACUOUS", "UNTESTED"),
+        "skipped": skipped, "total": len(rows),
         # The honest score. VACUOUS counts as ZERO, not as green — that is the
-        # entire difference between this and every scoreboard it replaces.
-        "score": round(100 * len(green) / len(rows)) if rows else 0,
+        # entire difference between this and every scoreboard it replaces. SKIPPED
+        # is neither green nor vacuous: it leaves the denominator, never inflating
+        # or deflating the score with a case that did not run here.
+        "score": round(100 * green / scored) if scored else 0,
     }
 
 
@@ -412,7 +482,7 @@ def cmd_add(a) -> int:
 def _render(st: dict) -> None:
     for c in st["cases"]:
         mark = {"GREEN": "✓", "RED": "✗", "VACUOUS": "?", "UNTESTED": "·",
-                "BROKEN": "!"}[c["verdict"]]
+                "BROKEN": "!", "SKIPPED": "–"}[c["verdict"]]
         print(f"  {mark} {c['verdict']:8} [{c['dim']:12}] {c['name']}")
     print(f"\n{st['verdict']}: {st['reason']}")
     print(f"score: {st['score']}  (VACUOUS scores ZERO — that is the point)")

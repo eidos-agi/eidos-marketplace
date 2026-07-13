@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.0 — 2026-07-12
+
+Three robustness/integrity improvements, planned and banked through staircase.
+
+- **Timeout.** Case execution now has a `case_timeout_sec` (default 300); a case
+  that hangs is killed and treated as BROKEN (exit 124) instead of blocking the
+  run forever.
+- **SKIPPED verdict.** A case may exit **77** to signal its environment is not
+  available here (a gui case on a headless CI box). That is SKIPPED — reported,
+  excluded from the score's denominator, never a false RED. A skip in CI was
+  previously indistinguishable from a failure.
+- **Judge anchoring.** A case may declare `anchor` (the path to the file(s) that
+  ARE its judge). Its earned red-history is then trusted only while that judge's
+  content hash is unchanged — so weakening the judge while keeping the command
+  identical drops the earned history. Closes the deepest remaining tamper vector
+  (falsifiability keyed on command string alone) for cases that opt in.
+
 ## 0.2.0 — 2026-07-12
 
 Two integrity bugs, found by dogfooding the runner against a real repo (emux).
