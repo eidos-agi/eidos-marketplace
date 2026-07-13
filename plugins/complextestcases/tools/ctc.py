@@ -61,6 +61,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -162,8 +163,10 @@ DEFAULT_CONFIG = {
 # a shell parse error (an unbalanced quote) all exit 2 — none of them ran the
 # case's logic. A case signals a genuine red with exit 1. 124 = the case ran but
 # was killed by the timeout (below): it did not complete, so it did not fail —
-# BROKEN, never red.
-NOT_EXECUTABLE = (2, 124, 126, 127)
+# BROKEN, never red. 125 = a structured case (verdict_protocol) exited without
+# ever affirming a CTC_VERDICT — it crashed before judging, so it is BROKEN too.
+NOT_EXECUTABLE = (2, 124, 125, 126, 127)
+NO_VERDICT = 125
 
 # A case may report exit 77 to SKIP: its environment is not available here (a gui
 # case on a headless box, a case needing a service that is not running). SKIP is
@@ -171,6 +174,19 @@ NOT_EXECUTABLE = (2, 124, 126, 127)
 # case is reported, counts neither green nor vacuous, and never fails the suite.
 SKIP_EXIT = 77
 TIMEOUT_EXIT = 124
+
+# A case may AFFIRM its verdict by printing `CTC_VERDICT: PASS|FAIL|SKIP`. This
+# closes the crash-vs-red hole: an exit code cannot tell a judged failure
+# (sys.exit(1)) from a crash (an unhandled exception also exits 1). A structured
+# case (`verdict_protocol: true`) that reaches a verdict SAYS so; if it exits
+# without the token it crashed before judging — BROKEN, not a false red. The
+# token is authoritative when present; last one wins.
+_VERDICT_RE = re.compile(r"CTC_VERDICT:\s*(PASS|FAIL|SKIP)", re.IGNORECASE)
+
+
+def _verdict_token(text: str) -> str | None:
+    m = list(_VERDICT_RE.finditer(text or ""))
+    return m[-1].group(1).upper() if m else None
 
 
 def _fail(msg: str) -> SystemExit:
@@ -292,6 +308,15 @@ class Suite:
                                    capture_output=True, text=True, timeout=timeout)
                 code = p.returncode
                 tail = (p.stderr or p.stdout or "").strip()[-200:]
+                # An affirmed CTC_VERDICT is authoritative over the exit code — the
+                # only way to tell a judged FAIL from a crash that also exits 1.
+                token = _verdict_token(p.stdout)
+                if token:
+                    code = {"PASS": 0, "FAIL": 1, "SKIP": SKIP_EXIT}[token]
+                elif c.get("verdict_protocol"):
+                    code = NO_VERDICT    # structured case never judged → it crashed
+                    tail = ("verdict_protocol case exited without a CTC_VERDICT — "
+                            "BROKEN (crashed before judging). " + tail)[:200]
             except subprocess.TimeoutExpired:
                 code = TIMEOUT_EXIT      # BROKEN: it did not complete, so it did not fail
                 tail = f"case exceeded case_timeout_sec={timeout}s — killed, treated as BROKEN"

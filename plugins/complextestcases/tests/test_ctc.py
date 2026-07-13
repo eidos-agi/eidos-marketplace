@@ -256,3 +256,22 @@ def test_changing_the_judge_drops_earned_red_history(tmp_path):
     assert "anchored" not in ctc.Suite(s.dir).falsifiable("t"), (
         "earned red-history must NOT survive a changed judge"
     )
+
+
+def test_a_crash_in_a_structured_case_is_broken_not_red(tmp_path):
+    """crash-vs-red: an exit code cannot tell a judged failure from a crash — both
+    exit 1. A structured case (verdict_protocol) AFFIRMS its verdict with a
+    CTC_VERDICT token. One that judges FAIL earns a real red; one that crashes
+    emits no token and is BROKEN, minting no falsifiability."""
+    s = _suite(tmp_path)
+    s.append("cases.jsonl", {"target": "t", "name": "judged_fail", "dim": "negative",
+        "run": "echo CTC_VERDICT: FAIL; exit 1", "verdict_protocol": True, "why": "x"})
+    s.append("cases.jsonl", {"target": "t", "name": "crashed", "dim": "negative",
+        "run": "python3 -c 'raise ValueError(\"boom\")'", "verdict_protocol": True, "why": "x"})
+    s = ctc.Suite(s.dir)
+    s.execute("t")
+    v = {c["name"]: c["verdict"] for c in ctc.Suite(s.dir).status("t")["cases"]}
+    assert v["judged_fail"] == "RED", v
+    assert v["crashed"] == "BROKEN", v
+    fals = ctc.Suite(s.dir).falsifiable("t")
+    assert "judged_fail" in fals and "crashed" not in fals, fals

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0 — 2026-07-12
+
+- **Crash vs. red, closed.** An exit code cannot tell a judged failure
+  (`sys.exit(1)`) from a crash (an unhandled exception also exits 1) — so a
+  buggy judge that blew up used to mint falsifiability as if it had caught
+  something. A case may now set `verdict_protocol: true` and AFFIRM its result
+  by printing `CTC_VERDICT: PASS|FAIL|SKIP` (authoritative over the exit code). A
+  structured case that judges FAIL earns a real red; one that exits without ever
+  printing a verdict crashed before judging and is BROKEN (exit 125), minting no
+  history. Opt-in; exit-code cases are unchanged.
+
 ## 0.3.0 — 2026-07-12
 
 Three robustness/integrity improvements, planned and banked through staircase.
