@@ -1,3 +1,4 @@
 {"id":"ctc-exec-timeout","note":"case_timeout_sec kills a hung case as BROKEN (exit 124)","proof":"eidos-marketplace@f1771a6","schema":1,"ts":"2026-07-13T00:06:21+00:00","type":"win"}
 {"id":"ctc-skipped-verdict","note":"exit 77 => SKIPPED, out of the score denominator, never a false RED","proof":"eidos-marketplace@f1771a6","schema":1,"ts":"2026-07-13T00:06:22+00:00","type":"win"}
 {"id":"ctc-judge-anchor","note":"anchor binds red-history to the judge's content hash","proof":"eidos-marketplace@f1771a6","schema":1,"ts":"2026-07-13T00:06:22+00:00","type":"win"}
+{"id":"ctc-verdict-protocol","note":"CTC_VERDICT token: judged FAIL vs crash-with-no-verdict (BROKEN)","proof":"eidos-marketplace@0cc3e74","schema":1,"ts":"2026-07-13T00:11:34+00:00","type":"win"}
