@@ -1139,17 +1139,17 @@
     },
     {
       "category": "development",
-      "description": "For the 'whoa, this must be complicated' moment. Turns the flinch into a number: prices the obvious path against the cheaper solution classes and returns PENCIL, NO PENCIL, or PENCIL-DON'T-SWITCH.",
+      "description": "A keyword meaning 'there's got to be an easier way \u2014 go back to first principles and stop worrying about the very specific task in front of us.' Changes altitude, finds the pencil, or says honestly there isn't one.",
       "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/russianpencil",
       "license": "MIT",
       "name": "russianpencil",
       "source": "./plugins/russianpencil",
       "tags": [
-        "yagni",
+        "first-principles",
         "simplicity",
+        "reframing",
+        "yagni",
         "decision-making",
-        "cost",
-        "architecture",
         "claude-code"
       ],
       "version": "0.1.0",

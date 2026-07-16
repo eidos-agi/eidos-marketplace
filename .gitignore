@@ -4,3 +4,12 @@ __pycache__/
 .env
 .venv/
 .shipr/
+
+# Published bundles carry no runtime proof/ledger state (.complextestcases/,
+# .staircase/, .telos/ append-only logs). Each plugin's canonical ledger lives
+# in its own source repo, where it stays tracked and sealed; the copy here is a
+# duplicate that a ship dragged in. tools/marketplace_publish.py already strips
+# *.jsonl on the publish path, so this rule covers the ship/copy path instead.
+# Enforced by tests/test_marketplace_publish.py::
+#   test_published_bundles_do_not_include_runtime_or_proof_noise
+plugins/**/*.jsonl

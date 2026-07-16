@@ -3,8 +3,7 @@
     "eidos-skills-hub": {
       "transport": "stdio",
       "command": "node",
-      "args": ["index.js"],
-      "cwd": ".",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/index.js"],
       "env": {}
     }
   }

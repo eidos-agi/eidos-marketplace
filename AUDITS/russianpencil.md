@@ -9,10 +9,38 @@
 
 ### Self-descent (dogfood)
 
-Per STANDARD.md's dogfooding rule, the plugin was run against itself before publishing.
+Per STANDARD.md's dogfooding rule, the skill was run on itself. It found a pencil, and the
+first draft of this plugin was the space pen.
 
-- **Stripped requirement:** notice, at the moment of flinching, whether a thing is genuinely complicated or only looks it.
-- **Obvious path:** this plugin — a few hours, one marketplace slot, ~nil carry (prose only, nothing to break).
-- **Classes priced:** (a) invoked skill [this]; (b) always-on hook, ponytail-style; (c) already-installed generalist challengers — `rhea_simplify`, `rhea_challenge`, `pal challenge`; (d) null — do nothing, keep flinching.
-- **Verdict:** `NO PENCIL` — nothing is 10x cheaper. Class (c) is the strongest rival and was the near-miss: rhea is installed and free. It loses on method, not price — no stripped requirement, no cost table, no null class, and no verdict it is willing to give you that you did not want. Class (b) was rejected on contradiction: a hook cannot fire on "whoa, wtf" because the flinch is human and undetectable from tool calls.
-- **Known ceiling:** invoked-only, so it is bounded by the user remembering to reach for it. Fails silently in exactly the cases where excitement, not intimidation, is driving the build — ponytail's territory, deliberately left there.
+- **Task we were grinding on:** build something that decides whether a plan is too expensive.
+- **Actual goal, no solution nouns:** notice when difficulty is coming from the framing rather
+  than from the problem.
+- **Ways to reach that goal:** (a) a keyword that changes altitude — a written first-principles
+  move, invoked by saying one word; (b) an always-on hook, ponytail-style; (c) already-installed
+  generalist challengers — `rhea_simplify`, `rhea_challenge`, `pal challenge`; (d) don't build
+  anything — just remember to think differently in the moment.
+- **Verdict:** `PENCIL: (a), the keyword.`
+
+The first draft was a seven-step cost descent — carry vs. migration vs. sunk cost, prices to an
+order of magnitude, a 10x rule, three verdicts. It was well-built and wrongly framed, which is
+the exact failure it exists to catch. **Cost was never the mechanism.** Cheaper is what happens
+*after* you find the easier way; pricing the options you already thought of does nothing to get
+you out of the cage. Deleting the accounting made the skill both shorter and better, which is
+the tell.
+
+Rejected classes, honestly:
+- **(b) hook** — contradiction. The trigger is a human going "whoa, wtf," and that flinch is not
+  detectable from tool calls. A hook cannot fire on it.
+- **(c) rhea** — the near-miss, and the strongest rival: installed, free, and genuinely good at
+  arguing. Loses on one thing only — it has no *move*. No forced restatement of the goal without
+  solution nouns, no mandatory null option, no permission to come back with "it's hard because
+  it's hard." It will simplify what you show it; it will not tell you that you're looking at the
+  wrong thing.
+- **(d) don't build it** — argued seriously and nearly won. It loses because "remember to zoom
+  out" is not a thing anyone remembers precisely when they most need to, which is while being
+  excellent inside the cage.
+
+**Known ceiling.** Invoked-only, so it is bounded by the user reaching for it. It fires on
+intimidation, not excitement — so it misses the case where you are *thrilled* about the thing
+you're overbuilding. That is ponytail's territory and is left there deliberately. Upgrade path,
+if that gap ever bites: not a hook (see above), but a habit — someone else saying the word.
