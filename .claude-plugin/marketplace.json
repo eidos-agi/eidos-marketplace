@@ -1138,6 +1138,39 @@
       }
     },
     {
+      "category": "development",
+      "description": "For the 'whoa, this must be complicated' moment. Turns the flinch into a number: prices the obvious path against the cheaper solution classes and returns PENCIL, NO PENCIL, or PENCIL-DON'T-SWITCH.",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/russianpencil",
+      "license": "MIT",
+      "name": "russianpencil",
+      "source": "./plugins/russianpencil",
+      "tags": [
+        "yagni",
+        "simplicity",
+        "decision-making",
+        "cost",
+        "architecture",
+        "claude-code"
+      ],
+      "version": "0.1.0",
+      "x-eidos": {
+        "audit": {
+          "audit_date": "2026-07-16",
+          "audit_doc": "AUDITS/russianpencil.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
+        "kind": {
+          "signals": [
+            "single_capability",
+            "skill_only"
+          ],
+          "type": "skill"
+        }
+      }
+    },
+    {
       "category": "productivity",
       "description": "The Eidos scribe \u2014 persistent, compounding knowledge bases using the Karpathy LLM Wiki pattern. Ingest sources, query synthesized knowledge, lint for gaps. Fork of ekadetov/llm-wiki under Eidos AGI maintenance, rebrand-in-progress.",
       "homepage": "https://github.com/eidos-agi/scridos",
