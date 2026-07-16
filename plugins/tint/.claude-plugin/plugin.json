@@ -1,0 +1,22 @@
+{
+  "name": "tint",
+  "version": "0.1.0",
+  "description": "Colour your terminal window by the topic it's on. Claude Code sessions recolour themselves as they move between projects.",
+  "author": { "name": "Eidos AGI", "url": "https://github.com/eidos-agi" },
+  "homepage": "https://github.com/eidos-agi/tint",
+  "repository": "https://github.com/eidos-agi/tint",
+  "license": "MIT",
+  "category": "agent-tools",
+  "keywords": ["claude-code", "iterm2", "terminal", "hooks", "colour", "context"],
+  "hooks": {
+    "SessionStart": [
+      { "matcher": "", "hooks": [{ "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/tint-hook.sh", "timeout": 5 }] }
+    ],
+    "UserPromptSubmit": [
+      { "matcher": "", "hooks": [{ "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/tint-hook.sh", "timeout": 5 }] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Edit|Write", "hooks": [{ "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/tint-hook.sh", "timeout": 5 }] }
+    ]
+  }
+}

@@ -497,7 +497,13 @@
         "governance"
       ],
       "x-eidos": {
-        "kind": {"type": "forge", "signals": ["ships_skills", "opinionated_workflow"]},
+        "kind": {
+          "type": "forge",
+          "signals": [
+            "ships_skills",
+            "opinionated_workflow"
+          ]
+        },
         "audit": {
           "audited_by": "pending",
           "audit_version": "STANDARD.md",
@@ -876,9 +882,22 @@
       "homepage": "https://github.com/eidos-agi/linearplus",
       "license": "MIT",
       "version": "0.1.0",
-      "tags": ["linear", "graphql", "initiatives", "projects", "cli", "eidos-agi"],
+      "tags": [
+        "linear",
+        "graphql",
+        "initiatives",
+        "projects",
+        "cli",
+        "eidos-agi"
+      ],
       "x-eidos": {
-        "kind": {"type": "tool", "signals": ["ships_skills", "cli_first"]},
+        "kind": {
+          "type": "tool",
+          "signals": [
+            "ships_skills",
+            "cli_first"
+          ]
+        },
         "audit": {
           "audited_by": "pending",
           "audit_version": "STANDARD.md",
@@ -1169,6 +1188,24 @@
           "audit_doc": "AUDITS/skillopt.md"
         }
       }
+    },
+    {
+      "category": "agent-tools",
+      "description": "Name and colour your terminal windows by the topic they're on. Claude Code sessions re-label themselves as they move between projects. No daemon, no model, no dependencies.",
+      "homepage": "https://github.com/eidos-agi/tint",
+      "license": "MIT",
+      "name": "tint",
+      "source": "./plugins/tint",
+      "tags": [
+        "terminal",
+        "iterm2",
+        "tmux",
+        "hooks",
+        "colour",
+        "context",
+        "claude-code",
+        "zsh"
+      ]
     },
     {
       "name": "visionlog",

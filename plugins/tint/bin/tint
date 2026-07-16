@@ -1,0 +1,76 @@
+#!/bin/zsh
+# tint -- colour your terminal window by the topic it's on.
+#   tint              show this window's tag and colour
+#   tint <topic>      pin this directory tree to <topic> (writes ./.tint)
+#   tint list         show every tag and its assigned colour
+#   tint color <tag> <colour>   "tint color aic blue" | "tint color eidos-agi #c4935a"
+#   tint all          retrofit every window that already exists
+#   tint off          leave this tree uncoloured
+emulate -L zsh
+root=${0:A:h:h}
+source $root/lib/color.zsh
+source $root/lib/tag.zsh
+
+_swatch() {  # "R G B" -> a printed block in that colour
+  local r g b; read r g b <<< "$1"
+  [[ -z "$b" ]] && { printf '   '; return }
+  printf '\033[48;2;%d;%d;%dm   \033[0m' $r $g $b
+}
+
+case "${1:-status}" in
+  status)
+    tag=$(tint_tag_for "$PWD") || { print "no tag for $PWD (window left alone)"; exit 0 }
+    rgb=$(tint_color_for_tag "$tag")
+    printf 'tag    %s\n' "$tag"
+    printf 'colour %s ' "${rgb:-none}"; _swatch "$rgb"; printf '\n'
+    printf 'window %s\n' "$(tint_bgtint_for_tag "$tag" 2>/dev/null || print none)"
+    ;;
+  list)
+    [[ -f $TINT_STATE ]] || { print "nothing assigned yet"; exit 0 }
+    while IFS=$'\t' read -r t hue; do
+      rgb=$(tint_color_for_tag "$t")
+      printf '%-28s %-12s ' "$t" "${rgb:-none}"; _swatch "$rgb"; printf '\n'
+    done < $TINT_STATE
+    ;;
+  color|colour)
+    # A human says "blue", not "40 130 220". The word table is already there.
+    [[ -n "$2" && -n "$3" ]] || { print "usage: tint color <tag> <colour|R G B|none>"; exit 1 }
+    local tag=$2; shift 2
+    local val="$*" rgb
+    if [[ "$val" == "none" ]]; then rgb=none
+    elif [[ "$val" == <->' '<->' '<-> ]]; then rgb="$val"
+    elif rgb=$(_tint_hex2rgb "$val"); then :                 # #c4935a -- brand colours
+    elif rgb=$(_tint_rgb_from_word "$val"); then :           # blue, brown, tan...
+    else
+      print "unknown colour '$val'."
+      print "  words: ${(ko)_TINT_WORDS} ${(ko)_TINT_RGBWORDS}"
+      print "  or a hex (#c4935a) or an rgb triplet (196 147 90)"
+      exit 1
+    fi
+    mkdir -p ${TINT_OVERRIDES:h}
+    # ponytail: append-only; last row wins on read? No -- first match wins, so
+    # drop any existing row for this tag before appending.
+    if [[ -f $TINT_OVERRIDES ]]; then
+      grep -v -e "^${tag}$(printf '\t')" $TINT_OVERRIDES > $TINT_OVERRIDES.tmp 2>/dev/null
+      mv $TINT_OVERRIDES.tmp $TINT_OVERRIDES
+    fi
+    printf '%s\t%s\n' "$tag" "$rgb" >> $TINT_OVERRIDES
+    printf '%s -> %s ' "$tag" "$rgb"; _swatch "$rgb"; printf '\n'
+    ;;
+  all)
+    source ${0:A:h:h}/lib/all.zsh
+    tint_all
+    ;;
+  off)
+    mkdir -p ${TINT_OVERRIDES:h}
+    tag=$(tint_tag_for "$PWD") || { print "no tag here"; exit 1 }
+    printf '%s\tnone\n' "$tag" >> $TINT_OVERRIDES
+    print "$tag will no longer colour windows"
+    ;;
+  -h|--help) sed -n '2,6p' $0 | sed 's/^# \?//' ;;
+  *)
+    print -r -- "${*}" > .tint
+    print "pinned $PWD (and below) to topic: ${*}"
+    print "colour: $(tint_color_for_tag "${*// /-}")"
+    ;;
+esac
