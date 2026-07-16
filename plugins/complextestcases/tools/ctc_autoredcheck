@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+"""ctc_autoredcheck — auto red-check a case by mutating the code it guards.
+
+THE FRICTION THIS KILLS
+=======================
+`ctc redcheck` proves a case is FALSIFIABLE by requiring a human to first break
+the code, watch the case go RED, then restore it. That manual break-and-restore
+dance is the whole reason vacuous tests slip through: nobody actually does it.
+
+This tool does it FOR you. Given code and the case that guards it, it:
+
+  1. MUTATES the code (flips the property the case guards),
+  2. runs the case, asserts it goes RED (the mutation is caught),
+  3. RESTORES the code exactly,
+  4. runs the case, asserts it goes GREEN (the property holds),
+
+and only certifies the case if BOTH held. A case that stays green under mutation
+never tested anything — it is vacuous, and this catches it without a human ever
+touching the code.
+
+SCOPE
+=====
+A fully general mutation engine (parse any code, generate meaningful mutants) is
+out of scope for this first cut. `--self-test` proves the MECHANISM end to end:
+it builds a throwaway module guarding a real arithmetic property, a case that
+checks that property, and drives the full mutate → RED → restore → GREEN loop.
+If the mechanism is sound, extending the mutator is the only remaining work.
+"""
+
+from __future__ import annotations
+
+import argparse
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+
+def run_case(cmd: str, cwd: Path) -> tuple[bool, int]:
+    """Run a case (a shell command). Returns (green, exit_code).
+
+    Green means exit 0. 126/127 are treated as NOT green but flagged by caller —
+    a command that could not be executed never ran, so it can never prove RED.
+    """
+    p = subprocess.run(cmd, shell=True, cwd=str(cwd),
+                       capture_output=True, text=True)
+    return p.returncode == 0, p.returncode
+
+
+def auto_redcheck(module_path: Path, case_cmd: str, mutate, cwd: Path) -> dict:
+    """Drive the mutate → RED → restore → GREEN loop for one case.
+
+    `mutate(original_source) -> mutated_source` produces the broken variant.
+    Returns a dict describing what happened; `certified` is True iff the case
+    went RED under mutation AND GREEN when restored.
+    """
+    original = module_path.read_text()
+
+    # Baseline: with honest code, the case must be GREEN. If it is not, the case
+    # is not guarding a property this code satisfies — nothing to certify.
+    base_green, base_exit = run_case(case_cmd, cwd)
+
+    # (a) MUTATE, then the case must go RED (the mutation must be caught).
+    mutated = mutate(original)
+    if mutated == original:
+        return {"certified": False, "base_green": base_green,
+                "mutant_red": False, "restored_green": False,
+                "reason": "mutation was a no-op — the mutator changed nothing, so "
+                          "nothing was tested"}
+    module_path.write_text(mutated)
+    try:
+        mut_green, mut_exit = run_case(case_cmd, cwd)
+    finally:
+        # (b) RESTORE exactly — always, even if the case above raised.
+        module_path.write_text(original)
+
+    # After restore, the case must be GREEN again.
+    restored_green, restored_exit = run_case(case_cmd, cwd)
+
+    mutant_red = (not mut_green) and mut_exit not in (126, 127)
+    certified = base_green and mutant_red and restored_green
+
+    if not base_green:
+        reason = "case was RED against honest code — it does not hold on the " \
+                 "unmutated module"
+    elif not mutant_red:
+        if mut_exit in (126, 127):
+            reason = f"case could not be EXECUTED under mutation (exit {mut_exit}) " \
+                     "— it never ran, so it proved nothing"
+        else:
+            reason = "case stayed GREEN under mutation — it is VACUOUS, it does " \
+                     "not detect the property it claims to guard"
+    elif not restored_green:
+        reason = "case did not return to GREEN after restore — the restore was " \
+                 "incomplete or the case is flaky"
+    else:
+        reason = "case went RED under mutation and GREEN when restored — " \
+                 "falsifiability proven automatically, no human broke anything"
+
+    return {"certified": certified, "base_green": base_green,
+            "mutant_red": mutant_red, "restored_green": restored_green,
+            "mutant_exit": mut_exit, "reason": reason}
+
+
+def cmd_self_test(_a) -> int:
+    """Prove the auto-red-check mechanism end to end on a throwaway module."""
+    with tempfile.TemporaryDirectory(prefix="ctc_autoredcheck_") as td:
+        work = Path(td)
+
+        # A tiny throwaway module guarding a REAL property: addition.
+        module = work / "widget.py"
+        module.write_text(
+            "def combine(a, b):\n"
+            "    # the property the case guards: combine is addition\n"
+            "    return a + b\n"
+        )
+
+        # The case: a shell command that checks the property and exits 0 iff it
+        # holds. This is exactly the shape ctc runs (a shell command per case).
+        # -B / PYTHONDONTWRITEBYTECODE: never cache .pyc. Without this, the
+        # mutation (+ -> -) keeps the file SIZE identical and all writes land in
+        # the same wall-clock second, so Python's (mtime, size) cache would serve
+        # stale bytecode and the mutant would falsely read as GREEN.
+        case_cmd = (
+            f'PYTHONDONTWRITEBYTECODE=1 {sys.executable} -B -c '
+            f'"import sys; sys.path.insert(0, \'.\'); '
+            f'import widget; '
+            f'sys.exit(0 if widget.combine(2, 3) == 5 else 1)"'
+        )
+
+        # The mutation: flip addition to subtraction. A real case MUST catch this.
+        def mutate(src: str) -> str:
+            return src.replace("return a + b", "return a - b")
+
+        result = auto_redcheck(module, case_cmd, mutate, cwd=work)
+
+    ok = result["certified"]
+    summary = (
+        f"ctc_autoredcheck --self-test: "
+        f"{'PASS' if ok else 'FAIL'} — "
+        f"baseline={'GREEN' if result['base_green'] else 'RED'} "
+        f"mutant={'RED' if result.get('mutant_red') else 'GREEN'} "
+        f"restored={'GREEN' if result.get('restored_green') else 'RED'} "
+        f"({result['reason']})"
+    )
+    print(summary)
+    return 0 if ok else 1
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(
+        prog="ctc_autoredcheck",
+        description="Auto red-check a case by mutating the code it guards.")
+    ap.add_argument(
+        "--self-test", action="store_true",
+        help="prove the mechanism end to end on a throwaway module")
+
+    a = ap.parse_args(argv)
+    if a.self_test:
+        return cmd_self_test(a)
+    ap.print_help()
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())

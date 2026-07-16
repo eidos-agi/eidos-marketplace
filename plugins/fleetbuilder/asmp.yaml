@@ -1,0 +1,34 @@
+asmp: "0.1"
+kind: service
+name: fleetbuilder
+description: "Learning work clothes for building Fleet — studies the operator's Claude Code transcripts to learn what Fleet they need, then builds it one honest cycle at a time as a team (product/engineer/reviewer/historian) with staircase cadence and keep-moving hooks."
+version: 0.1.0
+created_by: agent://claude/software-engineer
+owner: eidos-agi
+section: tools
+
+runtime:
+  style: plugin
+  host_app: claude-code
+
+capabilities:
+  provides:
+    - fleet.build-loop
+    - transcript.learning
+    - multi-agent.team
+    - antibody.minting
+  requires:
+    - claude-code
+    - staircase
+    - docket
+
+infra:
+  repo: https://github.com/eidos-agi/fleetbuilder
+  install:
+    - "/plugin marketplace add eidos-agi/fleetbuilder"
+    - "/plugin install fleetbuilder@fleetbuilder"
+
+display:
+  icon: hard-hat
+  label: FleetBuilder
+  section: tools

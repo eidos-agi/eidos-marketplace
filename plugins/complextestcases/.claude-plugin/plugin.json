@@ -1,0 +1,18 @@
+{
+  "name": "complextestcases",
+  "version": "0.4.0",
+  "description": "The case authority. A case must have been observed RED at least once \u2014 a test that has never failed has never been tested. Upstream of converge, staircase, docket and telos: every one of them is a judge, none of them is an author.",
+  "author": {
+    "name": "Eidos AGI",
+    "url": "https://github.com/eidos-agi/complex-test-cases"
+  },
+  "homepage": "https://github.com/eidos-agi/complex-test-cases",
+  "license": "MIT",
+  "keywords": [
+    "testing",
+    "falsifiability",
+    "adversarial",
+    "acceptance-criteria",
+    "agent-accountability"
+  ]
+}

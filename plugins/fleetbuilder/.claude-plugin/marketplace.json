@@ -1,0 +1,18 @@
+{
+  "name": "fleetbuilder",
+  "owner": {
+    "name": "Eidos AGI"
+  },
+  "metadata": {
+    "description": "FleetBuilder \u2014 the learning work clothes for building Fleet.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "fleetbuilder",
+      "source": "./",
+      "description": "Studies your Claude Code transcripts to learn what Fleet you need, then builds it one honest cycle at a time as a team (product/engineer/reviewer/historian) \u2014 workflows fan out, hooks keep it moving, wins bank in staircase.",
+      "version": "0.3.0"
+    }
+  ]
+}

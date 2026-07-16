@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "complex-test-cases"
+version = "0.4.0"
+description = "The case authority. A case must have been observed RED at least once — a test that has never failed has never been tested."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Eidos AGI", email = "hello@eidosagi.com" }]
+keywords = ["testing", "falsifiability", "adversarial", "acceptance-criteria", "agent-accountability"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Testing",
+]
+# ZERO runtime dependencies — stdlib only, by design.
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/eidos-agi/complex-test-cases"
+Repository = "https://github.com/eidos-agi/complex-test-cases"
+
+[project.scripts]
+ctc = "ctc:main"
+
+[tool.setuptools]
+py-modules = ["ctc", "authorship_store"]
+
+[tool.setuptools.package-dir]
+"" = "tools"
