@@ -12,31 +12,49 @@ import asyncio
 import json
 import shutil
 import subprocess
+import time
 import uuid
 
 import pytest
 
 
 def test_import():
+    import re
+
     import emux
-    assert emux.__version__ == "0.1.0"
+
+    # Format check, not an exact pin — so a version bump never breaks the suite.
+    assert re.fullmatch(r"\d+\.\d+\.\d+", emux.__version__)
 
 
 def test_server_module_loads():
     from emux import server
+
     assert server.mcp is not None
     assert server.mcp.name == "emux"
 
 
 def test_resolve_tmux_returns_string_or_none():
     from emux.server import _resolve_tmux
+
     result = _resolve_tmux()
     assert result is None or isinstance(result, str)
+
+
+def test_live_sessions_treats_remote_timeout_as_unavailable(monkeypatch):
+    from emux import server
+
+    def timeout(*_args, **_kwargs):
+        raise subprocess.TimeoutExpired("ssh host tmux", 10)
+
+    monkeypatch.setattr(server, "_run_tmux", timeout)
+    assert server._live_sessions(host="offline-host") == []
 
 
 def test_registry_round_trip(tmp_path, monkeypatch):
     """Registry persists through disk and reloads correctly."""
     from emux import server
+
     registry_path = tmp_path / "registry.json"
     monkeypatch.setattr(server, "REGISTRY_PATH", registry_path)
 
@@ -55,14 +73,155 @@ def test_registry_round_trip(tmp_path, monkeypatch):
     assert loaded == registry
 
 
+def test_spawn_passes_manages_edge_to_registry(tmp_path, monkeypatch):
+    """tmux_spawn records the manager→sub edge so the nested-manager tree is
+    declarable at spawn time (regression: spawn used to drop `manages`)."""
+    from emux import server
+
+    monkeypatch.setattr(server, "REGISTRY_PATH", tmp_path / "registry.json")
+    # No live tmux in this suite — fake the tmux calls and liveness.
+    monkeypatch.setattr(server, "_run_tmux", lambda *a, **k: (0, "", ""))
+    monkeypatch.setattr(server, "_session_exists", lambda *a, **k: False)
+
+    asyncio.run(server.tmux_spawn(name="mgr", manages=["sub"]))
+    entry = server._load_registry()["mgr"]
+    assert entry["manages"] == ["sub"], entry
+
+
+def test_a_tool_call_is_audited(tmp_path, monkeypatch):
+    """Every emux tool call appends one line to the audit trail: op, salient
+    args, outcome — the per-call record for rebooting/understanding old jobs."""
+    from emux import server
+
+    monkeypatch.setattr(server, "_AUDIT_PATH", tmp_path / "audit.jsonl")
+    monkeypatch.setattr(server, "REGISTRY_PATH", tmp_path / "reg.json")
+    asyncio.run(server.tmux_search(query="zzz"))
+    lines = (tmp_path / "audit.jsonl").read_text().splitlines()
+    assert len(lines) == 1
+    rec = json.loads(lines[0])
+    assert rec["op"] == "tmux_search" and rec["query"] == "zzz" and rec["ok"] is True
+
+
+def _signal_env(server, tmp_path, monkeypatch):
+    monkeypatch.setattr(server, "_LOG_DIR", tmp_path)
+    monkeypatch.setattr(server, "_INBOX_DIR", tmp_path / "inbox")
+    monkeypatch.setattr(server, "_SIGNAL_OFFSETS", tmp_path / "offsets.json")
+    monkeypatch.setattr(server, "_SIGNAL_SEEN", tmp_path / "seen.json")
+    monkeypatch.setattr(server, "_SIGNAL_LEDGER", tmp_path / "signals.jsonl")
+    monkeypatch.setattr(server, "REGISTRY_PATH", tmp_path / "reg.json")
+
+
+def test_remote_session_reads_from_local_mirror(tmp_path, monkeypatch):
+    """A remote session's inbox is read from the LOCAL mirror the tail follower
+    keeps — no ssh per read. (The live `ssh tail -F` follower is proven against
+    real hardware; here the follower is stubbed and the mirror pre-seeded.)"""
+    from emux import server
+
+    monkeypatch.setattr(server, "_INBOX_DIR", tmp_path / "inbox")
+    monkeypatch.setattr(server, "_ensure_mirror_tail", lambda host, name: None)
+    mirror = server._remote_mirror_path("rw")
+    mirror.parent.mkdir(parents=True, exist_ok=True)
+    mirror.write_text('{"id":"m1","t":1,"session":"rw","kind":"IDLE","payload":"x"}\n')
+    got = server._read_inbox("rw", host="somebox")
+    assert [x["id"] for x in got] == ["m1"] and got[0]["kind"] == "IDLE"
+
+
+def test_both_channels_deduped_by_id(tmp_path, monkeypatch):
+    """A remote session's signals arrive via BOTH channels — the local inbox
+    (where a child PUSHES) and the remote inbox (which the parent PULLS over ssh).
+    The same signal in both must collapse to ONE, by id. (The live push+pull
+    against a real box is proven separately; here the ssh read is stubbed.)"""
+    from emux import server
+
+    monkeypatch.setattr(server, "_SIGNAL_SEEN", tmp_path / "seen.json")
+    monkeypatch.setattr(server, "_SIGNAL_LEDGER", tmp_path / "signals.jsonl")
+    same = {"id": "A", "t": 1, "session": "w", "kind": "DONE", "payload": ""}
+    only_remote = {"id": "B", "t": 1, "session": "w", "kind": "PROGRESS", "payload": ""}
+
+    def fake_read(name, host):
+        return [same] if host is None else [same, only_remote]  # push landed in both
+
+    monkeypatch.setattr(server, "_read_inbox", fake_read)
+    got = server._new_inbox_signals("w", ack=True, host="somebox")
+    assert sorted(x["id"] for x in got) == ["A", "B"], got  # A deduped, B pulled
+    assert server._new_inbox_signals("w", ack=True, host="somebox") == []  # acked
+
+
+def test_tmux_signals_reads_and_acks(tmp_path, monkeypatch):
+    """A worker's @@EMUX@@ sentinel is lifted from its stream log, and ack means
+    you only ever see it once."""
+    from emux import server
+
+    _signal_env(server, tmp_path, monkeypatch)
+    server._log_path("wrk").write_text("working...\n@@EMUX@@ NEED approve? (y/n)\nmore\n")
+    r = asyncio.run(server.tmux_signals(targets=["wrk"]))
+    assert r["count"] == 1
+    assert r["signals"][0]["kind"] == "NEED" and "approve" in r["signals"][0]["payload"]
+    assert asyncio.run(server.tmux_signals(targets=["wrk"]))["count"] == 0  # acked
+
+
+def test_hook_injected_signal_is_read(tmp_path, monkeypatch):
+    """The ROBUST up-channel: a signal written directly to the inbox (as a Claude
+    Code Stop/Notification hook would, via `emux signal`) is read by tmux_signals
+    exactly like a scraped sentinel — no pane echo, no TUI scraping."""
+    from emux import server
+
+    monkeypatch.setattr(server, "_INBOX_DIR", tmp_path / "inbox")
+    monkeypatch.setattr(server, "_SIGNAL_OFFSETS", tmp_path / "off.json")
+    monkeypatch.setattr(server, "_LOG_DIR", tmp_path / "logs")
+    monkeypatch.setattr(server, "_SIGNAL_LEDGER", tmp_path / "signals.jsonl")
+    monkeypatch.setattr(server, "REGISTRY_PATH", tmp_path / "reg.json")
+    assert server.inject_signal("W1", "DONE", "all done")
+    r = asyncio.run(server.tmux_signals(targets=["W1"]))
+    assert r["count"] == 1 and r["signals"][0]["kind"] == "DONE"
+    assert "all done" in r["signals"][0]["payload"]
+    assert '"kind": "DONE"' in server._SIGNAL_LEDGER.read_text()
+    assert asyncio.run(server.tmux_signals(targets=["W1"]))["count"] == 0  # acked
+
+
+def test_idle_is_a_signal_kind(tmp_path, monkeypatch):
+    """IDLE/READY are first-class kinds — a warm worker's 'done that, feed me the
+    next task' signal, distinct from DONE-and-exit."""
+    from emux import server
+
+    _signal_env(server, tmp_path, monkeypatch)
+    server._log_path("wrk").write_text("ACC=:ALPHA\n@@EMUX@@ IDLE\n")
+    r = asyncio.run(server.tmux_signals(targets=["wrk"]))
+    assert r["count"] == 1 and r["signals"][0]["kind"] == "IDLE"
+
+
+def test_tmux_wait_returns_on_signal(tmp_path, monkeypatch):
+    """tmux_wait wakes as soon as a target has a signal, and says which + why."""
+    from emux import server
+
+    _signal_env(server, tmp_path, monkeypatch)
+    server._log_path("wrk").write_text("@@EMUX@@ DONE migration complete\n")
+    r = asyncio.run(server.tmux_wait(targets=["wrk"], until="signal", timeout=3))
+    assert not r["timed_out"]
+    assert r["ready"][0]["name"] == "wrk" and r["ready"][0]["why"] == "signal"
+    assert r["ready"][0]["signal"]["kind"] == "DONE"
+
+
+def test_tmux_wait_times_out(tmp_path, monkeypatch):
+    """No event → a clean timeout, not a hang."""
+    from emux import server
+
+    _signal_env(server, tmp_path, monkeypatch)
+    server._log_path("wrk").write_text("just noise, no signal\n")
+    r = asyncio.run(server.tmux_wait(targets=["wrk"], until="signal", timeout=1))
+    assert r["timed_out"] and r["ready"] == []
+
+
 def test_load_registry_returns_empty_when_missing(tmp_path, monkeypatch):
     from emux import server
+
     monkeypatch.setattr(server, "REGISTRY_PATH", tmp_path / "does-not-exist.json")
     assert server._load_registry() == {}
 
 
 def test_load_registry_handles_corrupt_file(tmp_path, monkeypatch):
     from emux import server
+
     bad = tmp_path / "registry.json"
     bad.write_text("this is not json")
     monkeypatch.setattr(server, "REGISTRY_PATH", bad)
@@ -71,6 +230,7 @@ def test_load_registry_handles_corrupt_file(tmp_path, monkeypatch):
 
 def test_tmux_sessions_handles_missing_tmux(monkeypatch):
     from emux import server
+
     monkeypatch.setattr(server, "_resolve_tmux", lambda: None)
     result = asyncio.run(server.tmux_sessions())
     assert result["ok"] is False
@@ -80,6 +240,7 @@ def test_tmux_sessions_handles_missing_tmux(monkeypatch):
 
 def test_tmux_send_handles_missing_tmux(monkeypatch):
     from emux import server
+
     monkeypatch.setattr(server, "_resolve_tmux", lambda: None)
     result = asyncio.run(server.tmux_send(target="nope", keys="echo hi"))
     assert result["ok"] is False
@@ -88,6 +249,7 @@ def test_tmux_send_handles_missing_tmux(monkeypatch):
 
 def test_tmux_capture_handles_missing_tmux(monkeypatch):
     from emux import server
+
     monkeypatch.setattr(server, "_resolve_tmux", lambda: None)
     result = asyncio.run(server.tmux_capture(target="nope"))
     assert result["ok"] is False
@@ -96,12 +258,15 @@ def test_tmux_capture_handles_missing_tmux(monkeypatch):
 
 def test_register_and_unregister_round_trip(tmp_path, monkeypatch):
     from emux import server
+
     monkeypatch.setattr(server, "REGISTRY_PATH", tmp_path / "registry.json")
     monkeypatch.setattr(server, "_live_sessions", lambda: [])
 
-    reg = asyncio.run(server.tmux_register(
-        name="alpha", session="actual-tmux-name", description="test", tags=["t1"]
-    ))
+    reg = asyncio.run(
+        server.tmux_register(
+            name="alpha", session="actual-tmux-name", description="test", tags=["t1"]
+        )
+    )
     assert reg["ok"]
     assert reg["entry"]["session"] == "actual-tmux-name"
     assert reg["session_live"] is False  # we mocked _live_sessions to []
@@ -118,6 +283,7 @@ def test_register_and_unregister_round_trip(tmp_path, monkeypatch):
 
 def test_unregister_unknown_returns_error(tmp_path, monkeypatch):
     from emux import server
+
     monkeypatch.setattr(server, "REGISTRY_PATH", tmp_path / "registry.json")
     result = asyncio.run(server.tmux_unregister("never-registered"))
     assert result["ok"] is False
@@ -127,28 +293,50 @@ def test_unregister_unknown_returns_error(tmp_path, monkeypatch):
 def test_send_by_registry_name_resolves(tmp_path, monkeypatch):
     """tmux_send with by_registry_name=True looks up the underlying session."""
     from emux import server
+
     registry_path = tmp_path / "registry.json"
-    registry_path.write_text(json.dumps({
-        "alpha": {"session": "real-session-x", "description": None, "tags": [], "registered_at": 0}
-    }))
+    registry_path.write_text(
+        json.dumps(
+            {
+                "alpha": {
+                    "session": "real-session-x",
+                    "description": None,
+                    "tags": [],
+                    "registered_at": 0,
+                }
+            }
+        )
+    )
     monkeypatch.setattr(server, "REGISTRY_PATH", registry_path)
     monkeypatch.setattr(server, "_resolve_tmux", lambda: "/usr/bin/tmux")
 
     captured_args: list[list[str]] = []
 
-    def fake_run_tmux(args, timeout=10):
+    def fake_run_tmux(args, timeout=10, host=None):
         captured_args.append(args)
         return (0, "", "")
 
     monkeypatch.setattr(server, "_run_tmux", fake_run_tmux)
+    server._PANE_AGENT_CACHE.clear()
     result = asyncio.run(server.tmux_send(target="alpha", keys="echo hi", by_registry_name=True))
     assert result["ok"]
     assert result["resolved_session"] == "real-session-x"
-    assert captured_args[0] == ["send-keys", "-t", "real-session-x", "echo hi", "Enter"]
+    # tmux_send now asks the pane WHICH AGENT is running (to get that agent's
+    # paste-settle from its adapter) before typing. The send itself is unchanged.
+    assert [
+        "display-message",
+        "-p",
+        "-t",
+        "real-session-x",
+        "#{pane_current_command}",
+    ] in captured_args
+    sends = [a for a in captured_args if a[0] == "send-keys"]
+    assert sends == [["send-keys", "-t", "real-session-x", "echo hi", "Enter"]]
 
 
 def test_send_by_registry_name_unknown_returns_error(tmp_path, monkeypatch):
     from emux import server
+
     monkeypatch.setattr(server, "REGISTRY_PATH", tmp_path / "registry.json")
     monkeypatch.setattr(server, "_resolve_tmux", lambda: "/usr/bin/tmux")
     result = asyncio.run(server.tmux_send(target="not-here", keys="x", by_registry_name=True))
@@ -194,32 +382,40 @@ def test_build_groups_orders_registered_live_stale_unregistered(monkeypatch):
     assert [item["name"] for item in groups["registered_stale"]] == ["gone"]
     assert groups["registered_stale"][0]["is_stale"] is True
     assert [item["session"] for item in groups["unregistered_live"]] == ["scratch"]
-    assert groups["actions"][0]["kind"] == "register_new"
+    assert [item["kind"] for item in groups["actions"]] == ["new_mission", "register_new"]
 
 
 def test_tmux_sessions_marks_registered_stale(tmp_path, monkeypatch):
     from emux import server
 
     registry_path = tmp_path / "registry.json"
-    registry_path.write_text(json.dumps({
-        "live-name": {
-            "session": "live-session",
-            "description": None,
-            "tags": [],
-            "registered_at": 1,
-        },
-        "stale-name": {
-            "session": "gone-session",
-            "description": None,
-            "tags": [],
-            "registered_at": 2,
-        },
-    }))
+    registry_path.write_text(
+        json.dumps(
+            {
+                "live-name": {
+                    "session": "live-session",
+                    "description": None,
+                    "tags": [],
+                    "registered_at": 1,
+                },
+                "stale-name": {
+                    "session": "gone-session",
+                    "description": None,
+                    "tags": [],
+                    "registered_at": 2,
+                },
+            }
+        )
+    )
     monkeypatch.setattr(server, "REGISTRY_PATH", registry_path)
     monkeypatch.setattr(server, "_resolve_tmux", lambda: "/usr/bin/tmux")
-    monkeypatch.setattr(server, "_live_sessions", lambda: [
-        {"name": "live-session", "windows": 1, "created_unix": 10, "attached": False}
-    ])
+    monkeypatch.setattr(
+        server,
+        "_live_sessions",
+        lambda host=None: [
+            {"name": "live-session", "windows": 1, "created_unix": 10, "attached": False}
+        ],
+    )
 
     result = asyncio.run(server.tmux_sessions())
 
@@ -232,15 +428,24 @@ def test_tmux_capture_by_registry_name_success(tmp_path, monkeypatch):
     from emux import server
 
     registry_path = tmp_path / "registry.json"
-    registry_path.write_text(json.dumps({
-        "alpha": {"session": "real-session", "description": None, "tags": [], "registered_at": 0}
-    }))
+    registry_path.write_text(
+        json.dumps(
+            {
+                "alpha": {
+                    "session": "real-session",
+                    "description": None,
+                    "tags": [],
+                    "registered_at": 0,
+                }
+            }
+        )
+    )
     monkeypatch.setattr(server, "REGISTRY_PATH", registry_path)
     monkeypatch.setattr(server, "_resolve_tmux", lambda: "/usr/bin/tmux")
 
     captured_args: list[list[str]] = []
 
-    def fake_run_tmux(args, timeout=10):
+    def fake_run_tmux(args, timeout=10, host=None):
         captured_args.append(args)
         return (0, "hello\nworld\n", "")
 
@@ -291,14 +496,22 @@ def test_tmux_run_reports_send_failure(monkeypatch):
 def test_cmd_ls_reports_registered_live_and_stale(monkeypatch, capsys):
     from emux import cli
 
-    monkeypatch.setattr(cli, "_load_registry", lambda: {
-        "alpha": {"session": "live-session", "description": "active shell", "tags": []},
-        "beta": {"session": "gone-session", "description": "old shell", "tags": []},
-    })
-    monkeypatch.setattr(cli, "_live_sessions", lambda: [
-        {"name": "live-session", "windows": 1, "created_unix": 10, "attached": False},
-        {"name": "scratch", "windows": 1, "created_unix": 20, "attached": True},
-    ])
+    monkeypatch.setattr(
+        cli,
+        "_load_registry",
+        lambda: {
+            "alpha": {"session": "live-session", "description": "active shell", "tags": []},
+            "beta": {"session": "gone-session", "description": "old shell", "tags": []},
+        },
+    )
+    monkeypatch.setattr(
+        cli,
+        "_live_sessions",
+        lambda: [
+            {"name": "live-session", "windows": 1, "created_unix": 10, "attached": False},
+            {"name": "scratch", "windows": 1, "created_unix": 20, "attached": True},
+        ],
+    )
 
     assert cli.cmd_ls() == 0
     out = capsys.readouterr().out
@@ -389,7 +602,7 @@ def test_render_watch_snapshot_shows_captures_and_stale():
 def test_capture_session_ignores_trailing_blank_pane_rows(monkeypatch):
     from emux import cli
 
-    def fake_run_tmux(args, timeout=10):
+    def fake_run_tmux(args, timeout=10, host=None):
         return (0, "old\nuseful one\nuseful two\n\n\n", "")
 
     monkeypatch.setattr(cli, "_run_tmux", fake_run_tmux)
@@ -413,21 +626,25 @@ def test_cmd_send_targets_registry_name_by_default(monkeypatch, capsys):
 
     monkeypatch.setattr(cli, "tmux_send", fake_send)
 
-    rc = cli.cmd_send(argparse.Namespace(
-        target="alpha",
-        keys=["echo", "hi"],
-        no_enter=False,
-        session=False,
-        json=False,
-    ))
+    rc = cli.cmd_send(
+        argparse.Namespace(
+            target="alpha",
+            keys=["echo", "hi"],
+            no_enter=False,
+            session=False,
+            json=False,
+        )
+    )
 
     assert rc == 0
-    assert calls == [{
-        "target": "alpha",
-        "keys": "echo hi",
-        "enter": True,
-        "by_registry_name": True,
-    }]
+    assert calls == [
+        {
+            "target": "alpha",
+            "keys": "echo hi",
+            "enter": True,
+            "by_registry_name": True,
+        }
+    ]
     assert "ok: alpha -> real-session" in capsys.readouterr().out
 
 
@@ -447,12 +664,14 @@ def test_cmd_interrupt_sends_control_c_without_enter(monkeypatch):
     rc = cli.cmd_interrupt(argparse.Namespace(target="alpha", session=False, json=False))
 
     assert rc == 0
-    assert calls == [{
-        "target": "alpha",
-        "keys": "C-c",
-        "enter": False,
-        "by_registry_name": True,
-    }]
+    assert calls == [
+        {
+            "target": "alpha",
+            "keys": "C-c",
+            "enter": False,
+            "by_registry_name": True,
+        }
+    ]
 
 
 def test_cmd_capture_prints_content(monkeypatch, capsys):
@@ -484,52 +703,81 @@ def test_cmd_run_prints_content_and_supports_raw_session(monkeypatch, capsys):
 
     monkeypatch.setattr(cli, "tmux_run", fake_run)
 
-    rc = cli.cmd_run(argparse.Namespace(
-        target="raw-session",
-        command=["printf", "DONE"],
-        wait=0.1,
-        lines=5,
-        session=True,
-        json=False,
-    ))
+    rc = cli.cmd_run(
+        argparse.Namespace(
+            target="raw-session",
+            command=["printf", "DONE"],
+            wait=0.1,
+            lines=5,
+            session=True,
+            json=False,
+        )
+    )
 
     assert rc == 0
-    assert calls == [{
-        "target": "raw-session",
-        "command": "printf DONE",
-        "wait_seconds": 0.1,
-        "capture_lines": 5,
-        "by_registry_name": False,
-    }]
+    assert calls == [
+        {
+            "target": "raw-session",
+            "command": "printf DONE",
+            "wait_seconds": 0.1,
+            "capture_lines": 5,
+            "by_registry_name": False,
+        }
+    ]
     assert capsys.readouterr().out == "DONE\n"
 
 
 def test_resolve_session_target_registry_live(monkeypatch):
-    from emux import cli
+    from emux import cli, server
 
-    monkeypatch.setattr(cli, "_load_registry", lambda: {
-        "alpha": {"session": "real-session", "description": None, "tags": []}
-    })
-    monkeypatch.setattr(cli, "_live_sessions", lambda: [
-        {"name": "real-session", "windows": 1, "created_unix": 1, "attached": False}
-    ])
+    monkeypatch.setattr(
+        cli,
+        "_load_registry",
+        lambda: {"alpha": {"session": "real-session", "description": None, "tags": []}},
+    )
+    monkeypatch.setattr(
+        server, "_session_exists", lambda session, host=None: session == "real-session"
+    )
 
-    ok, session, err = cli._resolve_session_target("alpha", by_registry_name=True)
+    ok, session, host, err = cli._resolve_session_target("alpha", by_registry_name=True)
 
     assert ok is True
     assert session == "real-session"
+    assert host is None
     assert err is None
 
 
+def test_resolve_session_target_resolves_remote_host(monkeypatch):
+    from emux import cli, server
+
+    seen = {}
+    monkeypatch.setattr(
+        cli, "_load_registry", lambda: {"alpha": {"session": "real-session", "host": "box-1"}}
+    )
+
+    def fake_exists(session, host=None):
+        seen["host"] = host
+        return True
+
+    monkeypatch.setattr(server, "_session_exists", fake_exists)
+
+    ok, session, host, err = cli._resolve_session_target("alpha", by_registry_name=True)
+
+    assert ok and session == "real-session" and host == "box-1" and err is None
+    assert seen["host"] == "box-1"  # liveness checked ON the remote
+
+
 def test_resolve_session_target_rejects_stale_registry(monkeypatch):
-    from emux import cli
+    from emux import cli, server
 
-    monkeypatch.setattr(cli, "_load_registry", lambda: {
-        "alpha": {"session": "gone-session", "description": None, "tags": []}
-    })
-    monkeypatch.setattr(cli, "_live_sessions", lambda: [])
+    monkeypatch.setattr(
+        cli,
+        "_load_registry",
+        lambda: {"alpha": {"session": "gone-session", "description": None, "tags": []}},
+    )
+    monkeypatch.setattr(server, "_session_exists", lambda session, host=None: False)
 
-    ok, session, err = cli._resolve_session_target("alpha", by_registry_name=True)
+    ok, session, host, err = cli._resolve_session_target("alpha", by_registry_name=True)
 
     assert ok is False
     assert session == "gone-session"
@@ -539,25 +787,53 @@ def test_resolve_session_target_rejects_stale_registry(monkeypatch):
 def test_cmd_head_print_command_resolves_registry(monkeypatch, capsys):
     import argparse
 
-    from emux import cli
+    from emux import cli, server
 
-    monkeypatch.setattr(cli, "_load_registry", lambda: {
-        "alpha": {"session": "real-session", "description": None, "tags": []}
-    })
-    monkeypatch.setattr(cli, "_live_sessions", lambda: [
-        {"name": "real-session", "windows": 1, "created_unix": 1, "attached": False}
-    ])
+    monkeypatch.setattr(
+        cli,
+        "_load_registry",
+        lambda: {"alpha": {"session": "real-session", "description": None, "tags": []}},
+    )
+    monkeypatch.setattr(server, "_session_exists", lambda session, host=None: True)
 
-    rc = cli.cmd_head(argparse.Namespace(
-        target="alpha",
-        session=False,
-        terminal="auto",
-        window=False,
-        print_command=True,
-    ))
+    rc = cli.cmd_head(
+        argparse.Namespace(
+            target="alpha",
+            session=False,
+            terminal="auto",
+            window=False,
+            print_command=True,
+        )
+    )
 
     assert rc == 0
     assert capsys.readouterr().out == "tmux attach -t real-session\n"
+
+
+def test_cmd_head_print_command_remote_uses_ssh(monkeypatch, capsys):
+    import argparse
+
+    from emux import cli, server
+
+    monkeypatch.setattr(
+        cli, "_load_registry", lambda: {"alpha": {"session": "real-session", "host": "box-1"}}
+    )
+    monkeypatch.setattr(server, "_session_exists", lambda session, host=None: True)
+
+    rc = cli.cmd_head(
+        argparse.Namespace(
+            target="alpha",
+            session=False,
+            terminal="auto",
+            window=False,
+            print_command=True,
+        )
+    )
+
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert out.startswith("ssh -t box-1 ")
+    assert "tmux attach -t real-session" in out
 
 
 def test_cmd_head_opens_iterm_for_raw_session(monkeypatch, capsys):
@@ -567,23 +843,25 @@ def test_cmd_head_opens_iterm_for_raw_session(monkeypatch, capsys):
 
     calls = []
 
-    monkeypatch.setattr(cli, "_live_sessions", lambda: [
-        {"name": "raw-session", "windows": 1, "created_unix": 1, "attached": False}
-    ])
+    from emux import server
 
-    def fake_open(session, terminal="auto", new_window=False):
+    monkeypatch.setattr(server, "_session_exists", lambda session, host=None: True)
+
+    def fake_open(session, terminal="auto", new_window=False, host=None):
         calls.append((session, terminal, new_window))
         return True, "iTerm", None
 
     monkeypatch.setattr(cli, "_open_terminal_head", fake_open)
 
-    rc = cli.cmd_head(argparse.Namespace(
-        target="raw-session",
-        session=True,
-        terminal="iterm",
-        window=True,
-        print_command=False,
-    ))
+    rc = cli.cmd_head(
+        argparse.Namespace(
+            target="raw-session",
+            session=True,
+            terminal="iterm",
+            window=True,
+            print_command=False,
+        )
+    )
 
     assert rc == 0
     assert calls == [("raw-session", "iterm", True)]
@@ -610,7 +888,11 @@ def test_open_iterm_head_builds_command_file(monkeypatch, tmp_path):
         return Result(1, "", "unexpected")
 
     monkeypatch.setattr(cli.platform, "system", lambda: "Darwin")
-    monkeypatch.setattr(cli.shutil, "which", lambda name: f"/usr/bin/{name}" if name in {"osascript", "open"} else None)
+    monkeypatch.setattr(
+        cli.shutil,
+        "which",
+        lambda name: f"/usr/bin/{name}" if name in {"osascript", "open"} else None,
+    )
     monkeypatch.setattr(cli.tempfile, "gettempdir", lambda: str(tmp_path))
     monkeypatch.setattr(cli, "_resolve_tmux", lambda: "/usr/bin/tmux")
     monkeypatch.setattr(cli.subprocess, "run", fake_run)
@@ -630,11 +912,11 @@ def test_open_terminal_head_auto_falls_back_to_terminal(monkeypatch):
 
     calls = []
 
-    def fake_iterm(session, new_window=False):
+    def fake_iterm(session, new_window=False, host=None):
         calls.append(("iterm", session, new_window))
         return False, "iTerm timeout"
 
-    def fake_terminal(session):
+    def fake_terminal(session, host=None):
         calls.append(("terminal", session))
         return True, None
 
@@ -661,22 +943,26 @@ def test_real_tmux_register_run_capture(tmp_path, monkeypatch):
     monkeypatch.setattr(server, "REGISTRY_PATH", tmp_path / "registry.json")
     subprocess.run(["tmux", "new-session", "-d", "-s", session, "sh"], check=True)
     try:
-        reg = asyncio.run(server.tmux_register(
-            "integration",
-            session,
-            "real tmux integration test",
-            ["test"],
-        ))
+        reg = asyncio.run(
+            server.tmux_register(
+                "integration",
+                session,
+                "real tmux integration test",
+                ["test"],
+            )
+        )
         assert reg["ok"] is True
         assert reg["session_live"] is True
 
-        result = asyncio.run(server.tmux_run(
-            "integration",
-            "printf EMUX_TMUX_OK",
-            wait_seconds=0.5,
-            capture_lines=20,
-            by_registry_name=True,
-        ))
+        result = asyncio.run(
+            server.tmux_run(
+                "integration",
+                "printf EMUX_TMUX_OK",
+                wait_seconds=0.5,
+                capture_lines=20,
+                by_registry_name=True,
+            )
+        )
 
         assert result["ok"] is True
         assert "EMUX_TMUX_OK" in result["content"]
@@ -695,23 +981,35 @@ def test_local_claude_code_version_through_registered_tmux(tmp_path, monkeypatch
     monkeypatch.setattr(server, "REGISTRY_PATH", tmp_path / "registry.json")
     subprocess.run(["tmux", "new-session", "-d", "-s", session, "sh"], check=True)
     try:
-        reg = asyncio.run(server.tmux_register(
-            "claude-code",
-            session,
-            "local Claude Code smoke",
-            ["claude", "local"],
-        ))
+        reg = asyncio.run(
+            server.tmux_register(
+                "claude-code",
+                session,
+                "local Claude Code smoke",
+                ["claude", "local"],
+            )
+        )
         assert reg["ok"] is True
 
-        result = asyncio.run(server.tmux_run(
-            "claude-code",
-            "claude --version",
-            wait_seconds=0.75,
-            capture_lines=30,
-            by_registry_name=True,
-        ))
-
+        result = asyncio.run(
+            server.tmux_run(
+                "claude-code",
+                "claude --version",
+                wait_seconds=0.75,
+                capture_lines=30,
+                by_registry_name=True,
+            )
+        )
         assert result["ok"] is True
-        assert "Claude Code" in result["content"]
+
+        # claude's startup beats 0.75s on an idle box but not a loaded one —
+        # poll up to ~10s for the output instead of trusting one fixed wait
+        content = result["content"]
+        deadline = time.time() + 10
+        while "Claude Code" not in content and time.time() < deadline:
+            time.sleep(0.5)
+            cap = asyncio.run(server.tmux_capture("claude-code", lines=30, by_registry_name=True))
+            content = cap.get("content", "")
+        assert "Claude Code" in content
     finally:
         subprocess.run(["tmux", "kill-session", "-t", session], check=False)
