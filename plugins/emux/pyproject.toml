@@ -1,7 +1,7 @@
 [project]
 name = "emux"
-version = "0.1.0"
-description = "Eidos mux — pick up where you left off in tmux. TUI picker for registered sessions + an MCP server for agent-driven attach/send/capture."
+version = "0.67.0"
+description = "Eidos mux — pick up where you left off in tmux, and let an agent drive it. TUI picker for registered sessions, an MCP server for agent-driven send/capture plus a ladder of autonomy (ask/navigate/goal) that observes, converses with, and pursues goals through existing sessions, and a web daemon that monitors any session like a chatbot. The autonomous loop never spawns or kills; explicit tmux_spawn does."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Eidos AGI", email = "daniel@eidosagi.com" }]
@@ -32,6 +32,7 @@ dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
     "ruff>=0.5",
+    "pyright>=1.1.400",
 ]
 
 [project.urls]
@@ -51,7 +52,9 @@ packages = ["src/emux"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 line-length = 100
@@ -60,3 +63,15 @@ target-version = "py311"
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP"]
 ignore = ["E501"]
+
+[tool.pyright]
+# Standard, not strict: catches the real bug class (None-access, shape/return
+# mismatches) so an AI editing emux gets useful author-time feedback, without
+# the strict-only `reportUnknown*` tax that a subprocess/JSON codebase can only
+# satisfy by annotating everything `Any`. Plus cheap dead-code catches.
+include = ["src"]
+pythonVersion = "3.11"
+typeCheckingMode = "standard"
+reportUnusedImport = "error"
+reportUnusedVariable = "error"
+reportUnnecessaryTypeIgnoreComment = "error"
