@@ -24,10 +24,15 @@ fi
 VP="${FLEET_VP_SESSION:-fleet-vp}"
 GROK="${FLEET_GROK_SESSION:-fleet-grok}"
 INTERVAL="${FLEET_BOOTSTRAP_INTERVAL:-60}"
-# The VP's cwd is its own state dir, not $HOME: --continue resumes "the most recent
-# conversation in this directory", so a private directory is what makes the chat that
-# resumes reliably ITS chat and not some other session that happened to run in $HOME.
-WORKDIR="${FLEET_BOOTSTRAP_DIR:-$STATE}"
+# Each seat gets its OWN directory, named after the seat, for two reasons:
+#   1. --continue resumes "the most recent conversation in this directory", so a private
+#      directory is what makes the chat that resumes reliably ITS chat.
+#   2. Claude Code derives the name shown in the Claude app from the working directory's
+#      basename — the --remote-control=<name> value does not set it. A seat living in
+#      .../fleet-vp shows up as "fleet-vp-<hash>" instead of something you cannot find.
+WORKDIR="${FLEET_BOOTSTRAP_DIR:-$STATE/seats}"
+VP_DIR="$WORKDIR/$VP"
+GROK_DIR="$WORKDIR/$GROK"
 
 VP_MD="$STATE/vp.md"
 VP_SEED="$STATE/vp-seed.md"
@@ -37,10 +42,6 @@ RUNNER="$STATE/fleet-bootstrap.sh"
 
 domain="gui/$(id -u)"
 
-# Some hosts hand you a /tmp you cannot create a tmux socket dir in (wrong owner, tmpfs
-# policy, hardened multi-user box). Probe the real operation rather than guessing, and only
-# relocate when it actually fails — relocating unnecessarily would orphan sessions that are
-# already running on the default socket.
 # Not every host gives you a writable /tmp (hardened multi-user boxes, tmpfs policy). tmux
 # needs it for its socket dir and claude needs it for /tmp/claude-<uid>; both die on startup
 # without it, which reads as an unexplained crash loop. Probe the exact operation they do —
@@ -71,7 +72,7 @@ trust_workdir() {
     echo "note: no python3 — if the VP stalls on a trust prompt, attach once and press 1"
     return 0
   }
-  python3 - "$cfg" "$WORKDIR" <<'PY'
+  python3 - "$cfg" "$VP_DIR" <<'PY'
 import json, sys
 cfg, wd = sys.argv[1], sys.argv[2]
 try:
@@ -112,7 +113,7 @@ alive() {
 }
 
 write_prompts() {
-  mkdir -p "$STATE"
+  mkdir -p "$STATE" "$VP_DIR" "$GROK_DIR"
   # Never clobber: these are the operator's to tune, and a reinstall must not undo that.
 
   [ -f "$VP_MD" ] || cat > "$VP_MD" <<EOF
@@ -184,7 +185,7 @@ EOF
 # the session, it can never permanently keep it down.
 start_vp() {
   tmux kill-session -t "$VP" 2>/dev/null || true
-  tmux new-session -d -s "$VP" -c "$WORKDIR" \
+  tmux new-session -d -s "$VP" -c "$VP_DIR" \
     claude "--remote-control=$VP" --continue \
     --append-system-prompt "$(cat "$VP_MD")"
   sleep 6
@@ -193,7 +194,7 @@ start_vp() {
 
   log "vp: nothing to resume — starting a fresh conversation"
   tmux kill-session -t "$VP" 2>/dev/null || true
-  tmux new-session -d -s "$VP" -c "$WORKDIR" \
+  tmux new-session -d -s "$VP" -c "$VP_DIR" \
     claude "--remote-control=$VP" \
     --append-system-prompt "$(cat "$VP_MD")" \
     "$(cat "$VP_SEED")"
@@ -201,14 +202,14 @@ start_vp() {
 
 start_grok() {
   tmux kill-session -t "$GROK" 2>/dev/null || true
-  tmux new-session -d -s "$GROK" -c "$WORKDIR" \
+  tmux new-session -d -s "$GROK" -c "$GROK_DIR" \
     grok --continue --rules "$(cat "$GROK_MD")"
   sleep 6
   if alive "$GROK" grok; then log "grok: resumed prior conversation"; return 0; fi
 
   log "grok: nothing to resume — starting a fresh conversation"
   tmux kill-session -t "$GROK" 2>/dev/null || true
-  tmux new-session -d -s "$GROK" -c "$WORKDIR" \
+  tmux new-session -d -s "$GROK" -c "$GROK_DIR" \
     grok --rules "$(cat "$GROK_MD")" "$(cat "$GROK_SEED")"
 }
 
@@ -320,10 +321,32 @@ EOF
   echo "installed: $PLIST (checks every ${INTERVAL}s)"
 }
 
+# Claude Code names a Remote Control session after its working directory, not after the
+# --remote-control value, and prints the join URL once at startup where it scrolls away.
+# Both live in the session record, so read them from there — a seat you cannot find in the
+# app is a seat that is not really reachable.
+seat_link() {
+  pid=$(tmux display-message -p -t "$1" '#{pane_pid}' 2>/dev/null) || return 0
+  f="$HOME/.claude/sessions/$pid.json"
+  [ -f "$f" ] || return 0
+  command -v python3 >/dev/null 2>&1 || return 0
+  python3 - "$f" <<'PY' 2>/dev/null || true
+import json, sys
+try:
+    d = json.load(open(sys.argv[1]))
+except Exception:
+    raise SystemExit(0)
+b = d.get("bridgeSessionId")
+if b:
+    print("             in the Claude app as '%s' — https://claude.ai/code/%s" % (d.get("name", "?"), b))
+PY
+}
+
 report() {
   if alive "$1" "$2"; then
     blocked=$(needs_human "$1") && { echo "$3 '$1' UP BUT BLOCKED: $blocked"; return 0; }
     echo "$3 '$1' healthy — attach with: tmux attach -t $1"
+    [ "$2" = "claude" ] && seat_link "$1"
   else
     echo "$3 '$1' DOWN — the next check (within ${INTERVAL}s) restarts it"
   fi
