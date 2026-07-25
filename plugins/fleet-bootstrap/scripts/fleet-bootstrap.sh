@@ -16,10 +16,35 @@ if [ "$(uname -s)" = "Darwin" ]; then
 else
   LOG="$STATE/fleet-bootstrap.log"
 fi
-# Settings are written here at install time. launchd and cron do not inherit the shell you
-# installed from, so an env override that is not persisted is an override that silently
-# reverts on the next reboot — which is exactly when nobody is watching.
-[ -f "$STATE/config" ] && . "$STATE/config"
+# Settings are written at install time. launchd and cron do not inherit the shell you
+# installed from, so an env override that is not persisted silently reverts on the next
+# reboot — exactly when nobody is watching.
+#
+# PARSED, never sourced. Sourcing a file at a predictable path would hand anything able to
+# write it arbitrary code execution as this user, every 60s, at login, forever — a better
+# persistence primitive than most malware builds, installed by the one component designed
+# to survive everything. Only known keys are accepted, and only conservative values; an
+# unrecognised line is ignored, never executed.
+#
+# Reads BOTH the current KEY=VALUE form and the legacy `: "${KEY:=VALUE}"` shell form that
+# earlier installs wrote. Not politeness — omitting it broke a live host on deploy: the
+# legacy lines were rejected as unsafe, the seat name fell back to its default, and the
+# supervisor stopped recognising the seat it was already running. A format change without
+# a migration path is a regression shipped to every host that upgrades.
+if [ -f "$STATE/config" ]; then
+  while IFS='=' read -r _k _v || [ -n "$_k" ]; do
+    _k=$(printf '%s' "$_k" | tr -cd 'A-Za-z0-9_')   # legacy: strips `: "${` and the `:`
+    _v=${_v%\}\"}                                    # legacy: strips the trailing `}"`
+    case "$_v" in ''|*[!A-Za-z0-9_./-]*) continue ;; esac
+    case "$_k" in
+      FLEET_VP_SESSION)          FLEET_VP_SESSION="${FLEET_VP_SESSION:-$_v}" ;;
+      FLEET_GROK_SESSION)        FLEET_GROK_SESSION="${FLEET_GROK_SESSION:-$_v}" ;;
+      FLEET_BOOTSTRAP_INTERVAL)  FLEET_BOOTSTRAP_INTERVAL="${FLEET_BOOTSTRAP_INTERVAL:-$_v}" ;;
+      FLEET_BOOTSTRAP_DIR)       FLEET_BOOTSTRAP_DIR="${FLEET_BOOTSTRAP_DIR:-$_v}" ;;
+      FLEET_BACKOFF_MAX)         FLEET_BACKOFF_MAX="${FLEET_BACKOFF_MAX:-$_v}" ;;
+    esac
+  done < "$STATE/config"
+fi
 
 VP="${FLEET_VP_SESSION:-fleet-vp}"
 GROK="${FLEET_GROK_SESSION:-fleet-grok}"
@@ -206,18 +231,23 @@ probe_seat() {
   # hours, healthy by every process check, and be invisible to the app without it.
   # NOTE: updatedAt in that same file is NOT a heartbeat. Measured 2168s stale on a
   # healthy idle seat; it tracks state transitions, not time. Never gate liveness on it.
+  # Read two plain lines rather than eval-ing generated shell. The generator is ours and
+  # the values are constrained, but eval-of-generated-code is the same hazard shape as
+  # sourcing the config, and a plain read costs nothing.
   if [ "$P_KIND" = claude ] && [ -f "$HOME/.claude/sessions/$pid.json" ] && command -v python3 >/dev/null 2>&1; then
-    eval "$(python3 - "$HOME/.claude/sessions/$pid.json" <<'PY' 2>/dev/null || true
+    out=$(python3 - "$HOME/.claude/sessions/$pid.json" <<'PY' 2>/dev/null || true
 import json, sys
 try:
     d = json.load(open(sys.argv[1]))
 except Exception:
-    raise SystemExit(0)
-print("P_BRIDGE=%s" % ("true" if d.get("bridgeSessionId") else "false"))
-s = str(d.get("status", "")).replace("'", "")
-print("P_STATUS='%s'" % s[:16])
+    print("false"); print(""); raise SystemExit(0)
+print("true" if d.get("bridgeSessionId") else "false")
+print(str(d.get("status", ""))[:16])
 PY
-)"
+)
+    P_BRIDGE=$(printf '%s' "$out" | sed -n 1p)
+    P_STATUS=$(printf '%s' "$out" | sed -n 2p)
+    [ "$P_BRIDGE" = true ] || P_BRIDGE=false
   fi
 
   blocked=$(needs_human "$P_SEAT") && P_BLOCKED="$blocked"
@@ -337,16 +367,34 @@ EOF
 # If the resume attempt dies (no prior session, or a transcript we cannot load), fall back
 # to a fresh seeded start. That fallback IS the crash handling: a bad saved state can delay
 # the session, it can never permanently keep it down.
+# wait_ready — poll until the seat is up, or the ceiling is reached.
+#
+# Replaces a fixed `sleep 6`. Every observed successful resume took 6-7 seconds against
+# that 6-second timeout, so success turned on sub-second jitter — and losing did not
+# retry, it killed the resumed session and started fresh, destroying the conversation
+# --continue exists to protect. Slow must not be fatal.
+wait_ready() {
+  waited=0
+  while [ "$waited" -lt "${3:-30}" ]; do
+    alive "$1" "$2" && return 0
+    sleep 2
+    waited=$((waited + 2))
+  done
+  return 1
+}
+
 start_vp() {
   tmux kill-session -t "$VP" 2>/dev/null || true
   tmux new-session -d -s "$VP" -c "$VP_DIR" \
     claude "--remote-control=$VP" --continue \
     --append-system-prompt "$(cat "$VP_MD")"
-  sleep 6
   clear_trust_gate "$VP"
-  if alive "$VP" claude; then log "vp: resumed prior conversation"; return 0; fi
+  if wait_ready "$VP" claude; then log "vp: resumed prior conversation"; return 0; fi
 
-  log "vp: nothing to resume — starting a fresh conversation"
+  # Say what was observed, not what is assumed. The old message claimed "nothing to
+  # resume" when all that was ever measured was "not up in time" — asserting a cause the
+  # code never saw. A fresh start here may well be discarding a real conversation.
+  log "vp: --continue did not come up within 30s — falling back to a fresh conversation"
   tmux kill-session -t "$VP" 2>/dev/null || true
   tmux new-session -d -s "$VP" -c "$VP_DIR" \
     claude "--remote-control=$VP" \
@@ -358,10 +406,9 @@ start_grok() {
   tmux kill-session -t "$GROK" 2>/dev/null || true
   tmux new-session -d -s "$GROK" -c "$GROK_DIR" \
     grok --continue --rules "$(cat "$GROK_MD")"
-  sleep 6
-  if alive "$GROK" grok; then log "grok: resumed prior conversation"; return 0; fi
+  if wait_ready "$GROK" grok; then log "grok: resumed prior conversation"; return 0; fi
 
-  log "grok: nothing to resume — starting a fresh conversation"
+  log "grok: --continue did not come up within 30s — falling back to a fresh conversation"
   tmux kill-session -t "$GROK" 2>/dev/null || true
   tmux new-session -d -s "$GROK" -c "$GROK_DIR" \
     grok --rules "$(cat "$GROK_MD")" "$(cat "$GROK_SEED")"
@@ -372,10 +419,21 @@ start_grok() {
 # reliably suppress it across Claude Code versions, so clear it the way a human would —
 # but only when that exact menu is on screen, never blind.
 clear_trust_gate() {
-  tmux capture-pane -p -t "$1" 2>/dev/null | grep -q "trust this folder" || return 0
-  log "$1: parked on the trust-folder prompt — accepting"
-  tmux send-keys -t "$1" Enter
-  sleep 3
+  pane=$(tmux capture-pane -p -t "$1" 2>/dev/null) || return 0
+  case "$pane" in *"trust this folder"*) ;; *) return 0 ;; esac
+
+  # Confirm the highlighted option is the one we mean to accept before pressing anything.
+  # A blind Enter presses whatever is selected: the menu is "1. Yes, I trust" / "2. No,
+  # exit", so if a future version lands with a different default, a blind Enter would make
+  # the supervisor close its own seat — on every tick, forever. Match the marker, or leave
+  # it for a human. Answer prompts you can see; never type blind.
+  if printf '%s' "$pane" | grep -q '❯.*1\..*rust'; then
+    log "$1: trust prompt with option 1 selected — confirming"
+    tmux send-keys -t "$1" Enter
+    sleep 3
+  else
+    log "$1: trust prompt visible but option 1 is NOT selected — leaving it for a human"
+  fi
 }
 
 # Some blocked states no restart can fix — an expired login is the main one. Restarting into
@@ -481,13 +539,16 @@ cmd_install() {
   cp "$0" "$RUNNER"
   chmod +x "$RUNNER"
 
+  # Plain KEY=VALUE, because this file is parsed and must never be shell.
   cat > "$STATE/config" <<EOF
 # fleet-bootstrap settings, captured at install. Edit and re-run install to change.
-: "\${FLEET_VP_SESSION:=$VP}"
-: "\${FLEET_GROK_SESSION:=$GROK}"
-: "\${FLEET_BOOTSTRAP_INTERVAL:=$INTERVAL}"
-: "\${FLEET_BOOTSTRAP_DIR:=$WORKDIR}"
+# Parsed, not sourced: only these keys are read, and only plain values.
+FLEET_VP_SESSION=$VP
+FLEET_GROK_SESSION=$GROK
+FLEET_BOOTSTRAP_INTERVAL=$INTERVAL
+FLEET_BOOTSTRAP_DIR=$WORKDIR
 EOF
+  chmod 600 "$STATE/config"
 
   if [ "$(uname -s)" = "Darwin" ]; then
     install_launchd   # kickstart runs the first check for us

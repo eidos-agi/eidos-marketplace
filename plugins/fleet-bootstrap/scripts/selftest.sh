@@ -87,6 +87,52 @@ else
   echo "  skip — no python3 to validate JSON"
 fi
 
+echo "config is parsed, not executed"
+# The config used to be sourced. Anything able to write that predictable path got code
+# execution as this user every 60s, at login, forever. These prove it is now inert data.
+CFG="$STATE/cfgtest"; mkdir -p "$CFG"
+cat > "$CFG/config" <<'EOF'
+FLEET_VP_SESSION=legit-seat
+EVIL=$(touch /tmp/fb-pwned-marker)
+FLEET_BOOTSTRAP_INTERVAL=90
+`touch /tmp/fb-pwned-marker2`
+FLEET_GROK_SESSION=has spaces and ; semicolons
+EOF
+rm -f /tmp/fb-pwned-marker /tmp/fb-pwned-marker2
+( unset FLEET_VP_SESSION FLEET_BOOTSTRAP_INTERVAL FLEET_GROK_SESSION
+  FLEET_BOOTSTRAP_STATE="$CFG" FLEET_BOOTSTRAP_LIB=1 \
+    . "$(dirname "$0")/fleet-bootstrap.sh" >/dev/null 2>&1
+  printf '%s|%s|%s\n' "$VP" "$INTERVAL" "$GROK" > "$CFG/out" ) 2>/dev/null || true
+read_out=$(cat "$CFG/out" 2>/dev/null || echo "|||")
+
+[ -e /tmp/fb-pwned-marker ] || [ -e /tmp/fb-pwned-marker2 ] \
+  && bad "config execution: a command in the config file RAN" \
+  || ok "config execution: no command in the config file ran"
+
+is "good key is honoured"        "$(echo "$read_out" | cut -d'|' -f1)" legit-seat
+is "numeric key is honoured"     "$(echo "$read_out" | cut -d'|' -f2)" 90
+is "unsafe value is ignored"     "$(echo "$read_out" | cut -d'|' -f3)" fleet-grok
+rm -f /tmp/fb-pwned-marker /tmp/fb-pwned-marker2
+
+echo "legacy config format still parses"
+# Regression: switching the config to KEY=VALUE without a migration path broke a live host
+# on deploy. Legacy lines were rejected as unsafe, the seat name fell back to its default,
+# and the supervisor stopped recognising the seat it was already running — one cron tick
+# away from starting a duplicate. Old installs must keep working.
+LEG="$STATE/legacy"; mkdir -p "$LEG"
+cat > "$LEG/config" <<'EOF'
+# fleet-bootstrap settings, captured at install.
+: "${FLEET_VP_SESSION:=hostkey-vp}"
+: "${FLEET_BOOTSTRAP_INTERVAL:=60}"
+EOF
+( unset FLEET_VP_SESSION FLEET_BOOTSTRAP_INTERVAL
+  FLEET_BOOTSTRAP_STATE="$LEG" FLEET_BOOTSTRAP_LIB=1 \
+    . "$(dirname "$0")/fleet-bootstrap.sh" >/dev/null 2>&1
+  printf '%s|%s\n' "$VP" "$INTERVAL" > "$LEG/out" ) 2>/dev/null || true
+leg_out=$(cat "$LEG/out" 2>/dev/null || echo "||")
+is "legacy seat name survives"  "$(echo "$leg_out" | cut -d'|' -f1)" hostkey-vp
+is "legacy interval survives"   "$(echo "$leg_out" | cut -d'|' -f2)" 60
+
 echo
 echo "$pass passed, $fail failed"
 [ "$fail" -eq 0 ]
