@@ -223,11 +223,23 @@ clear_trust_gate() {
   sleep 3
 }
 
+# Some blocked states no restart can fix — an expired login is the main one. Restarting into
+# them forever would be a crash loop that reports success. Name them, say a human is needed,
+# and leave the seat alone.
+needs_human() {
+  pane=$(tmux capture-pane -p -t "$1" 2>/dev/null) || return 1
+  case "$pane" in
+    *"Please run /login"*|*"Not logged in"*|*"Login expired"*) echo "not logged in — attach and run /login"; return 0 ;;
+  esac
+  return 1
+}
+
 cmd_ensure() {
   write_prompts
   down=0
   if ! alive "$VP" claude; then log "vp: down — restarting"; start_vp; down=1; fi
   alive "$VP" claude && clear_trust_gate "$VP"
+  blocked=$(needs_human "$VP") && log "vp: UP BUT BLOCKED — $blocked (a restart will not fix this)"
   # The report is optional: a host without the Grok CLI still gets a VP. Losing the second
   # seat must never cost you the first one.
   if have_grok && ! alive "$GROK" grok; then log "grok: down — restarting"; start_grok; down=1; fi
@@ -310,6 +322,7 @@ EOF
 
 report() {
   if alive "$1" "$2"; then
+    blocked=$(needs_human "$1") && { echo "$3 '$1' UP BUT BLOCKED: $blocked"; return 0; }
     echo "$3 '$1' healthy — attach with: tmux attach -t $1"
   else
     echo "$3 '$1' DOWN — the next check (within ${INTERVAL}s) restarts it"
