@@ -663,6 +663,39 @@
     },
     {
       "category": "agent-tools",
+      "description": "Keeps a machine staffed from login onward: a Remote-Control Claude Code VP, plus a Grok session reporting to it, restarted automatically whenever either goes down. macOS (launchd) and Linux (cron).",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/fleet-bootstrap",
+      "license": "MIT",
+      "name": "fleet-bootstrap",
+      "source": "./plugins/fleet-bootstrap",
+      "tags": [
+        "macos",
+        "linux",
+        "launchd",
+        "cron",
+        "remote-control",
+        "tmux",
+        "grok",
+        "fleet",
+        "always-on"
+      ],
+      "version": "0.1.0",
+      "x-eidos": {
+        "audit": {
+          "audit_doc": "AUDITS/fleet-bootstrap.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
+        "kind": {
+          "signals": [
+            "single_capability"
+          ],
+          "type": "tool"
+        }
+      }
+    },
+    {
+      "category": "agent-tools",
       "description": "Studies your Claude Code transcripts to learn what Fleet you need, then builds it one honest cycle at a time as a team (product/engineer/reviewer/historian) \u2014 workflows fan out, hooks keep it moving, wins bank in staircase.",
       "homepage": "https://github.com/eidos-agi/fleetbuilder",
       "license": "MIT",

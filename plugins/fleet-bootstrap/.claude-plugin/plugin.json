@@ -1,0 +1,9 @@
+{
+  "name": "fleet-bootstrap",
+  "description": "Keeps a machine staffed from login onward — a Remote-Control Claude Code VP plus a Grok session reporting to it, restarted automatically whenever either goes down (launchd on macOS, cron on Linux)",
+  "version": "0.1.0",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "hello@eidosagi.com"
+  }
+}
