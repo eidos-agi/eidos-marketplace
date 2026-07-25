@@ -230,12 +230,23 @@ PY
 # spending the shared quota whose exhaustion is itself a failure mode — so instead it
 # records what every cheap signal returned, and lets v2 be designed from which ones
 # actually predicted muteness. Conclusions go in the human log; evidence goes here.
+
+# j — make a value safe to sit inside a JSON string.
+#
+# Every field here is a short identifier (a process name, a state token, a reason), never
+# free prose, so stripping the characters that would need escaping is honest and cheap.
+# It is not cosmetic: a process name containing a quote produced a syntactically invalid
+# record, which would have silently corrupted the corpus this whole phase exists to build.
+# A malformed line in an append-only research log is worse than a missing one — it breaks
+# every reader that comes after it.
+j() { printf '%s' "$1" | tr -d '"\\' | tr -c -d '[:print:]' | cut -c1-"${2:-60}"; }
+
 emit_event() {
   state="$1"; action="$2"
-  printf '{"ts":"%s","host":"%s","seat":"%s","kind":"%s","state":"%s","session":%s,"proc":"%s","pstate":"%s","bridge":%s,"status":"%s","blocked":"%s","action":"%s"}\n' \
-    "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$(hostname -s)" "$P_SEAT" "$P_KIND" \
-    "$state" "$P_SESSION" "$P_PROC" "$P_PSTATE" "$P_BRIDGE" "$P_STATUS" \
-    "$(echo "$P_BLOCKED" | tr -d '"' | cut -c1-60)" "$action" >> "$EVENTS"
+  printf '{"ts":"%s","host":"%s","seat":"%s","kind":"%s","state":"%s","session":%s,"proc":"%s","pstate":"%s","bridge":%s,"status":"%s","blocked":"%s","action":"%s","v":1}\n' \
+    "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$(j "$(hostname -s)")" "$(j "$P_SEAT" 40)" "$(j "$P_KIND" 16)" \
+    "$(j "$state" 20)" "$P_SESSION" "$(j "$P_PROC" 32)" "$(j "$P_PSTATE" 8)" "$P_BRIDGE" "$(j "$P_STATUS" 16)" \
+    "$(j "$P_BLOCKED")" "$(j "$action" 16)" >> "$EVENTS"
 }
 
 write_prompts() {

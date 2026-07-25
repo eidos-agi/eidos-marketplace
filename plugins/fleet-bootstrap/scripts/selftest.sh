@@ -72,6 +72,21 @@ is "all signals good is READY" "$(derive_state)" READY
 P_KIND=grok; P_PROC=grok; P_BRIDGE=false
 is "grok without a bridge is READY" "$(derive_state)" READY
 
+echo "event records survive hostile values"
+# Regression: a process name with a quote produced invalid JSON and would have silently
+# corrupted the research corpus. Found 2026-07-25, 20 minutes after the corpus shipped.
+EVENTS="$STATE/events.jsonl"; : > "$EVENTS"
+P_SEAT='seat'; P_KIND=claude; P_SESSION=true; P_PSTATE='Ss+'; P_BRIDGE=true; P_STATUS=idle
+P_PROC='cla"ude\x'; P_BLOCKED='he said "no" \ then left'
+emit_event READY none
+if command -v python3 >/dev/null 2>&1; then
+  python3 -c "import json,sys; [json.loads(l) for l in open('$EVENTS')]" 2>/dev/null \
+    && ok "quotes and backslashes still yield valid JSON" \
+    || bad "hostile field values produced invalid JSON"
+else
+  echo "  skip — no python3 to validate JSON"
+fi
+
 echo
 echo "$pass passed, $fail failed"
 [ "$fail" -eq 0 ]
