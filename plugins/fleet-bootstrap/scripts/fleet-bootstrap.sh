@@ -39,6 +39,7 @@ VP_SEED="$STATE/vp-seed.md"
 GROK_MD="$STATE/grok.md"
 GROK_SEED="$STATE/grok-seed.md"
 RUNNER="$STATE/fleet-bootstrap.sh"
+EVENTS="$STATE/events.jsonl"
 
 domain="gui/$(id -u)"
 
@@ -106,10 +107,66 @@ alive() {
   ps -p "$pid" -o comm= 2>/dev/null | grep -q "$2" || return 1
   # A zombie or a SIGSTOPped process still answers `ps -p`, and would read as healthy
   # forever while serving nobody.
+  # PROVEN 2026-07-25 on an owned decoy: state went SN -> TN under SIGSTOP and this case
+  # matched, so alive() returned 1. The branch logic is exercised; the full path through
+  # a launchd-spawned seat is not (those processes are outside an agent's signal reach).
   case "$(ps -p "$pid" -o state= 2>/dev/null | tr -d ' ')" in
     Z*|T*) return 1 ;;
   esac
   return 0
+}
+
+# probe_seat — gather every FREE signal about a seat into P_* globals, so the same
+# evidence feeds both the decision and the record. Sets no policy; just observes.
+#
+# Deliberately records DERIVED booleans from the pane, never its text: the pane holds
+# real conversations, and a supervisor log is the wrong place for them.
+probe_seat() {
+  P_SEAT="$1"; P_KIND="$2"
+  P_SESSION=false; P_PROC=""; P_PSTATE=""; P_BRIDGE=false; P_STATUS=""; P_BLOCKED=""
+
+  tmux has-session -t "$P_SEAT" 2>/dev/null || return 0
+  P_SESSION=true
+  pid=$(tmux display-message -p -t "$P_SEAT" '#{pane_pid}' 2>/dev/null) || return 0
+  [ -n "$pid" ] || return 0
+  P_PROC=$(ps -p "$pid" -o comm= 2>/dev/null | sed 's|.*/||' | tr -d ' ')
+  P_PSTATE=$(ps -p "$pid" -o state= 2>/dev/null | tr -d ' ')
+
+  # The session record is written by the seat itself. bridgeSessionId is the ONLY
+  # authoritative proof that Remote Control actually registered — a seat can run for
+  # hours, healthy by every process check, and be invisible to the app without it.
+  # NOTE: updatedAt in that same file is NOT a heartbeat. Measured 2168s stale on a
+  # healthy idle seat; it tracks state transitions, not time. Never gate liveness on it.
+  if [ "$P_KIND" = claude ] && [ -f "$HOME/.claude/sessions/$pid.json" ] && command -v python3 >/dev/null 2>&1; then
+    eval "$(python3 - "$HOME/.claude/sessions/$pid.json" <<'PY' 2>/dev/null || true
+import json, sys
+try:
+    d = json.load(open(sys.argv[1]))
+except Exception:
+    raise SystemExit(0)
+print("P_BRIDGE=%s" % ("true" if d.get("bridgeSessionId") else "false"))
+s = str(d.get("status", "")).replace("'", "")
+print("P_STATUS='%s'" % s[:16])
+PY
+)"
+  fi
+
+  blocked=$(needs_human "$P_SEAT") && P_BLOCKED="$blocked"
+  return 0
+}
+
+# emit_event — one JSONL record per seat per check, evidence and all.
+#
+# This is the v1 deliverable. v1 cannot honestly answer "can this seat respond?" without
+# spending the shared quota whose exhaustion is itself a failure mode — so instead it
+# records what every cheap signal returned, and lets v2 be designed from which ones
+# actually predicted muteness. Conclusions go in the human log; evidence goes here.
+emit_event() {
+  state="$1"; action="$2"
+  printf '{"ts":"%s","host":"%s","seat":"%s","kind":"%s","state":"%s","session":%s,"proc":"%s","pstate":"%s","bridge":%s,"status":"%s","blocked":"%s","action":"%s"}\n' \
+    "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$(hostname -s)" "$P_SEAT" "$P_KIND" \
+    "$state" "$P_SESSION" "$P_PROC" "$P_PSTATE" "$P_BRIDGE" "$P_STATUS" \
+    "$(echo "$P_BLOCKED" | tr -d '"' | cut -c1-60)" "$action" >> "$EVENTS"
 }
 
 write_prompts() {
@@ -256,15 +313,49 @@ needs_human() {
   return 1
 }
 
+# derive_state — name what the evidence in P_* actually says.
+#
+# Not yet the full classifier (EID-1017): MUTE needs the account-health signal that does
+# not exist yet, and UNREGISTERED is observed here but not yet acted on. Naming the states
+# now means the event stream starts collecting them immediately, so when the classifier
+# lands it can be tuned against real history instead of guesses.
+derive_state() {
+  [ "$P_SESSION" = true ] || { echo DEAD; return; }
+  [ -n "$P_PROC" ] && echo "$P_PROC" | grep -q "$P_KIND" || { echo DEAD; return; }
+  case "$P_PSTATE" in Z*|T*) echo WEDGED; return ;; esac
+  [ -n "$P_BLOCKED" ] && { echo BLOCKED_HUMAN; return; }
+  # A claude seat with no bridge id is running and invisible to the app. Observed for
+  # hours on HOSTKEY: healthy by every process check, unreachable by the human.
+  [ "$P_KIND" = claude ] && [ "$P_BRIDGE" = false ] && { echo UNREGISTERED; return; }
+  echo READY
+}
+
 cmd_ensure() {
   write_prompts
   down=0
-  if ! alive "$VP" claude; then log "vp: down — restarting"; start_vp; down=1; fi
+
+  probe_seat "$VP" claude
+  state=$(derive_state)
+  if [ "$state" = DEAD ] || [ "$state" = WEDGED ]; then
+    log "vp: $state — restarting"; emit_event "$state" restart; start_vp; down=1
+  else
+    emit_event "$state" none
+  fi
   alive "$VP" claude && clear_trust_gate "$VP"
   blocked=$(needs_human "$VP") && log "vp: UP BUT BLOCKED — $blocked (a restart will not fix this)"
+
   # The report is optional: a host without the Grok CLI still gets a VP. Losing the second
   # seat must never cost you the first one.
-  if have_grok && ! alive "$GROK" grok; then log "grok: down — restarting"; start_grok; down=1; fi
+  if have_grok; then
+    probe_seat "$GROK" grok
+    state=$(derive_state)
+    if [ "$state" = DEAD ] || [ "$state" = WEDGED ]; then
+      log "grok: $state — restarting"; emit_event "$state" restart; start_grok; down=1
+    else
+      emit_event "$state" none
+    fi
+  fi
+
   [ "$down" -eq 0 ] || log "restart complete"
 }
 
