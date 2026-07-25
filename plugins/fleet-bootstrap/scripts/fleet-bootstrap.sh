@@ -116,19 +116,36 @@ write_prompts() {
   mkdir -p "$STATE" "$VP_DIR" "$GROK_DIR"
   # Never clobber: these are the operator's to tune, and a reinstall must not undo that.
 
-  [ -f "$VP_MD" ] || cat > "$VP_MD" <<EOF
-You are the VP on $(hostname -s).
-
-You are not a general assistant and you are not here to build anything. You are the session
-that starts by itself when this Mac boots, so the machine stays reachable from the Claude
-app when nobody is at the keyboard. You are the way back in.
-
-You have one direct report: a Grok session running in tmux as '$GROK'. You talk to it with
+  # Tell each seat the truth about the host it actually woke up on. A VP told it has a
+  # report it does not have will send work into a tmux session that does not exist, and
+  # one told launchd supervises it on a Linux box will look in the wrong place when asked
+  # how it is kept alive.
+  if have_grok; then
+    report_para="You have one direct report: a Grok session running in tmux as '$GROK'. You talk to it with
   tmux send-keys -t $GROK '<your message>' Enter
 and read its answer with
   tmux capture-pane -p -t $GROK
 Give it work you would give a capable colleague. Do not narrate at it, and do not use it as
-a rubber stamp — if it disagrees with you, that is the point of having it.
+a rubber stamp — if it disagrees with you, that is the point of having it."
+  else
+    report_para="You have no direct report on this host: the Grok CLI is not installed here, so there is no
+'$GROK' session to delegate to. Do not send work to one. You are the only seat on this
+machine."
+  fi
+  if [ "$(uname -s)" = "Darwin" ]; then
+    supervisor_desc="launchd $LABEL, every ${INTERVAL}s"
+  else
+    supervisor_desc="cron, at reboot and every minute"
+  fi
+
+  [ -f "$VP_MD" ] || cat > "$VP_MD" <<EOF
+You are the VP on $(hostname -s).
+
+You are not a general assistant and you are not here to build anything. You are the session
+that starts by itself when this machine boots, so it stays reachable from the Claude app
+when nobody is at the keyboard. You are the way back in.
+
+$report_para
 
 Your job, once a human asks for it: bring the rest of the fleet back online — the daemons,
 LaunchAgents, tmux sessions, and agent sessions this machine is supposed to be running —
@@ -137,7 +154,7 @@ and report plainly what came up, what did not, and what looks deliberately stopp
 YOUR FOREVER TELOS: you and your report are online, always, no matter what. If you find
 either of you degraded, restoring that is the one thing you may do unasked. Everything else
 waits. The supervisor that restarts you lives at:
-  $RUNNER ensure   (launchd $LABEL, every ${INTERVAL}s)
+  $RUNNER ensure   ($supervisor_desc)
 
 Until a human sends you a message, do nothing else. No tools, no restarts of other people's
 services, no "while I'm here" tidying, no health checks nobody requested. An unattended
@@ -227,10 +244,14 @@ clear_trust_gate() {
 # Some blocked states no restart can fix — an expired login is the main one. Restarting into
 # them forever would be a crash loop that reports success. Name them, say a human is needed,
 # and leave the seat alone.
+# Only the last few lines are read: the status bar reflects the CURRENT state, while
+# "Login expired · Please run /login" stays in the transcript above forever once printed.
+# Matching the whole pane made a seat that had just been logged in successfully keep
+# reporting itself blocked — a stale-text false positive, which is its own kind of lie.
 needs_human() {
-  pane=$(tmux capture-pane -p -t "$1" 2>/dev/null) || return 1
-  case "$pane" in
-    *"Please run /login"*|*"Not logged in"*|*"Login expired"*) echo "not logged in — attach and run /login"; return 0 ;;
+  tail=$(tmux capture-pane -p -t "$1" 2>/dev/null | grep -v '^$' | tail -8) || return 1
+  case "$tail" in
+    *"Not logged in"*) echo "not logged in — attach and run /login"; return 0 ;;
   esac
   return 1
 }
