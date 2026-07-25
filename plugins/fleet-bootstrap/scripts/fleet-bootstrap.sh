@@ -62,6 +62,75 @@ fi
 
 have_grok() { command -v grok >/dev/null 2>&1; }
 
+# ---- single-runner lock ------------------------------------------------------------
+# cron starts a second ensure if the first one hangs (launchd will not). Two concurrent
+# runs can both decide a seat is down and both start it. mkdir is atomic on POSIX, so it
+# is the lock primitive that needs no flock dependency.
+LOCK="$STATE/.ensure.lock"
+take_lock() {
+  if mkdir "$LOCK" 2>/dev/null; then
+    trap 'rmdir "$LOCK" 2>/dev/null || true' EXIT INT TERM
+    return 0
+  fi
+  # A crashed run would otherwise hold the lock forever, which would silently disable
+  # the supervisor — a worse failure than the overlap it prevents. Break it if it is
+  # older than 10 minutes; a healthy ensure takes ~15s at worst.
+  if [ -n "$(find "$LOCK" -maxdepth 0 -mmin +10 2>/dev/null)" ]; then
+    log "lock: stale (>10m) — breaking it"
+    rmdir "$LOCK" 2>/dev/null || true
+    mkdir "$LOCK" 2>/dev/null || return 1
+    trap 'rmdir "$LOCK" 2>/dev/null || true' EXIT INT TERM
+    return 0
+  fi
+  return 1
+}
+
+# ---- restart budget ----------------------------------------------------------------
+# Without this, a start that can never succeed (a CLI flag that changed under us, a
+# corrupt state dir) retries 1,440x/day, each attempt submitting a seeded prompt against
+# real quota, silently. Backoff turns a permanent failure into a bounded cost and a loud
+# one. Restarting is the supervisor's only power; a budget is what keeps it honest.
+BACKOFF_MAX="${FLEET_BACKOFF_MAX:-6}"
+
+# Seconds to wait before attempt N: immediate, 2m, 5m, 15m, 30m, then hourly.
+backoff_for() {
+  case "$1" in
+    0|1) echo 0 ;; 2) echo 120 ;; 3) echo 300 ;;
+    4) echo 900 ;; 5) echo 1800 ;; *) echo 3600 ;;
+  esac
+}
+
+restart_count() { [ -f "$STATE/restarts.$1" ] && cut -d' ' -f1 "$STATE/restarts.$1" || echo 0; }
+restart_last()  { [ -f "$STATE/restarts.$1" ] && cut -d' ' -f2 "$STATE/restarts.$1" || echo 0; }
+record_restart() { echo "$2 $(date +%s)" > "$STATE/restarts.$1"; }
+clear_restarts() { rm -f "$STATE/restarts.$1"; }
+
+# may_restart — is starting this seat allowed right now? Echoes the reason when not.
+may_restart() {
+  n=$(restart_count "$1"); last=$(restart_last "$1")
+  [ -n "$n" ] || n=0; [ -n "$last" ] || last=0
+  if [ "$n" -ge "$BACKOFF_MAX" ]; then
+    echo "held after $n consecutive failed starts — a human has to look"
+    return 1
+  fi
+  wait=$(backoff_for "$n"); now=$(date +%s)
+  if [ $((now - last)) -lt "$wait" ]; then
+    echo "backoff, $((wait - now + last))s left after $n failed starts"
+    return 1
+  fi
+  return 0
+}
+
+# Both logs grow forever otherwise. Rotate at ~1MB, keep one generation.
+rotate() {
+  [ -f "$1" ] || return 0
+  sz=$(wc -c < "$1" 2>/dev/null | tr -d ' ') || return 0
+  [ -n "$sz" ] || return 0
+  [ "$sz" -gt "${2:-1048576}" ] || return 0
+  mv "$1" "$1.1" 2>/dev/null || return 0
+  : > "$1"
+}
+
 # On a directory it has not seen, Claude Code opens with a blocking "do you trust this
 # folder?" menu. Nobody is there to press 1, so the seat sits at a prompt forever looking
 # alive. We created the working directory ourselves, so accepting it here is the same answer
@@ -330,31 +399,61 @@ derive_state() {
   echo READY
 }
 
+# tend_seat — probe, classify, and respond according to what the state actually is.
+#
+# The response is NOT uniform, which is the point. Restarting is right for DEAD and
+# WEDGED, useless for BLOCKED_HUMAN (an expired login survives any restart), and will be
+# actively harmful for MUTE once that state exists — a restart submits a seeded prompt
+# against a quota that is already gone, deepening the outage while reporting a fix.
+tend_seat() {
+  seat="$1"; kind="$2"
+  probe_seat "$seat" "$kind"
+  state=$(derive_state)
+
+  case "$state" in
+    DEAD|WEDGED)
+      if ! reason=$(may_restart "$seat"); then
+        log "$seat: $state but $reason"
+        emit_event "$state" held
+        return 0
+      fi
+      n=$(restart_count "$seat")
+      log "$seat: $state — restarting (attempt $((n + 1)))"
+      emit_event "$state" restart
+      case "$kind" in claude) start_vp ;; grok) start_grok ;; esac
+      if alive "$seat" "$kind"; then
+        clear_restarts "$seat"
+      else
+        record_restart "$seat" "$((n + 1))"
+        log "$seat: start did not come up healthy — attempt $((n + 1)) recorded"
+      fi
+      return 1
+      ;;
+    BLOCKED_HUMAN)
+      log "$seat: UP BUT BLOCKED — $P_BLOCKED (a restart will not fix this)"
+      emit_event "$state" none
+      ;;
+    *)
+      emit_event "$state" none
+      clear_restarts "$seat"
+      ;;
+  esac
+  return 0
+}
+
 cmd_ensure() {
+  # Never let two runs fight over the same seats.
+  take_lock || { log "ensure: another run holds the lock — skipping this tick"; return 0; }
+  rotate "$LOG"; rotate "$EVENTS"
   write_prompts
   down=0
 
-  probe_seat "$VP" claude
-  state=$(derive_state)
-  if [ "$state" = DEAD ] || [ "$state" = WEDGED ]; then
-    log "vp: $state — restarting"; emit_event "$state" restart; start_vp; down=1
-  else
-    emit_event "$state" none
-  fi
+  tend_seat "$VP" claude || down=1
   alive "$VP" claude && clear_trust_gate "$VP"
-  blocked=$(needs_human "$VP") && log "vp: UP BUT BLOCKED — $blocked (a restart will not fix this)"
 
   # The report is optional: a host without the Grok CLI still gets a VP. Losing the second
   # seat must never cost you the first one.
-  if have_grok; then
-    probe_seat "$GROK" grok
-    state=$(derive_state)
-    if [ "$state" = DEAD ] || [ "$state" = WEDGED ]; then
-      log "grok: $state — restarting"; emit_event "$state" restart; start_grok; down=1
-    else
-      emit_event "$state" none
-    fi
-  fi
+  if have_grok; then tend_seat "$GROK" grok || down=1; fi
 
   [ "$down" -eq 0 ] || log "restart complete"
 }
@@ -490,6 +589,13 @@ cmd_uninstall() {
   echo "uninstalled: supervisor removed, both sessions killed"
   echo "kept:        prompts in $STATE (delete the directory to remove them too)"
 }
+
+# Library mode: when sourced by selftest, define everything and dispatch nothing. Without
+# this the only way to exercise a decision function is to run the real supervisor against
+# real seats, which is how an earlier test started a live Grok session by accident.
+if [ "${FLEET_BOOTSTRAP_LIB:-}" = 1 ]; then
+  return 0 2>/dev/null || exit 0
+fi
 
 case "${1:-status}" in
   install)   cmd_install ;;
