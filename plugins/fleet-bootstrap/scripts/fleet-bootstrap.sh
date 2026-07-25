@@ -279,9 +279,75 @@ emit_event() {
     "$(j "$P_BLOCKED")" "$(j "$action" 16)" >> "$EVENTS"
 }
 
+# ---- generated-state versioning ----------------------------------------------------
+# Identity prompts are never clobbered, which is right: operator edits are sacred. But the
+# same rule lets every host accumulate instructions that were true at install time and then
+# silently rot. HOSTKEY's VP spent hours believing it ran on a Mac, under launchd, with a
+# Grok report that did not exist — it would have sent work to a session that was never
+# there. Stale instructions do not crash; they make a seat confidently wrong, which is
+# worse than down and invisible to every health check.
+#
+# The whole trick is telling "the operator edited this" apart from "we generated this and
+# it is now stale". A hash of what we last generated answers exactly that.
+hash_stdin() {
+  if command -v shasum >/dev/null 2>&1; then shasum -a 256 | cut -d' ' -f1
+  elif command -v sha256sum >/dev/null 2>&1; then sha256sum | cut -d' ' -f1
+  else cksum | cut -d' ' -f1   # weak, but a changed file still changes it
+  fi
+}
+
+# install_prompt <path> <file-holding-freshly-generated-content>
+#   absent             -> write it, record the hash
+#   matches our stamp  -> untouched by the operator, so refresh freely
+#   differs            -> operator edited it, or it predates versioning: LEAVE IT, say so
+#
+# Takes a FILE rather than a string on purpose: the generated prompts contain parentheses,
+# and `var=$(cat <<EOF ... )` mis-parses on them. A temp file sidesteps every quoting and
+# substitution hazard at the cost of one write.
+install_prompt() {
+  _path="$1"; _src="$2"; _stamp="$STATE/.$(basename "$_path").gen"
+  _new=$(hash_stdin < "$_src")
+
+  if [ ! -f "$_path" ]; then
+    cp "$_src" "$_path"
+    printf '%s\n' "$_new" > "$_stamp"
+    return 0
+  fi
+
+  _cur=$(hash_stdin < "$_path")
+  [ "$_cur" = "$_new" ] && return 0            # already current; say nothing
+
+  if [ -f "$_stamp" ] && [ "$_cur" = "$(cat "$_stamp" 2>/dev/null)" ]; then
+    cp "$_src" "$_path"
+    printf '%s\n' "$_new" > "$_stamp"
+    log "$(basename "$_path"): refreshed — generated, unmodified, and the host facts changed"
+    return 0
+  fi
+
+  # No stamp means the file predates versioning and its provenance is unknown. Treating
+  # unknown as "operator edited" is the conservative direction: the cost is a stale prompt
+  # that gets REPORTED, versus silently overwriting something a human wrote.
+  # Say it once per distinct situation, not once per tick. ensure runs every 60s, so an
+  # unconditional warning here would write 1,440 identical lines a day and bury the events
+  # that matter — a supervisor that cries wolf on schedule is one nobody reads.
+  _warn="$STATE/.$(basename "$_path").warned"
+  _key="$_cur:$_new"
+  [ "$(cat "$_warn" 2>/dev/null)" = "$_key" ] && return 0
+  printf '%s\n' "$_key" > "$_warn"
+
+  if [ -f "$_stamp" ]; then
+    log "$(basename "$_path"): stale vs the current template but edited — left alone. To adopt: rm '$_path'"
+  else
+    log "$(basename "$_path"): stale vs the current template, provenance unknown (predates versioning) — left alone. To adopt: rm '$_path'"
+  fi
+  return 0
+}
+
 write_prompts() {
   mkdir -p "$STATE" "$VP_DIR" "$GROK_DIR"
-  # Never clobber: these are the operator's to tune, and a reinstall must not undo that.
+  _gen="$STATE/.generated.tmp"
+  # Generated content is refreshed only while it stays byte-identical to what we last
+  # generated; the moment the operator touches it, it is theirs (GUARD-004).
 
   # Tell each seat the truth about the host it actually woke up on. A VP told it has a
   # report it does not have will send work into a tmux session that does not exist, and
@@ -305,7 +371,7 @@ machine."
     supervisor_desc="cron, at reboot and every minute"
   fi
 
-  [ -f "$VP_MD" ] || cat > "$VP_MD" <<EOF
+  cat > "$_gen" <<EOF
 You are the VP on $(hostname -s).
 
 You are not a general assistant and you are not here to build anything. You are the session
@@ -331,14 +397,16 @@ When a human does speak, take the smallest action that answers them. Restarting 
 your specialty, so be careful with it: confirm before restarting anything currently serving
 traffic or holding state, and never assume a stopped service was stopped by accident.
 EOF
+  install_prompt "$VP_MD" "$_gen"
 
-  [ -f "$VP_SEED" ] || cat > "$VP_SEED" <<'EOF'
+  cat > "$_gen" <<'EOF'
 Bootstrap check-in. In one short paragraph, tell me what you are, who reports to you, and
 what you can bring back online for me — then stand by. Do not start, restart, or inspect
 anything yet.
 EOF
+  install_prompt "$VP_SEED" "$_gen"
 
-  [ -f "$GROK_MD" ] || cat > "$GROK_MD" <<EOF
+  cat > "$_gen" <<EOF
 You are Fleet Grok on $(hostname -s), running in a tmux session named '$GROK'.
 
 You report to the VP: a Claude Code session in tmux named '$VP'. It will send you work by
@@ -356,11 +424,13 @@ not as something you should re-derive or re-introduce yourself over.
 
 Until the VP or a human sends you something, do nothing. Wait.
 EOF
+  install_prompt "$GROK_MD" "$_gen"
 
-  [ -f "$GROK_SEED" ] || cat > "$GROK_SEED" <<'EOF'
+  cat > "$_gen" <<'EOF'
 Check-in. One or two sentences: who you are and who you report to. Then stand by — do not
 start, inspect, or change anything yet.
 EOF
+  install_prompt "$GROK_SEED" "$_gen"
 }
 
 # Start a session, resuming its prior conversation if there is one.

@@ -133,6 +133,51 @@ leg_out=$(cat "$LEG/out" 2>/dev/null || echo "||")
 is "legacy seat name survives"  "$(echo "$leg_out" | cut -d'|' -f1)" hostkey-vp
 is "legacy interval survives"   "$(echo "$leg_out" | cut -d'|' -f2)" 60
 
+echo "generated prompts: refresh the untouched, never the edited"
+# The flaw named as most likely to break first: never-clobber is correct, and it also lets
+# instructions rot. HOSTKEY's VP believed for hours that it ran on a Mac under launchd with
+# a Grok report that did not exist. Stale instructions don't crash — they make a seat
+# confidently wrong, which is worse than down.
+PD="$STATE"; SRC="$PD/gen.src"; TGT="$PD/prompt.md"
+
+printf 'v1 content\n' > "$SRC"
+install_prompt "$TGT" "$SRC" >/dev/null 2>&1
+is "absent -> written" "$(cat "$TGT")" "v1 content"
+[ -f "$PD/.prompt.md.gen" ] && ok "stamp recorded" || bad "no stamp recorded"
+
+# unmodified by the operator -> a template change must reach the host
+printf 'v2 content\n' > "$SRC"
+install_prompt "$TGT" "$SRC" >/dev/null 2>&1
+is "untouched -> refreshed" "$(cat "$TGT")" "v2 content"
+
+# operator edits it -> theirs now, hands off (GUARD-004)
+printf 'HAND EDITED\n' > "$TGT"
+printf 'v3 content\n' > "$SRC"
+install_prompt "$TGT" "$SRC" >/dev/null 2>&1
+is "edited -> left alone" "$(cat "$TGT")" "HAND EDITED"
+
+# a file predating versioning has no stamp: provenance unknown, so treat as edited
+rm -f "$PD/.legacy.md.gen"; printf 'pre-existing\n' > "$PD/legacy.md"
+printf 'new template\n' > "$SRC"
+install_prompt "$PD/legacy.md" "$SRC" >/dev/null 2>&1
+is "no stamp -> left alone" "$(cat "$PD/legacy.md")" "pre-existing"
+
+# idempotence: a second identical run must not churn the file or re-log
+printf 'v4\n' > "$SRC"; rm -f "$TGT" "$PD/.prompt.md.gen"
+install_prompt "$TGT" "$SRC" >/dev/null 2>&1
+before=$(hash_stdin < "$TGT")
+install_prompt "$TGT" "$SRC" >/dev/null 2>&1
+is "second run is a no-op" "$(hash_stdin < "$TGT")" "$before"
+
+# ensure runs every 60s. An unconditional "left alone" warning would be 1,440 identical
+# log lines a day, burying the events that matter.
+printf 'edited by hand\n' > "$PD/spam.md"; printf 'template\n' > "$SRC"
+rm -f "$PD/.spam.md.warned"
+n1=$(install_prompt "$PD/spam.md" "$SRC" 2>&1 | grep -c 'left alone' || true)
+n2=$(install_prompt "$PD/spam.md" "$SRC" 2>&1 | grep -c 'left alone' || true)
+is "warns on first sight"        "$n1" 1
+is "silent on every tick after"  "$n2" 0
+
 echo
 echo "$pass passed, $fail failed"
 [ "$fail" -eq 0 ]
