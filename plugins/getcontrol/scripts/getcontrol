@@ -498,6 +498,67 @@ def record(u: dict, disposition: str, reason: str, linear: str | None = None) ->
     ledger_save(led)
 
 
+# ---------------------------------------------------------------- classify
+
+# What a harness pane is actually doing. Every one of these was learned by being
+# wrong about it in production, so the fixtures in selfcheck are real captures.
+ASKING_RE = r"Enter to confirm|❯ 1\.|\(y/n\)|Do you want to"
+BUSY_RE = r"…|esc to interrupt|Running \d+ (shell )?command"
+PROMPT_RE = r"^❯\s*(.*)$"
+TAIL_LINES = 8
+
+
+def classify(screen: str) -> tuple[str, str]:
+    """(state, detail) for a pane. Pure — see selfcheck for the real fixtures.
+
+    States: busy · asking · staged · idle
+
+    Two rules here were bought with live failures:
+
+    **A leading glyph is not activity.** `✻ Churned for 43s` is PAST TENSE — the
+    work has finished — and is indistinguishable from `✻ Churning… (43s)` if you
+    match on the glyph. Doing that reported stalled sessions as busy, so they were
+    never fed and sat forever. Activity carries an ellipsis or `esc to interrupt`;
+    completion reads `<verb>ed for <duration>`.
+
+    **Only the tail describes the present.** Scanning the whole pane matched
+    glyphs scrolled up from minutes ago and called a dead session alive.
+    """
+    tail = [ln for ln in screen.splitlines() if ln.strip()][-TAIL_LINES:]
+    blob = "\n".join(tail)
+
+    if re.search(BUSY_RE, blob):
+        return "busy", ""
+    if re.search(ASKING_RE, blob):
+        return "asking", next((ln.strip() for ln in reversed(tail) if re.search(ASKING_RE, ln)), "")
+    for ln in reversed(tail):
+        m = re.match(PROMPT_RE, ln)
+        if m:
+            # Text sitting in the composer, never submitted. The session looks
+            # idle and is doing nothing while whoever typed it believes it was
+            # asked. Feeding it more types on top and compounds the mess.
+            return ("staged", m.group(1).strip()) if m.group(1).strip() else ("idle", "")
+    return "idle", ""
+
+
+def cmd_classify(args) -> int:
+    live = sh(["tmux", "list-sessions", "-F", "#{session_name}"]).split()
+    names = [args.session] if args.session else live
+    rows = []
+    for n in names:
+        if n not in live:
+            rows.append((n, "dead", ""))
+            continue
+        rows.append((n, *classify(sh(["tmux", "capture-pane", "-p", "-t", n]))))
+    if args.json:
+        print(json.dumps([{"session": n, "state": s, "detail": d} for n, s, d in rows], indent=2))
+    else:
+        for n, s, d in rows:
+            print(f"{n:<28} {s:<7} {d[:52]}")
+    # Non-zero when something needs a human: a question, or input nobody submitted.
+    return 1 if any(s in ("asking", "staged") for _, s, _ in rows) else 0
+
+
 def reapable(u: dict, hours: float) -> bool:
     """An empty shell nobody has touched. Pure; see selfcheck.
 
@@ -541,6 +602,57 @@ def cmd_reap(args) -> int:
             history_append({"at": int(time.time()), "event": "reaped", "tty": u["tty"],
                             "cwd": u["cwd"], "idle_h": round(u["idle_h"], 1)})
     print(f"closed {closed} of {len(dead)} — {len(units)} panes → {len(units) - closed}")
+    return 0
+
+
+PARKED_RE = r"Enter to confirm|❯ 1\.|\(y/n\)|Do you want to"
+RESUME_MENU_RE = r"Resume full session as-is"
+
+
+def unpark_one(name: str, mode: str) -> str:
+    """Answer a resume menu. Default is FULL session, by standing instruction:
+    a resumed agent that lost its context is worth less than the tokens saved.
+
+    Narrow on purpose — it only ever answers THIS menu, matched by its own text.
+    Auto-answering prompts in general is how an agent approves something nobody
+    meant to approve.
+    """
+    screen = sh(["tmux", "capture-pane", "-p", "-t", name])
+    if not re.search(RESUME_MENU_RE, screen):
+        return f"{name}: not on a resume menu, left alone"
+    key = "2" if mode == "full" else "1"
+    subprocess.run([resolve("tmux"), "send-keys", "-t", name, key], capture_output=True)
+    time.sleep(0.5)
+    subprocess.run([resolve("tmux"), "send-keys", "-t", name, "Enter"], capture_output=True)
+    time.sleep(5)
+    after = sh(["tmux", "capture-pane", "-p", "-t", name])
+    if re.search(RESUME_MENU_RE, after):
+        return f"{name}: STILL on the menu — the keypress did not take"
+    history_append({"at": int(time.time()), "event": "unparked", "session": name, "mode": mode})
+    return f"{name}: resumed ({mode})"
+
+
+def cmd_unpark(args) -> int:
+    """Answer the resume menu on every session parked on one."""
+    live = sh(["tmux", "list-sessions", "-F", "#{session_name}"]).split()
+    targets = [args.session] if args.session else live
+    parked = [n for n in targets if re.search(RESUME_MENU_RE, sh(["tmux", "capture-pane", "-p", "-t", n]))]
+    if not parked:
+        print("nothing parked on a resume menu")
+        return 0
+    print(f"parked: {', '.join(parked)}  → answering '{args.mode}'")
+    if not args.apply:
+        print("Dry run. Re-run with --apply.")
+        return 0
+    verdict, note = hancock_verdict(f"getcontrol unpark {len(parked)} sessions ({args.mode})")
+    if verdict == "deny":
+        print(f"hancock denies this — {note}", file=sys.stderr)
+        return 4
+    if verdict == "sign" and not args.signed:
+        print("needs a signature — queue through hancock with --signed", file=sys.stderr)
+        return 3
+    for n in parked:
+        print("  " + unpark_one(n, args.mode), flush=True)
     return 0
 
 
@@ -896,6 +1008,26 @@ def cmd_selfcheck(args) -> int:
     assert reapable(pane(harness="claude"), 4) is False, "never reap a pane with work in it"
     assert reapable(pane(tmux={"session": "x"}), 4) is False, "tmux panes are not husks"
 
+    # Real captures. Every one of these was, at some point tonight, classified
+    # wrongly in production — so they are fixtures, not illustrations.
+    FIX = [
+        ("· Synthesizing… (13m 34s · ↓ 51.6k tokens)\n❯ \n  [PONYTAIL]", "busy"),
+        ("⏺ Running 2 shell commands…\n  ⎿  $ head -40 x.sh\n❯ ", "busy"),
+        # past tense: the work FINISHED. matching the glyph called this busy and
+        # the session was never fed again.
+        ("✻ Churned for 43s\n────────\n❯ queue the remount through hancock\n────────", "staged"),
+        ("✻ Cogitated for 3m 12s\n❯ \n  [PONYTAIL]", "idle"),
+        ("  ❯ 1. Resume from summary (recommended)\n    2. Resume full session as-is\n  Enter to confirm · Esc to cancel", "asking"),
+        ("new task? /clear to save 200.6k tokens\n❯ merge the PR and do the cutover\n────────", "staged"),
+        ("❯ \n────────\n  ⏵⏵ auto mode on (shift+tab to cycle)", "idle"),
+    ]
+    for screen, want in FIX:
+        got, _ = classify(screen)
+        assert got == want, f"classify: expected {want}, got {got} for {screen[:44]!r}"
+    assert classify(FIX[2][0])[1] == "queue the remount through hancock", "staged text must be recovered"
+    # a glyph scrolled far up is not the present
+    assert classify("✻ Working…\n" + "\n".join(f"line {i}" for i in range(30)) + "\n❯ ")[0] == "idle"
+
     assert acct({"governed": True, "account": None}) == "emux"
     assert acct({"governed": False, "account": {"disposition": "hold"}}) == "hold"
     assert acct({"governed": False, "account": None}) == "-"
@@ -953,6 +1085,14 @@ def main() -> int:
 
     sub.add_parser("shellinit", help="print the `gc` shell function to add to ~/.zshrc").set_defaults(fn=cmd_shellinit)
 
+    s = sub.add_parser("unpark", help="answer the resume menu on parked sessions (default: full session)")
+    s.add_argument("session", nargs="?")
+    s.add_argument("--mode", choices=["full", "summary"], default="full",
+                   help="full (default, standing rule) keeps the whole conversation; summary is cheaper")
+    s.add_argument("--apply", action="store_true")
+    s.add_argument("--signed", action="store_true", help="this run is coming through hancock")
+    s.set_defaults(fn=cmd_unpark)
+
     s = sub.add_parser("reap", help="close empty shells — the fastest way to actually get control")
     s.add_argument("--older-than", type=float, default=4.0, help="minimum idle hours (default 4)")
     s.add_argument("--apply", action="store_true")
@@ -977,6 +1117,11 @@ def main() -> int:
     s.set_defaults(fn=cmd_explode)
 
     sub.add_parser("doctor", help="which inventory and control paths actually work here").set_defaults(fn=cmd_doctor)
+    s = sub.add_parser("classify", help="what each session is actually doing: busy/asking/staged/idle")
+    s.add_argument("session", nargs="?")
+    s.add_argument("--json", action="store_true")
+    s.set_defaults(fn=cmd_classify)
+
     sub.add_parser("selfcheck", help="assert the classification logic").set_defaults(fn=cmd_selfcheck)
 
     args = ap.parse_args()

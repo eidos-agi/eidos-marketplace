@@ -177,6 +177,42 @@ day; the pattern, not the instance, is the lesson.
 
 ---
 
+## 2026-07-26 — Five of six defects were one defect: matching shape instead of meaning
+
+**What happened.** Six real defects surfaced over two days. Written into a table
+for EID-1049, five of them collapsed into a single class:
+
+| what was asserted | what was actually true |
+|---|---|
+| a pane exists → the session came back | it resumed in the wrong directory |
+| the cwd is right → the session is working | it was frozen on a resume menu |
+| exit code 0 → the command did its job | `lsof` was missing from PATH, output empty |
+| a leading glyph → the agent is busy | `✻ Churned for 43s` is past tense; it had finished |
+| a registry row → a live worker | 63 of 81 rows named the dead |
+
+Every one asserts on **structure** and infers **behaviour**. The structure was
+present and the behaviour was absent, and the two are indistinguishable from
+outside unless you look at content.
+
+**Changed.** `getcontrol classify` — one classifier for what a pane is actually
+doing (`busy · asking · staged · idle · dead`), with the real captures as
+regression fixtures in `selfcheck`, including the past-tense case that fooled two
+earlier detectors. `fleet-perpetual` calls it rather than grepping for itself:
+two copies of a subtle rule is one copy too many.
+
+**Why, and the rule it produces.** Verification must read *content*, not shape.
+Before asserting a state, name the observation that would be different if the
+assertion were false — and go make that observation. "A process exists" is never
+evidence that work is happening.
+
+**What it found immediately.** Ninety seconds after existing, it found six of
+eighteen sessions holding unsent instructions from the operator — a third of the
+fleet idle while the human believed it had been asked (EID-1048). None of the
+supervision built that night had noticed; the tree's catch rate at that point was
+0 of 6 (EID-1049).
+
+---
+
 ## Still open
 
 - **Identity is the hard part of any registry.** ttys recycle, pids recycle,
