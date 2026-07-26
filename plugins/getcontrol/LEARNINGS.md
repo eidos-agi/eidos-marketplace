@@ -213,6 +213,46 @@ supervision built that night had noticed; the tree's catch rate at that point wa
 
 ---
 
+## 2026-07-26 — The antibody caught the disease
+
+**What happened.** `classify` was written to stop asserting on shape instead of
+meaning — the class of defect behind five earlier bugs. Within minutes it
+reported that **6 of 18 sessions were holding unsent instructions from the
+operator**, "a third of the fleet never heard the human". An Urgent issue was
+filed and the operator was told.
+
+It was false. Every instruction had been delivered.
+
+Claude Code renders the previous message as a **dim placeholder** in an empty
+composer. `capture-pane -p` strips escapes, making the placeholder byte-identical
+to real staged input:
+
+```
+before:            ❯ continue with EID-1019
+after typing ZZ:   ❯ ZZ                      <- the composer was EMPTY
+after backspace:   ❯ continue with EID-1019  <- placeholder returned
+```
+
+With escapes intact they are trivially distinct — the placeholder is wrapped in
+`ESC[2m`, real input is not.
+
+**Changed.** `classify` reads `capture-pane -pe` and treats a dim composer as
+idle. Both cases are fixtures in `selfcheck` with the real captured bytes.
+
+**Why this one matters most.** The tool built to prevent shape-over-meaning
+committed shape-over-meaning, one level down: it read *text after a prompt* as
+evidence of intent, when the evidence that answers the question is the styling.
+Stripping escapes did not lose formatting — it destroyed the only available
+signal.
+
+And the process failure underneath: `busy` and `idle` were tested against known
+answers. `staged` was not. **The untested state is the one that lied.** One
+keystroke would have falsified it, before the issue was filed and before the
+operator was told. Before believing a new check, feed it a case whose answer you
+already know — and the check you skip testing is the check that will be wrong.
+
+---
+
 ## Still open
 
 - **Identity is the hard part of any registry.** ttys recycle, pids recycle,

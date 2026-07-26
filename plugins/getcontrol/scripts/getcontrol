@@ -504,7 +504,9 @@ def record(u: dict, disposition: str, reason: str, linear: str | None = None) ->
 # wrong about it in production, so the fixtures in selfcheck are real captures.
 ASKING_RE = r"Enter to confirm|❯ 1\.|\(y/n\)|Do you want to"
 BUSY_RE = r"…|esc to interrupt|Running \d+ (shell )?command"
-PROMPT_RE = r"^❯\s*(.*)$"
+PROMPT_RE = r"^(?:\x1b\[[0-9;]*m)*❯\s*(.*)$"
+DIM = "\x1b[2m"
+ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 TAIL_LINES = 8
 
 
@@ -534,10 +536,19 @@ def classify(screen: str) -> tuple[str, str]:
     for ln in reversed(tail):
         m = re.match(PROMPT_RE, ln)
         if m:
-            # Text sitting in the composer, never submitted. The session looks
-            # idle and is doing nothing while whoever typed it believes it was
-            # asked. Feeding it more types on top and compounds the mess.
-            return ("staged", m.group(1).strip()) if m.group(1).strip() else ("idle", "")
+            body = m.group(1)
+            # An EMPTY composer still renders text: Claude Code shows the previous
+            # message as a DIM placeholder. Stripping escapes makes that identical
+            # to real staged input, and believing it produced a false report that a
+            # third of the fleet had never heard the operator. It had.
+            #
+            # The placeholder is wrapped in ESC[2m (dim); real input is not. So
+            # this must be read from `capture-pane -pe`, escapes intact. Reading
+            # the plain text cannot answer the question at all.
+            if DIM in ln:
+                return "idle", ""
+            plain = ANSI_RE.sub("", body).strip()
+            return ("staged", plain) if plain else ("idle", "")
     return "idle", ""
 
 
@@ -549,7 +560,7 @@ def cmd_classify(args) -> int:
         if n not in live:
             rows.append((n, "dead", ""))
             continue
-        rows.append((n, *classify(sh(["tmux", "capture-pane", "-p", "-t", n]))))
+        rows.append((n, *classify(sh(["tmux", "capture-pane", "-pe", "-t", n]))))
     if args.json:
         print(json.dumps([{"session": n, "state": s, "detail": d} for n, s, d in rows], indent=2))
     else:
@@ -1020,6 +1031,11 @@ def cmd_selfcheck(args) -> int:
         ("  ❯ 1. Resume from summary (recommended)\n    2. Resume full session as-is\n  Enter to confirm · Esc to cancel", "asking"),
         ("new task? /clear to save 200.6k tokens\n❯ merge the PR and do the cutover\n────────", "staged"),
         ("❯ \n────────\n  ⏵⏵ auto mode on (shift+tab to cycle)", "idle"),
+        # an EMPTY composer rendering the previous message as a DIM placeholder.
+        # indistinguishable from staged input once escapes are stripped — this
+        # exact confusion produced a false "a third of the fleet never heard you".
+        ("✻ Cogitated for 7m\n\x1b[39m❯ \x1b[2mcontinue with EID-1019\x1b[0m\n────", "idle"),
+        ("✻ Cogitated for 7m\n\x1b[39m❯ REALTEXT\n────", "staged"),
     ]
     for screen, want in FIX:
         got, _ = classify(screen)
