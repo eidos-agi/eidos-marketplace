@@ -503,9 +503,15 @@ def record(u: dict, disposition: str, reason: str, linear: str | None = None) ->
 # What a harness pane is actually doing. Every one of these was learned by being
 # wrong about it in production, so the fixtures in selfcheck are real captures.
 ASKING_RE = r"Enter to confirm|❯ 1\.|\(y/n\)|Do you want to"
+# A capacity block LOOKS like any other question but must never be answered:
+# options 2 and 3 spend money. It is resolved by restarting under a new login,
+# which is the only path that re-reads credentials — a running process keeps the
+# auth it started with.
+CAPACITY_RE = r"Stop and wait for limit to reset|hit your weekly limit|usage limit reached|Switch to usage credits"
 BUSY_RE = r"…|esc to interrupt|Running \d+ (shell )?command"
 PROMPT_RE = r"^(?:\x1b\[[0-9;]*m)*❯\s*(.*)$"
 DIM = "\x1b[2m"
+PROBE_CHAR = "\u2063"  # invisible separator: shows nothing if the cleanup ever fails
 ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 TAIL_LINES = 8
 
@@ -531,6 +537,8 @@ def classify(screen: str) -> tuple[str, str]:
 
     if re.search(BUSY_RE, blob):
         return "busy", ""
+    if re.search(CAPACITY_RE, blob) and re.search(ASKING_RE, blob):
+        return "capacity", "out of capacity — needs a restart under a new login, not an answer"
     if re.search(ASKING_RE, blob):
         return "asking", next((ln.strip() for ln in reversed(tail) if re.search(ASKING_RE, ln)), "")
     for ln in reversed(tail):
@@ -552,6 +560,223 @@ def classify(screen: str) -> tuple[str, str]:
     return "idle", ""
 
 
+def cmd_tree(args) -> int:
+    """The hierarchy with live state per node — the view a manager needs to
+    answer "what are my children doing" without attaching to six panes.
+
+    State comes from classify (content, not shape). Structure comes from the
+    registry. Neither alone answers the question, which is why this exists.
+    """
+    reg = {}
+    try:
+        with open(REGISTRY) as fh:
+            reg = json.load(fh)
+    except Exception:
+        print("no registry", file=sys.stderr)
+        return 1
+    live = set(sh(["tmux", "list-sessions", "-F", "#{session_name}"]).split())
+
+    state, detail = {}, {}
+    for name, e in reg.items():
+        sess = e.get("session")
+        if sess in live:
+            state[name], detail[name] = classify(sh(["tmux", "capture-pane", "-pe", "-t", sess]))
+        else:
+            state[name] = "-"
+
+    # children of nobody = roots. an orphan shows up here too, which is the point.
+    parented = {c for e in reg.values() if isinstance(e, dict) for c in (e.get("manages") or [])}
+    roots = [n for n in reg if n in live and n not in parented] if not args.node else [args.node]
+
+    GLYPH = {"busy": "▶", "idle": "·", "asking": "?", "staged": "!", "-": "×"}
+    lines, seen = [], set()
+
+    def walk(n, depth=0):
+        if n in seen:
+            lines.append("  " * depth + f"↺ {n} (cycle)")
+            return
+        seen.add(n)
+        e = reg.get(n, {})
+        iss = (e.get("linear") or {}).get("issue") or ""
+        st = state.get(n, "-")
+        d = detail.get(n, "")
+        if st == "-" and n not in live:
+            d = "not running"
+        lines.append(f"{'  ' * depth}{GLYPH.get(st, '?')} {n:<{28 - depth * 2}} {st:<7} {iss:<10} {d[:38]}")
+        for c in e.get("manages") or []:
+            walk(c, depth + 1)
+
+    for r in sorted(roots):
+        walk(r)
+
+    # anything live but not in any tree is invisible to every manager
+    loose = [n for n in reg if n in live and n not in seen]
+    print("\n".join(lines))
+    if loose:
+        print("\nnot in any tree — no manager can see these:")
+        for n in sorted(loose):
+            print(f"  {GLYPH.get(state.get(n, '-'), '?')} {n:<28} {state.get(n, '-')}")
+    needs = [n for n in seen | set(loose) if state.get(n) in ("asking", "staged")]
+    if needs:
+        print(f"\nneeds a human: {', '.join(sorted(needs))}")
+    return 1 if needs else 0
+
+
+def probe(session: str) -> tuple[bool, str]:
+    """Does this pane actually accept input? (reads_stdin, evidence)
+
+    A **wedged** session — process alive, not reading stdin — is indistinguishable
+    from a healthy idle one by looking. Same glyphs, same prompt, `has-session`
+    succeeds, `classify` says idle. It was found tonight only because a manager
+    tried to talk to it and noticed nothing happened, and because sending Enter by
+    hand did nothing either.
+
+    So this is deliberately an ACTIVE test: type a character, see whether the pane
+    changes, remove it. Passive inspection cannot answer this question — that is
+    the whole point of the state.
+
+    Harmless by construction: one printable char then one backspace, never Enter.
+    Nothing is submitted, so a live agent is not interrupted and a staged
+    instruction is left exactly as it was.
+    """
+    before = sh(["tmux", "capture-pane", "-pe", "-t", session])
+    subprocess.run([resolve("tmux"), "send-keys", "-t", session, "-l", PROBE_CHAR], capture_output=True)
+    time.sleep(1.2)
+    during = sh(["tmux", "capture-pane", "-pe", "-t", session])
+    subprocess.run([resolve("tmux"), "send-keys", "-t", session, "BSpace"], capture_output=True)
+    time.sleep(0.6)
+    after = sh(["tmux", "capture-pane", "-pe", "-t", session])
+
+    if during == before:
+        return False, "pane did not change when a character was typed — not reading stdin"
+    if after != before:
+        # It responded but did not clean up. Say so rather than claiming success:
+        # leaving a stray character in someone's composer is a real side effect.
+        return True, f"reads stdin, but the probe character may remain — check {session}"
+    return True, "reads stdin (typed and removed a character, pane returned to its prior state)"
+
+
+def attest(session: str, timeout: int = 40) -> tuple[bool, str]:
+    """Prove a session actually answers. The ONLY test that means anything.
+
+    After a restart the pane still shows the old rate-limit banner —
+    "You've hit your weekly limit · resets 7pm" — on a session that is now
+    perfectly healthy. And "✻ Worked for 7s" is past tense. Both read as live
+    state and are history. Nothing on screen can settle this; only a reply can.
+    """
+    token = "getcontrol-attest-ok"
+    subprocess.run([resolve("tmux"), "send-keys", "-t", session, f"reply with just: {token}"], capture_output=True)
+    time.sleep(2)
+    subprocess.run([resolve("tmux"), "send-keys", "-t", session, "Enter"], capture_output=True)
+    for _ in range(timeout // 5):
+        time.sleep(5)
+        screen = sh(["tmux", "capture-pane", "-p", "-S", "-40", "-t", session])
+        # the echoed prompt does not count — look for the reply after it
+        after = screen.split(f"reply with just: {token}")[-1]
+        if token in after:
+            return True, "replied"
+    return False, f"no reply within {timeout}s — did NOT come back"
+
+
+def cmd_recover(args) -> int:
+    """Restart capacity-blocked sessions under the current login.
+
+    Running out of capacity is not an outage, it is a routine event, and it
+    stalls a whole fleet at once: on 2026-07-26 six of eighteen sessions stopped
+    on the same prompt. Each holds the credentials it launched with, so a new
+    login only reaches them through a restart.
+
+    Per session: stash anything uncommitted, kill, resume with --continue, answer
+    the resume menu with FULL (standing rule — context beats saved tokens), then
+    ATTEST. One at a time, verified before moving on.
+    """
+    live = sh(["tmux", "list-sessions", "-F", "#{session_name}"]).split()
+    names = [args.session] if args.session else live
+    blocked = []
+    for n in names:
+        if n not in live:
+            continue
+        st, _ = classify(sh(["tmux", "capture-pane", "-pe", "-t", n]))
+        if st == "capacity" or (args.session and args.force):
+            blocked.append(n)
+
+    if not blocked:
+        print("no capacity-blocked sessions")
+        return 0
+    print("capacity-blocked: " + ", ".join(blocked))
+    if not args.apply:
+        print("\nDry run. Re-run with --apply --signed (queue it through hancock).")
+        return 0
+
+    verdict, note = hancock_verdict(f"getcontrol recover {len(blocked)} capacity-blocked sessions")
+    if verdict == "deny":
+        print(f"hancock denies this — {note}", file=sys.stderr)
+        return 4
+    if verdict == "sign" and not args.signed:
+        print("needs a signature — queue through hancock with --signed", file=sys.stderr)
+        return 3
+
+    reg = {}
+    try:
+        with open(REGISTRY) as fh:
+            reg = json.load(fh)
+    except Exception:
+        pass
+
+    failed = 0
+    for n in blocked:
+        entry = next((v for k, v in reg.items() if v.get("session") == n), {})
+        cwd = entry.get("cwd")
+        issue = (entry.get("linear") or {}).get("issue")
+        if not cwd or not os.path.isdir(cwd):
+            print(f"{n}: cwd unknown — refusing to restart it blind", file=sys.stderr)
+            failed += 1
+            continue
+
+        # Uncommitted work must survive. Stash, never commit — the work is
+        # mid-flight and its completeness is not ours to judge.
+        if sh(["git", "-C", cwd, "status", "--porcelain"]).strip():
+            subprocess.run(["git", "-C", cwd, "stash", "push", "-u", "-m",
+                            f"WIP before capacity restart {time.strftime('%Y-%m-%d')}"], capture_output=True)
+            print(f"{n}: stashed uncommitted work — the agent must `git stash pop`")
+
+        subprocess.run([resolve("tmux"), "kill-session", "-t", n], capture_output=True)
+        time.sleep(2)
+        cmd = [sys.argv[0], "start", cwd, "--name", n, "--command", "claude --continue", "--no-attach"]
+        if issue:
+            cmd += ["--issue", issue]
+        subprocess.run(cmd, capture_output=True)
+        time.sleep(14)
+        unpark_one(n, "full")
+        time.sleep(10)
+
+        ok, why = attest(n)
+        failed += not ok
+        print(f"{n}: {'RECOVERED' if ok else 'FAILED'} — {why}")
+        history_append({"at": int(time.time()), "event": "capacity_restart",
+                        "session": n, "ok": ok, "why": why})
+    return 1 if failed else 0
+
+
+def cmd_probe(args) -> int:
+    live = sh(["tmux", "list-sessions", "-F", "#{session_name}"]).split()
+    names = [args.session] if args.session else live
+    bad = 0
+    for n in names:
+        if n not in live:
+            print(f"{n:<28} dead")
+            continue
+        state, _ = classify(sh(["tmux", "capture-pane", "-pe", "-t", n]))
+        if state == "busy" and not args.force:
+            # Never poke a working agent to satisfy curiosity.
+            print(f"{n:<28} busy      skipped (--force to probe anyway)")
+            continue
+        ok, why = probe(n)
+        bad += not ok
+        print(f"{n:<28} {'reads' if ok else 'WEDGED':<9} {why}")
+    return 1 if bad else 0
+
+
 def cmd_classify(args) -> int:
     live = sh(["tmux", "list-sessions", "-F", "#{session_name}"]).split()
     names = [args.session] if args.session else live
@@ -560,7 +785,18 @@ def cmd_classify(args) -> int:
         if n not in live:
             rows.append((n, "dead", ""))
             continue
-        rows.append((n, *classify(sh(["tmux", "capture-pane", "-pe", "-t", n]))))
+        st, detail = classify(sh(["tmux", "capture-pane", "-pe", "-t", n]))
+        # `idle` is PROVISIONAL and says so. A healthy session waiting for work and
+        # a wedged one that stopped reading stdin are identical on screen — two
+        # independent agents concluded "wedged" from looking, and both were wrong.
+        # Only touching the pane distinguishes them.
+        if st == "idle":
+            if args.probe:
+                ok, why = probe(n)
+                st, detail = ("idle", "") if ok else ("wedged", why)
+            else:
+                detail = "unverified — idle and wedged look identical; use --probe"
+        rows.append((n, st, detail))
     if args.json:
         print(json.dumps([{"session": n, "state": s, "detail": d} for n, s, d in rows], indent=2))
     else:
@@ -1036,6 +1272,13 @@ def cmd_selfcheck(args) -> int:
         # exact confusion produced a false "a third of the fleet never heard you".
         ("✻ Cogitated for 7m\n\x1b[39m❯ \x1b[2mcontinue with EID-1019\x1b[0m\n────", "idle"),
         ("✻ Cogitated for 7m\n\x1b[39m❯ REALTEXT\n────", "staged"),
+        # capacity: looks like any other question, must NEVER be answered —
+        # options 2 and 3 spend money. Resolved by restart, not by a keypress.
+        ("   What do you want to do?\n   ❯ 1. Stop and wait for limit to reset\n"
+         "     2. Switch to usage credits\n   Enter to confirm · Esc to cancel", "capacity"),
+        # and the same banner AFTER a restart is history, not state — the session
+        # is healthy and must not be re-restarted forever.
+        ("⎿  You've hit your weekly limit · resets 7pm\n✻ Churned for 11m\n\x1b[39m❯ \n────", "idle"),
     ]
     for screen, want in FIX:
         got, _ = classify(screen)
@@ -1133,8 +1376,26 @@ def main() -> int:
     s.set_defaults(fn=cmd_explode)
 
     sub.add_parser("doctor", help="which inventory and control paths actually work here").set_defaults(fn=cmd_doctor)
+    s = sub.add_parser("tree", help="the hierarchy with live state per node")
+    s.add_argument("node", nargs="?", help="show only this subtree")
+    s.set_defaults(fn=cmd_tree)
+
+    s = sub.add_parser("recover", help="restart capacity-blocked sessions under the current login")
+    s.add_argument("session", nargs="?")
+    s.add_argument("--apply", action="store_true")
+    s.add_argument("--signed", action="store_true", help="this run is coming through hancock")
+    s.add_argument("--force", action="store_true", help="restart a named session even if not detected as blocked")
+    s.set_defaults(fn=cmd_recover)
+
+    s = sub.add_parser("probe", help="does this pane actually read input? detects wedged sessions")
+    s.add_argument("session", nargs="?")
+    s.add_argument("--force", action="store_true", help="probe even a busy session")
+    s.set_defaults(fn=cmd_probe)
+
     s = sub.add_parser("classify", help="what each session is actually doing: busy/asking/staged/idle")
     s.add_argument("session", nargs="?")
+    s.add_argument("--probe", action="store_true",
+                   help="resolve idle vs wedged by touching the pane — the ONLY way to tell them apart")
     s.add_argument("--json", action="store_true")
     s.set_defaults(fn=cmd_classify)
 

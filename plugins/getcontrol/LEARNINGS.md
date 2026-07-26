@@ -253,6 +253,51 @@ already know — and the check you skip testing is the check that will be wrong.
 
 ---
 
+## 2026-07-26 — Running out of capacity stalls the whole fleet, and the banner outlives the block
+
+**What happened.** The account hit its weekly limit. **Six of eighteen sessions**
+stopped at once on the same prompt:
+
+```
+What do you want to do?
+❯ 1. Stop and wait for limit to reset
+  2. Switch to usage credits
+  3. Switch to Team plan
+```
+
+Every one looked idle. None was. And a new login in a fresh terminal did nothing
+for them: **a running process keeps the credentials it started with**, so the only
+path that re-reads them is a restart.
+
+**The trap that nearly made this unfixable.** After a successful restart the pane
+still shows `You've hit your weekly limit · resets 7pm` — in scrollback, from
+before. On a session that is now perfectly healthy. Read as live state, it says
+the restart failed. Combined with `✻ Worked for 7s` (past tense, reads as
+activity), *nothing on screen can settle whether the session came back*.
+
+Only a reply can. `attest()` sends a token and waits to see it come back, and that
+is the only step in the recipe that proves anything.
+
+**Changed.** `capacity` is its own state, distinct from `asking` — because it must
+never be *answered* (options 2 and 3 spend money) and must instead be *restarted*.
+`getcontrol recover` runs the recipe, hancock-gated, one session at a time:
+
+    stash uncommitted work  (stash, not commit — completeness is not ours to judge)
+    kill-session
+    start --command "claude --continue"
+    unpark --mode full      (standing rule: context beats saved tokens)
+    attest                  (the only proof)
+
+Both the live prompt and the post-restart banner are regression fixtures. The
+second matters as much as the first: without it, recovery would re-restart healthy
+sessions forever.
+
+**Why it earns its place.** Capacity exhaustion is routine, not exceptional, and
+it takes a fleet down all at once with a symptom that looks like idleness. Proven
+by hand on four sessions before being written down.
+
+---
+
 ## Still open
 
 - **Identity is the hard part of any registry.** ttys recycle, pids recycle,
