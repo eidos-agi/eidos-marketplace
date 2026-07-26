@@ -138,6 +138,45 @@ control, and pretending otherwise would be worse than saying so.
 
 ---
 
+## 2026-07-25 — The agent is in its own survey
+
+**What happened.** Checking which tty this process runs on returned `ttys017` — a
+Claude pane sitting in the survey alongside the others, indistinguishable from a
+pull target. `control --pull --all` would have killed the agent performing the
+sweep, mid-sweep, leaving the work half-done and nobody alive to report it.
+
+**Changed.** `self_tty()` walks the parent chain (tool subprocesses are detached,
+so `getppid()` is not enough — the controlling terminal is several ancestors up).
+`pull_blocked()` and `reapable()` both refuse it; `survey` marks it.
+
+**Why.** A tool that acts on processes is itself a process. Nothing in the design
+had accounted for the operator being inside the population it operates on.
+
+---
+
+## 2026-07-25 — PATH is not the same everywhere the tool runs
+
+**What happened.** The same pull that worked by hand failed under hancock, twice,
+with `cwd unknown ('?')`. Direct probe: `lsof_rc=127`. hancock runs with a minimal
+PATH that excludes `/usr/sbin`, so `lsof` did not exist, `sh()` caught the
+exception and returned `""`, and every pane's cwd became unknown. **This — not a
+race, not a timeout — is what resumed a live Claude session in the wrong
+directory.**
+
+**Changed.** Binaries resolve through `shutil.which` with absolute fallbacks
+(`/usr/sbin/lsof`, `/bin/ps`, `/opt/homebrew/bin/tmux`, …). A missing tool is
+recorded in `MISSING` and `pull_blocked()` refuses outright: *"cannot see the
+machine properly — refusing to act blind."* Also: a stale pid no longer poisons the
+batched `lsof` (per-pid retry), proven by a unit check with a bogus pid.
+
+**Why, and why it matters beyond the pull.** The same failure silently breaks
+`reap`, `status`, and any launchd or cron run — every one of them reading empty
+data and acting on it. A tool that destroys things must treat "I cannot see" as a
+hard stop, never as "nothing there". This is the third silent-fallback bug in one
+day; the pattern, not the instance, is the lesson.
+
+---
+
 ## Still open
 
 - **Identity is the hard part of any registry.** ttys recycle, pids recycle,

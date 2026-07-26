@@ -27,10 +27,32 @@ SHELLS = {"login", "zsh", "-zsh", "bash", "-bash", "sh", "-sh", "fish", "-fish",
 HARNESSES = ("claude", "codex", "grok", "gemini", "aider", "cursor-agent")
 
 
+# Never rely on PATH for system binaries. hancock, launchd and cron all run with a
+# minimal PATH in which /usr/sbin is absent, so `lsof` vanishes, sh() returned "",
+# and every pane's cwd silently became unknown — which is how a live Claude session
+# got resumed in the wrong directory. Missing tools must be loud, not empty.
+BIN_PATHS = {
+    "lsof": ["/usr/sbin/lsof", "/usr/bin/lsof"],
+    "ps": ["/bin/ps"],
+    "kill": ["/bin/kill"],
+    "tmux": ["/opt/homebrew/bin/tmux", "/usr/local/bin/tmux"],
+    "osascript": ["/usr/bin/osascript"],
+}
+MISSING: set[str] = set()
+
+
+def resolve(name: str) -> str:
+    found = shutil.which(name) or next((p for p in BIN_PATHS.get(name, []) if os.path.exists(p)), None)
+    if not found:
+        MISSING.add(name)
+    return found or name
+
+
 def sh(cmd: list[str], timeout: int = 10) -> str:
     try:
-        return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout).stdout
+        return subprocess.run([resolve(cmd[0]), *cmd[1:]], capture_output=True, text=True, timeout=timeout).stdout
     except Exception:
+        MISSING.add(cmd[0])
         return ""
 
 
@@ -77,17 +99,31 @@ def foreground(pid: int, procs: dict, kids: dict) -> int:
     return pid
 
 
-def cwds(pids: list[int]) -> dict[int, str]:
-    """One batched lsof for every pane's cwd. Missing is fine, not fatal."""
-    if not pids:
-        return {}
-    out = sh(["lsof", "-a", "-d", "cwd", "-Fpn", "-p", ",".join(str(p) for p in pids)], timeout=25)
+def _parse_lsof(out: str) -> dict[int, str]:
     res, cur = {}, None
     for line in out.splitlines():
         if line.startswith("p"):
             cur = int(line[1:])
         elif line.startswith("n") and cur:
             res.setdefault(cur, line[1:])
+    return res
+
+
+def cwds(pids: list[int]) -> dict[int, str]:
+    """Every pane's cwd, batched — then individually for whatever the batch missed.
+
+    The retry is not politeness. A single stale pid in `lsof -p a,b,c` (one that
+    exited between the `ps` and the `lsof`, a constant race on a busy machine)
+    makes the WHOLE batch return nothing, so every cwd silently becomes unknown.
+    That is what destroyed a live Claude session: cwd unknown -> tmux -c fell back
+    to $HOME -> the wrong conversation was resumed. Cheap: lsof is ~30ms.
+    """
+    if not pids:
+        return {}
+    res = _parse_lsof(sh(["lsof", "-a", "-d", "cwd", "-Fpn", "-p", ",".join(str(p) for p in pids)], timeout=25))
+    for pid in pids:
+        if pid not in res:
+            res.update(_parse_lsof(sh(["lsof", "-a", "-d", "cwd", "-Fpn", "-p", str(pid)], timeout=5)))
     return res
 
 
@@ -100,6 +136,26 @@ def starts(pids: list[int]) -> dict[int, str]:
         if len(parts) == 2:
             res[int(parts[0])] = parts[1].strip()
     return res
+
+
+def self_tty() -> str:
+    """The tty this process is running on, found by walking up the parent chain.
+
+    An agent driving getcontrol is itself a pane in the survey. Without this it
+    will happily kill the terminal it is running in — mid-sweep, leaving the work
+    half-done and nobody alive to report it. Direct getppid() is not enough: tool
+    subprocesses run detached (tty '??'), so the controlling terminal is several
+    ancestors up.
+    """
+    pid = os.getpid()
+    for _ in range(12):
+        out = sh(["ps", "-o", "ppid=,tty=", "-p", str(pid)]).split()
+        if len(out) < 2:
+            return ""
+        if out[1] != "??":
+            return out[1]
+        pid = int(out[0])
+    return ""
 
 
 def idle_hours(tty: str) -> float:
@@ -209,7 +265,7 @@ def survey() -> list[dict]:
         if p["tty"] != "??":
             tty_pids.setdefault(p["tty"], []).append(p["pid"])
 
-    tm, reg = tmux_panes(), emux_registry()
+    tm, reg, me = tmux_panes(), emux_registry(), self_tty()
     units = []
     for tty, pids in sorted(tty_pids.items()):
         pidset = set(pids)
@@ -250,6 +306,7 @@ def survey() -> list[dict]:
             if u["tmux"]
             else f"proc:{u['pid']}@{born.get(u['pid'], '?')}"
         )
+        u["self"] = u["tty"] == me
         u["idle_h"] = idle_hours(u["tty"])
         u["account"] = led.get(u["key"])
         u["accounted"] = bool(u["governed"] or u["account"])
@@ -449,7 +506,9 @@ def reapable(u: dict, hours: float) -> bool:
     tool — closing 12 husks beat every registry feature in it — so it is also the
     one that most needs to be unable to surprise anyone.
     """
-    return bool(u["shell"] and not u["harness"] and not u["tmux"] and u["idle_h"] >= hours)
+    return bool(
+        u["shell"] and not u["harness"] and not u["tmux"] and not u.get("self") and u["idle_h"] >= hours
+    )
 
 
 def cmd_reap(args) -> int:
@@ -569,6 +628,12 @@ def pull_blocked(u: dict, siblings: int = 1, signed: bool = False) -> str | None
     Shared by the dry run and the real run on purpose: a dry run that promises
     something the real run would refuse is worse than no dry run at all.
     """
+    if u.get("self"):
+        return f"{u['tty']} is the pane you are running in — pulling it would kill the agent doing the pulling"
+
+    if MISSING:
+        return f"{u['tty']}: cannot see the machine properly — missing {sorted(MISSING)} on PATH; refusing to act blind"
+
     # `tmux -c <bad path>` does not fail — it silently falls back to $HOME, so a
     # resumed agent lands in the wrong repo and continues the wrong conversation.
     if not u["cwd"] or not os.path.isdir(u["cwd"]):
@@ -825,6 +890,8 @@ def cmd_selfcheck(args) -> int:
         return {**base, **kw}
 
     assert reapable(pane(), 4) is True
+    assert reapable(pane(self=True), 4) is False, "never reap the pane we are running in"
+    assert pull_blocked({"self": True, "tty": "ttys9"}), "never pull the pane we are running in"
     assert reapable(pane(idle_h=1.0), 4) is False, "recently used shell is not residue"
     assert reapable(pane(harness="claude"), 4) is False, "never reap a pane with work in it"
     assert reapable(pane(tmux={"session": "x"}), 4) is False, "tmux panes are not husks"
