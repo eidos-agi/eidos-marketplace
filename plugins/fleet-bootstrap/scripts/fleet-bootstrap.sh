@@ -130,6 +130,23 @@ restart_last()  { [ -f "$STATE/restarts.$1" ] && cut -d' ' -f2 "$STATE/restarts.
 record_restart() { echo "$2 $(date +%s)" > "$STATE/restarts.$1"; }
 clear_restarts() { rm -f "$STATE/restarts.$1"; }
 
+# ---- state streaks -----------------------------------------------------------------
+# Some states are only worth acting on once they PERSIST. A seat that has just started is
+# briefly UNREGISTERED while Remote Control registers; restarting on the first sighting
+# would kill healthy seats mid-handshake and could loop forever. Count consecutive
+# observations instead, and act only when the state has proven itself.
+streak_bump() {
+  _f="$STATE/streak.$1"
+  if [ "$(cut -d' ' -f1 "$_f" 2>/dev/null)" = "$2" ]; then
+    _n=$(( $(cut -d' ' -f2 "$_f" 2>/dev/null || echo 0) + 1 ))
+  else
+    _n=1
+  fi
+  echo "$2 $_n" > "$_f"
+  echo "$_n"
+}
+streak_clear() { rm -f "$STATE/streak.$1"; }
+
 # may_restart — is starting this seat allowed right now? Echoes the reason when not.
 may_restart() {
   n=$(restart_count "$1"); last=$(restart_last "$1")
@@ -568,13 +585,38 @@ tend_seat() {
       fi
       return 1
       ;;
+    UNREGISTERED)
+      # Running, healthy by every process check, and invisible to the Claude app because
+      # Remote Control never registered. Observed for hours on HOSTKEY after a seat started
+      # while logged out. A restart is the only fix — but registration takes a moment, so
+      # act only once the state has persisted, or a fresh seat gets killed mid-handshake.
+      n=$(streak_bump "$seat" UNREGISTERED)
+      if [ "$n" -lt 3 ]; then
+        emit_event "$state" waiting
+        return 0
+      fi
+      if ! reason=$(may_restart "$seat"); then
+        log "$seat: UNREGISTERED for ${n} checks but $reason"
+        emit_event "$state" held
+        return 0
+      fi
+      k=$(restart_count "$seat")
+      log "$seat: UNREGISTERED for ${n} checks — no Remote Control; restarting (attempt $((k + 1)))"
+      emit_event "$state" restart
+      case "$kind" in claude) start_vp ;; grok) start_grok ;; esac
+      if alive "$seat" "$kind"; then clear_restarts "$seat"; else record_restart "$seat" "$((k + 1))"; fi
+      streak_clear "$seat"
+      return 1
+      ;;
     BLOCKED_HUMAN)
       log "$seat: UP BUT BLOCKED — $P_BLOCKED (a restart will not fix this)"
       emit_event "$state" none
+      streak_clear "$seat"
       ;;
     *)
       emit_event "$state" none
       clear_restarts "$seat"
+      streak_clear "$seat"
       ;;
   esac
   return 0
@@ -606,8 +648,15 @@ cmd_install() {
   trust_workdir
   # Copy the runner to a stable path so the supervisor survives plugin updates,
   # reinstalls, and the plugin directory moving.
-  cp "$0" "$RUNNER"
-  chmod +x "$RUNNER"
+  #
+  # Write-then-rename, because `cp` is NOT atomic and the supervisor fires every 60s: a
+  # tick that lands mid-copy executes a half-written script. That is not hypothetical —
+  # `line 372: MANAGER: unbound variable` appears once in the Mac's log, naming a variable
+  # that exists in no version of this file. rename(2) is atomic on the same filesystem, so
+  # a tick sees either the old runner or the new one, never a torn one.
+  cp "$0" "$RUNNER.new"
+  chmod +x "$RUNNER.new"
+  mv -f "$RUNNER.new" "$RUNNER"
 
   # Plain KEY=VALUE, because this file is parsed and must never be shell.
   cat > "$STATE/config" <<EOF

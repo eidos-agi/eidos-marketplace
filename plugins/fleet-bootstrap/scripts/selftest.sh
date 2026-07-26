@@ -9,7 +9,20 @@
 # Run: sh scripts/selftest.sh
 set -u
 
-STATE=$(mktemp -d)
+# A sandbox, or nothing. `mktemp -d` uses /tmp, which is UNWRITABLE on HOSTKEY — it
+# returned empty there, so FLEET_BOOTSTRAP_STATE was empty, the sourced script fell back
+# to its default, and this "isolated" test was quietly running against the live state dir:
+# writing restart counters, hash stamps and prompt files into production. Fall back to a
+# path we know is writable, and refuse to run at all rather than touch the real thing.
+STATE=$(mktemp -d 2>/dev/null || true)
+if [ -z "$STATE" ] || [ ! -d "$STATE" ]; then
+  STATE="$HOME/.cache/fleet-bootstrap-selftest.$$"
+  mkdir -p "$STATE" || { echo "REFUSING: no writable sandbox for the selftest"; exit 1; }
+fi
+case "$STATE" in
+  "$HOME/.local/share/fleet-bootstrap"*)
+    echo "REFUSING: sandbox resolved to the live state dir ($STATE)"; exit 1 ;;
+esac
 export FLEET_BOOTSTRAP_STATE="$STATE"
 pass=0; fail=0
 
@@ -75,7 +88,16 @@ is "grok without a bridge is READY" "$(derive_state)" READY
 echo "event records survive hostile values"
 # Regression: a process name with a quote produced invalid JSON and would have silently
 # corrupted the research corpus. Found 2026-07-25, 20 minutes after the corpus shipped.
-EVENTS="$STATE/events.jsonl"; : > "$EVENTS"
+# Point the event stream at a file that provably is not the real corpus, and refuse to run
+# if it ever resolves under $HOME. A synthetic record in the production stream is not just
+# noise — the corpus IS this phase's deliverable, and a fake seat in it would mislead
+# exactly the reader it exists for. One leaked onto HOSTKEY before this guard existed.
+EVENTS="$STATE/selftest-events.jsonl"
+case "$EVENTS" in
+  "$HOME/.local/share/fleet-bootstrap"*)
+    echo "REFUSING: selftest would write into the live corpus ($EVENTS)"; exit 1 ;;
+esac
+: > "$EVENTS"
 P_SEAT='seat'; P_KIND=claude; P_SESSION=true; P_PSTATE='Ss+'; P_BRIDGE=true; P_STATUS=idle
 P_PROC='cla"ude\x'; P_BLOCKED='he said "no" \ then left'
 emit_event READY none
@@ -177,6 +199,18 @@ n1=$(install_prompt "$PD/spam.md" "$SRC" 2>&1 | grep -c 'left alone' || true)
 n2=$(install_prompt "$PD/spam.md" "$SRC" 2>&1 | grep -c 'left alone' || true)
 is "warns on first sight"        "$n1" 1
 is "silent on every tick after"  "$n2" 0
+
+echo "streaks: act only on a state that persists"
+# A seat is briefly UNREGISTERED while Remote Control registers. Restarting on first
+# sighting would kill healthy seats mid-handshake, so the state must prove itself.
+streak_clear s1
+is "first sighting counts 1"  "$(streak_bump s1 UNREGISTERED)" 1
+is "second counts 2"          "$(streak_bump s1 UNREGISTERED)" 2
+is "third counts 3 (acts)"    "$(streak_bump s1 UNREGISTERED)" 3
+is "a different state resets" "$(streak_bump s1 READY)" 1
+streak_clear s1
+is "clearing resets"          "$(streak_bump s1 UNREGISTERED)" 1
+streak_clear s1
 
 echo
 echo "$pass passed, $fail failed"
