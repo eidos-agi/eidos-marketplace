@@ -209,6 +209,13 @@
       "category": "Productivity"
     },
     {
+      "category": "agent-tools",
+      "description": "Take stock of every terminal window, tab, and split on this Mac, then walk each one into tmux, emux, and a Linear issue so an agent can actually reach it.",
+      "name": "getcontrol",
+      "source": "./plugins/getcontrol",
+      "version": "0.1.0"
+    },
+    {
       "name": "ike",
       "source": {
         "source": "local",

@@ -814,6 +814,41 @@
       }
     },
     {
+      "category": "agent-tools",
+      "description": "Take stock of every terminal window, tab, and split on this Mac, then walk each one into tmux, emux, and a Linear issue so an agent can actually reach it.",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/getcontrol",
+      "license": "MIT",
+      "name": "getcontrol",
+      "source": "./plugins/getcontrol",
+      "tags": [
+        "terminal",
+        "tmux",
+        "emux",
+        "iterm2",
+        "session-control",
+        "fleet",
+        "linear",
+        "agent-native"
+      ],
+      "version": "0.1.0",
+      "x-eidos": {
+        "audit": {
+          "audit_date": "2026-07-25",
+          "audit_doc": "AUDITS/getcontrol.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
+        "kind": {
+          "signals": [
+            "single_capability",
+            "cli_first"
+          ],
+          "type": "tool"
+        }
+      }
+    },
+    {
       "category": "productivity",
       "description": "Task and project management \u2014 create tasks, track milestones, manage documents, and execute within visionlog contracts",
       "homepage": "https://github.com/eidos-agi/ike.md",

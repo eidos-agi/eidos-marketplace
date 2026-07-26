@@ -1,0 +1,23 @@
+{
+  "name": "getcontrol",
+  "version": "0.1.0",
+  "description": "Take stock of every terminal window, tab, and split on this Mac, then walk each one into tmux, emux, and a Linear issue so an agent can actually reach it.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "hello@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/getcontrol",
+  "repository": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/getcontrol",
+  "license": "MIT",
+  "keywords": [
+    "terminal",
+    "tmux",
+    "emux",
+    "iterm2",
+    "session-control",
+    "fleet",
+    "linear",
+    "eidos-agi"
+  ]
+}

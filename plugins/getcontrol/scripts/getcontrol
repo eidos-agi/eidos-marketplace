@@ -1,0 +1,920 @@
+#!/usr/bin/env python3
+"""getcontrol — take stock of every terminal pane on this Mac and say, per pane,
+what it would take to get it under control (tmux + emux + a Linear issue).
+
+Facts only. The judgement calls — which Linear issue a pane belongs to, whether
+a busy pane may be closed — belong to the agent reading this output, not here.
+
+stdlib only, no install step.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import shlex
+import shutil
+import subprocess
+import sys
+import time
+
+REGISTRY = os.path.expanduser("~/.config/emux/registry.json")
+LEDGER = os.path.expanduser("~/.config/getcontrol/ledger.json")
+HISTORY = os.path.expanduser("~/.config/getcontrol/history.jsonl")
+SHELLS = {"login", "zsh", "-zsh", "bash", "-bash", "sh", "-sh", "fish", "-fish", "tmux", "screen"}
+HARNESSES = ("claude", "codex", "grok", "gemini", "aider", "cursor-agent")
+
+
+def sh(cmd: list[str], timeout: int = 10) -> str:
+    try:
+        return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout).stdout
+    except Exception:
+        return ""
+
+
+# ---------------------------------------------------------------- inventory
+
+
+def ps_table() -> dict[int, dict]:
+    procs = {}
+    for line in sh(["ps", "-axo", "pid=,ppid=,tty=,stat=,command="]).splitlines():
+        m = re.match(r"\s*(\d+)\s+(\d+)\s+(\S+)\s+(\S+)\s+(.*)", line)
+        if not m:
+            continue
+        pid, ppid, tty, stat, cmd = m.groups()
+        procs[int(pid)] = {
+            "pid": int(pid),
+            "ppid": int(ppid),
+            "tty": tty,
+            "stat": stat,
+            "cmd": cmd,
+        }
+    return procs
+
+
+def basename(cmd: str) -> str:
+    first = cmd.strip().split()[0] if cmd.strip() else ""
+    return os.path.basename(first)
+
+
+def foreground(pid: int, procs: dict, kids: dict) -> int:
+    """Descend the tty's process chain through shell wrappers to the real work.
+
+    Stops at the first non-shell process, or where the chain forks — a claude
+    with ten MCP children is the unit, not one of the children.
+    """
+    seen = set()
+    while pid not in seen:
+        seen.add(pid)
+        if basename(procs[pid]["cmd"]) not in SHELLS:
+            return pid
+        same = [k for k in kids.get(pid, []) if procs[k]["tty"] == procs[pid]["tty"]]
+        if len(same) != 1:
+            return pid
+        pid = same[0]
+    return pid
+
+
+def cwds(pids: list[int]) -> dict[int, str]:
+    """One batched lsof for every pane's cwd. Missing is fine, not fatal."""
+    if not pids:
+        return {}
+    out = sh(["lsof", "-a", "-d", "cwd", "-Fpn", "-p", ",".join(str(p) for p in pids)], timeout=25)
+    res, cur = {}, None
+    for line in out.splitlines():
+        if line.startswith("p"):
+            cur = int(line[1:])
+        elif line.startswith("n") and cur:
+            res.setdefault(cur, line[1:])
+    return res
+
+
+def starts(pids: list[int]) -> dict[int, str]:
+    """Process start times. pid alone is not an identity — macOS recycles them —
+    so a pane's key is pid + the moment it started."""
+    res = {}
+    for line in sh(["ps", "-o", "pid=,lstart=", "-p", ",".join(str(p) for p in pids)]).splitlines():
+        parts = line.split(None, 1)
+        if len(parts) == 2:
+            res[int(parts[0])] = parts[1].strip()
+    return res
+
+
+def idle_hours(tty: str) -> float:
+    """Hours since anything was written to this pane. The tty device mtime is the
+    cheapest honest activity signal there is — no screen scraping, no polling."""
+    try:
+        return (time.time() - os.stat("/dev/" + tty).st_mtime) / 3600
+    except OSError:
+        return -1.0
+
+
+def history_append(event: dict) -> None:
+    os.makedirs(os.path.dirname(HISTORY), exist_ok=True)
+    with open(HISTORY, "a") as fh:
+        fh.write(json.dumps(event, sort_keys=True) + "\n")
+
+
+def ledger_load() -> dict[str, dict]:
+    try:
+        with open(LEDGER) as fh:
+            return json.load(fh)
+    except Exception:
+        return {}
+
+
+def ledger_save(led: dict[str, dict]) -> None:
+    os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
+    tmp = LEDGER + ".tmp"
+    with open(tmp, "w") as fh:
+        json.dump(led, fh, indent=2, sort_keys=True)
+    os.replace(tmp, LEDGER)
+
+
+def tmux_panes() -> dict[str, dict]:
+    fmt = "#{pane_tty}\t#{session_name}\t#{window_index}.#{pane_index}\t#{pane_current_path}\t#{session_created}"
+    res = {}
+    for line in sh(["tmux", "list-panes", "-a", "-F", fmt]).splitlines():
+        parts = line.split("\t")
+        if len(parts) == 5:
+            res[os.path.basename(parts[0])] = {
+                "session": parts[1],
+                "pane": parts[2],
+                "path": parts[3],
+                "created": parts[4],
+            }
+    return res
+
+
+def emux_registry() -> dict[str, dict]:
+    try:
+        with open(REGISTRY) as fh:
+            reg = json.load(fh)
+    except Exception:
+        return {}
+    # keyed by friendly name; index by the tmux session it points at
+    return {v["session"]: dict(v, name=k) for k, v in reg.items() if isinstance(v, dict) and v.get("session")}
+
+
+def owner_app(root_ppid: int, procs: dict) -> str:
+    cmd = procs.get(root_ppid, {}).get("cmd", "")
+    low = cmd.lower()
+    for needle, name in (
+        ("iterm", "iTerm2"),
+        ("tmux", "tmux"),
+        ("terminal.app", "Terminal"),
+        ("ghostty", "Ghostty"),
+        ("wezterm", "WezTerm"),
+        ("alacritty", "Alacritty"),
+        ("kitty", "kitty"),
+        ("sshd", "sshd"),
+        ("code helper", "VSCode"),
+        ("warp", "Warp"),
+    ):
+        if needle in low:
+            return name
+    return basename(cmd) or "unknown"
+
+
+# ---------------------------------------------------------------- judgement
+
+
+def strategy(unit: dict) -> tuple[str, str]:
+    """(next_step, why) — how this pane gets under control. Pure; see selfcheck."""
+    if unit["tmux"] and unit["emux"]:
+        if unit["linear"]:
+            return "ok", "tmux + emux + Linear"
+        return "link", "registered but unmanaged — no Linear issue behind the work"
+    if unit["tmux"]:
+        return "register", "in tmux but invisible to emux"
+    if unit["harness"] in HARNESSES:
+        return "resume", f"{unit['harness']} outside tmux — relaunch it under tmux and close this pane"
+    if unit["harness"] == "ssh":
+        return "redial", "raw ssh — re-dial the same host inside tmux"
+    if unit["shell"]:
+        return "relaunch", "idle shell — start a tmux session in the same cwd, close this pane"
+    return "hold", "busy foreground process that cannot be moved without killing it"
+
+
+def survey() -> list[dict]:
+    procs = ps_table()
+    kids: dict[int, list[int]] = {}
+    for p in procs.values():
+        kids.setdefault(p["ppid"], []).append(p["pid"])
+
+    tty_pids: dict[str, list[int]] = {}
+    for p in procs.values():
+        if p["tty"] != "??":
+            tty_pids.setdefault(p["tty"], []).append(p["pid"])
+
+    tm, reg = tmux_panes(), emux_registry()
+    units = []
+    for tty, pids in sorted(tty_pids.items()):
+        pidset = set(pids)
+        roots = [p for p in pids if procs[p]["ppid"] not in pidset]
+        for root in roots:
+            pid = foreground(root, procs, kids)
+            cmd = procs[pid]["cmd"]
+            base = basename(cmd)
+            pane = tm.get(tty)
+            entry = reg.get(pane["session"]) if pane else None
+            units.append(
+                {
+                    "tty": tty,
+                    "pid": pid,
+                    "app": owner_app(procs[root]["ppid"], procs),
+                    "command": cmd[:200],
+                    "harness": base if base in HARNESSES or base == "ssh" else "",
+                    "shell": base in SHELLS,
+                    "tmux": pane,
+                    "emux": entry["name"] if entry else None,
+                    "linear": (entry or {}).get("linear"),
+                    "cwd": pane["path"] if pane else None,
+                }
+            )
+
+    missing = [u["pid"] for u in units if not u["cwd"]]
+    found = cwds(missing)
+    born = starts([u["pid"] for u in units])
+    led = ledger_load()
+    for u in units:
+        u["cwd"] = u["cwd"] or found.get(u["pid"], "?")
+        u["next"], u["why"] = strategy(u)
+        u["governed"] = u["next"] == "ok"
+        # a tmux session keeps its name across restarts; a raw pane is only ever
+        # this process, so the key must die with it
+        u["key"] = (
+            f"tmux:{u['tmux']['session']}@{u['tmux']['created']}"
+            if u["tmux"]
+            else f"proc:{u['pid']}@{born.get(u['pid'], '?')}"
+        )
+        u["idle_h"] = idle_hours(u["tty"])
+        u["account"] = led.get(u["key"])
+        u["accounted"] = bool(u["governed"] or u["account"])
+    return units
+
+
+# ---------------------------------------------------------------- rendering
+
+
+def short(path: str, n: int = 34) -> str:
+    path = (path or "?").replace(os.path.expanduser("~"), "~")
+    return path if len(path) <= n else "…" + path[-(n - 1) :]
+
+
+def acct(u: dict) -> str:
+    if u["governed"]:
+        return "emux"
+    return u["account"]["disposition"] if u["account"] else "-"
+
+
+def render(units: list[dict]) -> str:
+    rows = [("TTY", "APP", "TMUX", "EMUX", "LINEAR", "RUNNING", "IDLE", "CWD", "ACCT", "NEXT")]
+    for u in units:
+        rows.append(
+            (
+                u["tty"],
+                u["app"],
+                u["tmux"]["session"] if u["tmux"] else "-",
+                u["emux"] or "-",
+                (u["linear"] or {}).get("issue") or ("project" if u["linear"] else "-"),
+                u["harness"] or basename(u["command"]) or "-",
+                f"{u['idle_h']:.1f}h" if u["idle_h"] >= 0 else "?",
+                short(u["cwd"]),
+                acct(u),
+                "-" if u["accounted"] else u["next"],
+            )
+        )
+    w = [max(len(r[i]) for r in rows) for i in range(len(rows[0]))]
+    out = ["  ".join(c.ljust(w[i]) for i, c in enumerate(r)).rstrip() for r in rows]
+    out.append("")
+    out.append(tally(units))
+    return "\n".join(out)
+
+
+def tally(units: list[dict]) -> str:
+    gov = sum(1 for u in units if u["governed"])
+    held = sum(1 for u in units if not u["governed"] and u["account"])
+    loose = [u for u in units if not u["accounted"]]
+    line = f"{len(units)} panes: {gov} governed, {held} accounted for by hand, {len(loose)} unaccounted."
+    if loose:
+        line += "\nEvery pane needs one of the two: adopt it, or account for it with a reason."
+    return line
+
+
+# ---------------------------------------------------------------- actions
+
+
+def menu_click(path: list[str], apply: bool) -> str:
+    """Drive iTerm2 through System Events. Direct iTerm2 AppleScript hangs on
+    busy installs (-1712); UI scripting keeps working, so that is the path."""
+    if not apply:
+        return "dry-run: would click " + " > ".join(path)
+    inner = 'menu bar item "%s" of menu bar 1' % path[0]
+    for item in path[1:-1]:
+        inner = 'menu item "%s" of menu 1 of %s' % (item, inner)
+    script = (
+        'tell application "iTerm2" to activate\n'
+        'with timeout of 15 seconds\n'
+        'tell application "System Events" to tell process "iTerm2"\n'
+        f' click menu item "{path[-1]}" of menu 1 of {inner}\n'
+        "end tell\nend timeout"
+    )
+    p = subprocess.run(["osascript", "-e", script], capture_output=True, text=True, timeout=30)
+    return p.stderr.strip() or "clicked " + " > ".join(path)
+
+
+def cmd_explode(args) -> int:
+    """Split iTerm2 tabs/splits out into standalone windows.
+
+    Only worth doing for panes that cannot be adopted into tmux — once a pane is
+    in tmux the window it lives in stops mattering.
+    """
+    path = ["Session", "Move Session", "Move Session to Window"]
+    for i in range(args.times):
+        print(f"[{i + 1}/{args.times}] {menu_click(path, args.apply)}")
+        if args.apply:
+            subprocess.run(
+                ["osascript", "-e", 'tell application "System Events" to key code 30 using command down'],
+                capture_output=True,
+            )  # cmd-] : next pane
+    if not args.apply:
+        print("\nNothing moved. Re-run with --apply.")
+    return 0
+
+
+def cmd_adopt(args) -> int:
+    units = {u["tty"]: u for u in survey()}
+    u = units.get(args.tty) or units.get("ttys" + args.tty.lstrip("ttys"))
+    if not u:
+        print(f"no pane on {args.tty}. Run: getcontrol survey", file=sys.stderr)
+        return 1
+    if not (args.linear_issue or args.linear_project or args.unmanaged_ok):
+        print(
+            f"refusing to adopt {u['tty']} with no Linear issue behind it.\n"
+            f"  running: {u['harness'] or basename(u['command'])} in {u['cwd']}\n"
+            "  find or create the issue, then pass --linear-issue ID "
+            "(or --unmanaged-ok to record it as deliberately unmanaged).",
+            file=sys.stderr,
+        )
+        return 2
+    stem = os.path.basename(u["cwd"])
+    if u["next"] == "redial":  # cwd is the local dir you dialled from — name it for the host
+        hosts = [t for t in u["command"].split()[1:] if not t.startswith("-")]
+        stem = "ssh-" + (hosts[0] if hosts else "remote")
+    # keep the name it already answers to, or re-registering forks a second entry
+    name = args.name or u["emux"] or re.sub(r"[^a-z0-9-]+", "-", stem.lower()) or "adopted"
+    linear = ["--linear-issue", args.linear_issue] if args.linear_issue else []
+    linear += ["--linear-project", args.linear_project] if args.linear_project else []
+    register = ["emux", "register", name, name, *linear]
+
+    # `emux new` is the interactive mission TUI — there is no non-interactive spawn,
+    # so create the session detached with tmux and hand it straight to emux.
+    if u["next"] in ("register", "link", "ok"):
+        plan = [["emux", "register", name, u["tmux"]["session"], *linear]]
+    elif u["next"] == "resume":
+        cont = f"{u['harness']} --continue"  # resumes the newest session in that cwd
+        plan = [
+            ["tmux", "new-session", "-d", "-s", name, "-c", u["cwd"], cont],
+            register,
+            ["#", "verify:", f"tmux capture-pane -p -t {name}", "— then close", u["tty"],
+             "(two live copies of one session conflict)"],
+        ]
+    elif u["next"] == "redial":
+        plan = [
+            ["tmux", "new-session", "-d", "-s", name, u["command"]],
+            register,
+            ["#", "verify, then close", u["tty"]],
+        ]
+    elif u["next"] == "relaunch":
+        plan = [
+            ["tmux", "new-session", "-d", "-s", name, "-c", u["cwd"]],
+            register,
+            ["#", "verify, then close", u["tty"]],
+        ]
+    else:
+        print(f"hold: {u['why']}\n  {u['command'][:120]}\n  don't move it — explode it to its own window instead.")
+        return 3
+
+    for step in plan:
+        if step[0] == "#":
+            print(" ".join(step))
+            continue
+        print(" ".join(shlex.quote(s) for s in step), flush=True)
+        if args.apply:
+            r = subprocess.run(step)
+            if r.returncode:
+                print(f"  ^ failed (rc={r.returncode}) — stopping here", file=sys.stderr)
+                return 4
+    if not args.apply:
+        print("\nDry run. Re-run with --apply, or run the lines yourself.")
+        return 0
+    if u["next"] in ("resume", "redial", "relaunch"):
+        if not session_alive(name):
+            print(f"{name} did not come up — leaving {u['tty']} alone", file=sys.stderr)
+            return 5
+        if args.keep_source:
+            print(f"{name} is up. Source pane {u['tty']} left open (--keep-source).")
+        elif close_pane(u["tty"]):
+            print(f"{name} is up; closed source pane {u['tty']} — one window fewer.")
+            history_append({"at": int(time.time()), "event": "closed", "tty": u["tty"],
+                            "cwd": u["cwd"], "replaced_by": name})
+        else:
+            print(f"{name} is up but {u['tty']} would not close — check it by hand.", file=sys.stderr)
+    record(u, "adopted", f"adopted as '{name}'", args.linear_issue or args.linear_project)
+    return 0
+
+
+def record(u: dict, disposition: str, reason: str, linear: str | None = None) -> None:
+    led = ledger_load()
+    led[u["key"]] = {
+        "disposition": disposition,
+        "reason": reason,
+        "linear": linear,
+        "tty": u["tty"],
+        "cwd": u["cwd"],
+        "command": u["command"][:120],
+        "decided_at": int(time.time()),
+    }
+    ledger_save(led)
+
+
+def reapable(u: dict, hours: float) -> bool:
+    """An empty shell nobody has touched. Pure; see selfcheck.
+
+    Deliberately narrow: something must be RUNNING for a pane to be worth keeping,
+    and idleness alone is never enough. This is the highest-value operation in the
+    tool — closing 12 husks beat every registry feature in it — so it is also the
+    one that most needs to be unable to surprise anyone.
+    """
+    return bool(u["shell"] and not u["harness"] and not u["tmux"] and u["idle_h"] >= hours)
+
+
+def cmd_reap(args) -> int:
+    """Close empty shells. The headline number of this tool is how many panes are
+    GONE, not how many are catalogued."""
+    units = survey()
+    dead = [u for u in units if reapable(u, args.older_than)]
+    if not dead:
+        print(f"nothing to reap (no empty shells idle {args.older_than}h+)")
+        return 0
+    for u in dead:
+        print(f"  {u['tty']}  idle {u['idle_h']:.1f}h  {short(u['cwd'], 44)}")
+    print(f"\n{len(dead)} empty shells, nothing running in any of them.")
+    if not args.apply:
+        print("Dry run. Re-run with --apply.")
+        return 0
+
+    verdict, note = hancock_verdict(f"getcontrol reap {len(dead)} idle shells")
+    if verdict == "deny":
+        print(f"hancock denies this — {note}", file=sys.stderr)
+        return 4
+    if verdict == "sign" and not args.signed:
+        print("needs a signature — queue through hancock with --signed", file=sys.stderr)
+        return 3
+
+    closed = 0
+    for u in dead:
+        if close_pane(u["tty"]):
+            closed += 1
+            history_append({"at": int(time.time()), "event": "reaped", "tty": u["tty"],
+                            "cwd": u["cwd"], "idle_h": round(u["idle_h"], 1)})
+    print(f"closed {closed} of {len(dead)} — {len(units)} panes → {len(units) - closed}")
+    return 0
+
+
+def cmd_account(args) -> int:
+    """Record a decision about a pane you are NOT adopting, so it stops showing
+    up as unexamined. A decision without a reason is just hiding it."""
+    units = {u["tty"]: u for u in survey()}
+    u = units.get(args.tty)
+    if not u:
+        print(f"no pane on {args.tty}. Run: getcontrol survey", file=sys.stderr)
+        return 1
+    disposition = "hold" if args.hold else "unmanaged"
+    record(u, disposition, args.reason)
+    print(f"{u['tty']} accounted for as '{disposition}': {args.reason}")
+    return 0
+
+
+def cmd_status(args) -> int:
+    """The closure check: is every pane on this machine accounted for?
+    Exit 1 when something is loose — usable as a gate or a cron."""
+    units = survey()
+    live = {u["key"] for u in units}
+    led = ledger_load()
+    dead = [k for k in led if k not in live]
+    for k in dead:
+        del led[k]
+    if dead:
+        ledger_save(led)
+        print(f"pruned {len(dead)} ledger entries for panes that no longer exist")
+    print(tally(units))
+    loose = [u for u in units if not u["accounted"]]
+    for u in loose[: args.limit]:
+        print(f"  {u['tty']}  {u['next']:9} {short(u['cwd'], 40)}  {u['harness'] or basename(u['command'])}")
+    if len(loose) > args.limit:
+        print(f"  … and {len(loose) - args.limit} more (--limit to see them)")
+    return 1 if loose else 0
+
+
+def session_alive(name: str) -> bool:
+    """Did the new session actually come up? Never close a source pane on faith."""
+    if name not in sh(["tmux", "list-sessions", "-F", "#{session_name}"]).split():
+        return False
+    return bool(sh(["tmux", "list-panes", "-t", name, "-F", "#{pane_pid}"]).strip())
+
+
+def hancock_verdict(cmd: str) -> tuple[str, str]:
+    """Ask hancock whether we may do this ourselves.
+
+    exit 0 allow / 3 needs a signature / 4 deny. The default rule is that anything
+    unmatched must be signed, so silence is never permission. We deliberately only
+    *check* here and never `hancock add` — the CLI tray and the MCP tray are
+    separate stores, so a request queued from inside this script would land where
+    the agent that wants to wait on it cannot see it.
+    """
+    h = shutil.which("hancock")
+    if not h:
+        return "no-hancock", ""
+    r = subprocess.run([h, "check", cmd], capture_output=True, text=True)
+    return {0: "allow", 3: "sign", 4: "deny"}.get(r.returncode, "sign"), (r.stdout or r.stderr).strip()[:200]
+
+
+def close_pane(tty: str) -> bool:
+    """Close a terminal pane by killing everything on its tty. Works in any
+    terminal app — no AppleScript, no per-app API.
+
+    SIGTERM is ignored by login/zsh, so this has to be SIGKILL or the window
+    simply stays. Note the list->args handling: zsh does not word-split unquoted
+    parameters, so a multi-pid string passed as one argument silently no-ops.
+    """
+    pids = [
+        line.split()[0]
+        for line in sh(["ps", "-axo", "pid=,tty="]).splitlines()
+        if len(line.split()) == 2 and line.split()[1] == tty
+    ]
+    if not pids:
+        return False
+    subprocess.run(["kill", "-9", *pids], capture_output=True)
+    time.sleep(1)
+    return not any(line.split()[1] == tty for line in sh(["ps", "-axo", "pid=,tty="]).splitlines() if len(line.split()) == 2)
+
+
+def pull_blocked(u: dict, siblings: int = 1, signed: bool = False) -> str | None:
+    """Every reason a pull must not happen, checked BEFORE anything is killed.
+
+    Shared by the dry run and the real run on purpose: a dry run that promises
+    something the real run would refuse is worse than no dry run at all.
+    """
+    # `tmux -c <bad path>` does not fail — it silently falls back to $HOME, so a
+    # resumed agent lands in the wrong repo and continues the wrong conversation.
+    if not u["cwd"] or not os.path.isdir(u["cwd"]):
+        return f"{u['tty']}: cwd unknown ({u['cwd']!r}) — refusing to recreate it blind"
+
+    # `--continue` resumes "the most recent session for the current working
+    # directory" (verified in both claude and grok --help). Two panes of the same
+    # harness in one cwd would therefore collapse onto ONE conversation, leaving
+    # the other transcript unreachable. Four grok panes in ~ is exactly this.
+    if siblings > 1 and u["harness"] in HARNESSES:
+        return (
+            f"{u['tty']}: {siblings} {u['harness']} panes share {u['cwd']} — `--continue` is "
+            f"cwd-scoped, so pulling them would collapse them onto one conversation. "
+            f"Resume by session id, or pick which of the {siblings} to keep and reap the rest."
+        )
+
+    verdict, note = hancock_verdict(f"getcontrol pull {u['tty']} ({u['harness'] or 'shell'} in {u['cwd']})")
+    if verdict == "deny":
+        return f"{u['tty']}: hancock denies this — {note}"
+    if verdict == "sign" and not signed:
+        # ponytail: --signed is a declaration, not proof — hancock exports no request
+        # id into the environment (verified), so there is nothing to check against.
+        # It stops an accidental self-run, not a determined one; the tray is the real control.
+        return f"{u['tty']}: needs a signature. Queue through hancock with --signed, don't sign it yourself"
+    return None
+
+
+def pull(u: dict, name: str, emux: str, issue: str | None, signed: bool = False, siblings: int = 1) -> tuple[bool, str]:
+    """Pull one non-tmux pane INTO emux: close it, recreate it inside tmux, register.
+
+    The order is counter-intuitive and deliberate. For an agent harness the durable
+    state is the transcript on disk, not the process — so the ORIGINAL IS CLOSED
+    FIRST. That avoids two live copies writing one transcript, and costs nothing,
+    because a transcript that exists can always be resumed again.
+    """
+    blocked = pull_blocked(u, siblings, signed)
+    if blocked:
+        return False, blocked
+
+    if u["harness"] in HARNESSES:
+        cmd = f"{u['harness']} --continue"
+    elif u["harness"] == "ssh":
+        cmd = u["command"]
+    else:
+        cmd = None
+
+    if not close_pane(u["tty"]):
+        return False, f"{u['tty']} would not close — skipped, nothing was touched"
+
+    make = ["tmux", "new-session", "-d", "-s", name, "-c", u["cwd"]] + ([cmd] if cmd else [])
+    if subprocess.run(make, capture_output=True).returncode or not session_alive(name):
+        return False, f"{name} failed to start — {u['tty']} is closed; recover with `{cmd or 'shell'}` in {u['cwd']}"
+
+    landed = sh(["tmux", "display-message", "-p", "-t", name, "#{pane_current_path}"]).strip()
+    if landed and os.path.realpath(landed) != os.path.realpath(u["cwd"]):
+        return False, f"{name} started in {landed}, not {u['cwd']} — wrong directory, resume it by hand"
+
+    reg = [emux, "register", name, name, "-d", f"{u['harness'] or 'shell'} in {u['cwd']}"]
+    if issue:
+        reg += ["--linear-issue", issue]
+    subprocess.run(reg, capture_output=True)
+    history_append({"at": int(time.time()), "event": "pulled", "tty": u["tty"], "cwd": u["cwd"], "session": name})
+
+    # A resumed agent is NOT running yet if it stopped to ask something. `claude
+    # --continue` on a large session parks on "Resume from summary / full?" and
+    # waits forever. Sweeping without this check leaves every session frozen at a
+    # menu while the sweep reports success.
+    time.sleep(4)
+    screen = sh(["tmux", "capture-pane", "-p", "-t", name])
+    if re.search(r"Enter to confirm|❯ 1\.|\(y/n\)|Do you want to", screen):
+        tail = [ln for ln in screen.splitlines() if ln.strip()][-3:]
+        return True, f"{u['tty']} → tmux:{name} → emux, but PARKED asking a question:\n      " + "\n      ".join(tail)
+    return True, f"{u['tty']} → tmux:{name} → emux (one window fewer)"
+
+
+def cmd_control(args) -> int:
+    """Sweep every pane into emux in one pass.
+
+    emux's registry is the central one — a getcontrol ledger entry is a holding
+    pen, never a second registry. Panes already in tmux are registered directly.
+    Panes outside tmux need --pull, because joining the registry means closing and
+    recreating the process, and that is a decision, not a default.
+    """
+    units = survey()
+    todo = [u for u in units if not u["governed"] and (not args.only or u["tty"] == args.only)]
+    emux = shutil.which("emux") or os.path.expanduser("~/repos-eidos-agi/emux/.venv/bin/emux")
+    done, needs_issue, needs_move = [], [], []
+
+    for u in todo:
+        if u["next"] == "register":
+            name = u["tmux"]["session"]
+            desc = f"{u['harness'] or basename(u['command'])} in {u['cwd']}"
+            cmd = [emux, "register", name, name, "-d", desc]
+            print(" ".join(shlex.quote(c) for c in cmd), flush=True)
+            if args.apply:
+                r = subprocess.run(cmd, capture_output=True, text=True)
+                if r.returncode:
+                    print(f"  failed: {r.stderr.strip()[:120]}", file=sys.stderr)
+                    continue
+                record(u, "registered", desc)
+            done.append(name)
+        elif u["next"] == "link":
+            needs_issue.append(u)
+        elif args.pull:
+            # strip(): a cwd of "?" sanitizes to "-", which is a legal tmux name
+            # and a terrible one — it produced a session literally called "-"
+            name = re.sub(r"[^a-z0-9-]+", "-", os.path.basename(u["cwd"]).lower()).strip("-")
+            name = name or f"{u['harness'] or 'pane'}-{u['tty']}"
+            live = set(sh(["tmux", "list-sessions", "-F", "#{session_name}"]).split())
+            while name in live:
+                name += "-2"
+            sibs = sum(1 for o in units if o["cwd"] == u["cwd"] and o["harness"] == u["harness"] and not o["tmux"])
+            if not args.apply:
+                blocked = pull_blocked(u, sibs, args.signed)
+                print(f"  BLOCKED {blocked}" if blocked else
+                      f"would pull {u['tty']} ({u['harness'] or 'shell'} in {short(u['cwd'])}) → tmux:{name} → emux")
+                needs_move.append(u)
+                continue
+            ok, msg = pull(u, name, emux, None, args.signed, sibs)
+            print(("  " if ok else "  FAILED ") + msg, flush=True)
+            if ok:
+                done.append(name)
+                if not args.all:
+                    # One pull per run by default. Pulling ONE pane exposed three
+                    # separate defects; a batch would have multiplied each of them.
+                    print("\n  stopping after one — read the pane back, then run again (--all to override)")
+                    break
+            else:
+                needs_move.append(u)
+        else:
+            needs_move.append(u)
+
+    print()
+    print(f"registered: {len(done)}" + (f" ({', '.join(done)})" if done else ""))
+    if needs_issue:
+        print(f"in the registry, still no Linear issue: {len(needs_issue)}")
+        for u in needs_issue:
+            print(f"  {u['emux'] or u['tmux']['session']:<24} {u['harness'] or '-':<7} {short(u['cwd'], 40)}")
+    if needs_move:
+        print(f"outside tmux — cannot be registered without recreating them: {len(needs_move)}")
+        for u in needs_move:
+            print(f"  {u['tty']:<8} {u['next']:<9} {u['harness'] or basename(u['command']):<7} {short(u['cwd'], 40)}")
+    if not args.apply:
+        print("\nDry run. Re-run with --apply.")
+    return 0
+
+
+def cmd_start(args) -> int:
+    """Start work the way that never needs cleaning up: born in tmux, registered,
+    and exec'd into so the launching shell is REPLACED — when the work ends the
+    window has nothing left to fall back to and closes itself. That husk (a shell
+    sitting at a prompt after its agent quit) is where the sprawl comes from.
+
+    Terminal-app agnostic on purpose: iTerm, Terminal, Ghostty, Warp, ssh from a
+    phone — all of them are just a viewport onto the same tmux session.
+    """
+    d = os.path.abspath(os.path.expanduser(args.dir or os.getcwd()))
+    name = args.name or re.sub(r"[^a-z0-9-]+", "-", os.path.basename(d).lower()) or "work"
+    live = set(sh(["tmux", "list-sessions", "-F", "#{session_name}"]).split())
+
+    if name not in live:  # attach-or-create: asking twice reuses, it never multiplies
+        cmd = ["tmux", "new-session", "-d", "-s", name, "-c", d]
+        if args.command:
+            cmd.append(args.command)
+        r = subprocess.run(cmd)
+        if r.returncode:
+            return r.returncode
+        print(f"created {name} in {d}")
+    else:
+        print(f"attaching to existing {name}")
+
+    emux = shutil.which("emux")
+    if emux:
+        reg = [emux, "register", name, name]
+        if args.issue:
+            reg += ["--linear-issue", args.issue]
+        subprocess.run(reg, capture_output=True)
+        if not args.issue:
+            print(f"note: {name} has no Linear issue — `getcontrol status` will flag it")
+    else:
+        print("note: emux not on PATH — session is in tmux but unregistered")
+
+    if args.no_attach:
+        return 0
+    os.execvp("tmux", ["tmux", "attach", "-t", name])  # replaces this process
+
+
+def cmd_shellinit(args) -> int:
+    """Print the shell hook. `exec` is the whole trick and it is POSIX, not iTerm."""
+    me = os.path.abspath(__file__)
+    print(
+        f"# getcontrol — add to ~/.zshrc:  eval \"$({me} shellinit)\"\n"
+        f"gc() {{ exec {me} start \"$@\"; }}"
+    )
+    return 0
+
+
+def cmd_doctor(args) -> int:
+    checks = []
+    checks.append(("tmux", bool(sh(["tmux", "-V"]).strip()), "brew install tmux"))
+    checks.append(("emux registry", os.path.exists(REGISTRY), "install emux and register one session"))
+    it = sh(["osascript", "-e", 'with timeout of 8 seconds\ntell application "iTerm2" to count windows\nend timeout'], timeout=20)
+    checks.append(
+        (
+            "iTerm2 AppleScript",
+            it.strip().isdigit(),
+            "times out (-1712) on busy installs — explode falls back to System Events, survey never needed it",
+        )
+    )
+    ui = sh(
+        ["osascript", "-e", 'tell application "System Events" to return name of first process whose frontmost is true'],
+        timeout=15,
+    )
+    checks.append(("System Events UI scripting", bool(ui.strip()), "grant Accessibility to your terminal in System Settings"))
+    for name, ok, hint in checks:
+        print(f"{'ok  ' if ok else 'FAIL'}  {name}" + ("" if ok else f"  →  {hint}"))
+    return 0 if all(c[1] for c in checks[:2]) else 1
+
+
+def cmd_survey(args) -> int:
+    units = survey()
+    if args.ungoverned:
+        units = [u for u in units if not u["governed"]]
+    if args.unaccounted:
+        units = [u for u in units if not u["accounted"]]
+    print(json.dumps(units, indent=2) if args.json else render(units))
+    return 0
+
+
+def cmd_selfcheck(args) -> int:
+    def u(**kw):
+        base = {"tmux": None, "emux": None, "linear": None, "harness": "", "shell": False}
+        return {**base, **kw}
+
+    assert strategy(u(tmux={"session": "a"}, emux="a", linear={"issue": "X-1"}))[0] == "ok"
+    assert strategy(u(tmux={"session": "a"}, emux="a"))[0] == "link"
+    assert strategy(u(tmux={"session": "a"}))[0] == "register"
+    assert strategy(u(harness="claude"))[0] == "resume"
+    assert strategy(u(harness="ssh"))[0] == "redial"
+    assert strategy(u(shell=True))[0] == "relaunch"
+    assert strategy(u(harness="", shell=False))[0] == "hold"
+
+    procs = {
+        1: {"pid": 1, "ppid": 0, "tty": "ttys0", "stat": "Ss", "cmd": "/usr/bin/login -fpl x"},
+        2: {"pid": 2, "ppid": 1, "tty": "ttys0", "stat": "S+", "cmd": "-zsh"},
+        3: {"pid": 3, "ppid": 2, "tty": "ttys0", "stat": "S+", "cmd": "claude --continue"},
+        4: {"pid": 4, "ppid": 3, "tty": "ttys0", "stat": "S+", "cmd": "python mcp_server.py"},
+    }
+    kids = {0: [1], 1: [2], 2: [3], 3: [4]}
+    assert foreground(1, procs, kids) == 3, "must stop at claude, not its MCP child"
+
+    def pane(**kw):
+        base = {"shell": True, "harness": "", "tmux": None, "idle_h": 9.0}
+        return {**base, **kw}
+
+    assert reapable(pane(), 4) is True
+    assert reapable(pane(idle_h=1.0), 4) is False, "recently used shell is not residue"
+    assert reapable(pane(harness="claude"), 4) is False, "never reap a pane with work in it"
+    assert reapable(pane(tmux={"session": "x"}), 4) is False, "tmux panes are not husks"
+
+    assert acct({"governed": True, "account": None}) == "emux"
+    assert acct({"governed": False, "account": {"disposition": "hold"}}) == "hold"
+    assert acct({"governed": False, "account": None}) == "-"
+
+    global LEDGER
+    import tempfile
+
+    old, LEDGER = LEDGER, os.path.join(tempfile.mkdtemp(), "ledger.json")
+    try:
+        pane = {"key": "proc:1@x", "tty": "ttys9", "cwd": "/tmp", "command": "zsh"}
+        record(pane, "hold", "long build")
+        assert ledger_load()["proc:1@x"]["reason"] == "long build"
+        assert ledger_load()["proc:1@x"]["disposition"] == "hold"
+    finally:
+        LEDGER = old
+    print("selfcheck ok")
+    return 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(prog="getcontrol", description=__doc__.split("\n")[0])
+    sub = ap.add_subparsers(dest="cmd", required=True)
+
+    s = sub.add_parser("survey", help="every terminal pane on this Mac and what it needs")
+    s.add_argument("--json", action="store_true")
+    s.add_argument("--ungoverned", action="store_true", help="only panes with no Linear issue behind them")
+    s.add_argument("--unaccounted", action="store_true", help="only panes nobody has decided anything about")
+    s.set_defaults(fn=cmd_survey)
+
+    s = sub.add_parser("adopt", help="plan (or run) the takeover of one pane; refuses without a Linear ref")
+    s.add_argument("tty")
+    s.add_argument("--name")
+    s.add_argument("--linear-issue")
+    s.add_argument("--linear-project")
+    s.add_argument("--unmanaged-ok", action="store_true")
+    s.add_argument("--keep-source", action="store_true", help="do not close the original pane")
+    s.add_argument("--apply", action="store_true")
+    s.set_defaults(fn=cmd_adopt)
+
+    s = sub.add_parser("control", help="sweep every registerable pane into the emux registry in one pass")
+    s.add_argument("--apply", action="store_true")
+    s.add_argument("--pull", action="store_true", help="also pull non-tmux panes in — closes and recreates them")
+    s.add_argument("--only", help="restrict to one tty, to test the pull on a single pane first")
+    s.add_argument("--signed", action="store_true", help="this run is coming through hancock")
+    s.add_argument("--all", action="store_true", help="don't stop after the first successful pull")
+    s.set_defaults(fn=cmd_control)
+
+    s = sub.add_parser("start", help="start work born in tmux + emux — the way that never needs cleanup")
+    s.add_argument("dir", nargs="?")
+    s.add_argument("--name")
+    s.add_argument("--issue", help="Linear issue behind this work")
+    s.add_argument("--command", help="what to run (default: your shell)")
+    s.add_argument("--no-attach", action="store_true")
+    s.set_defaults(fn=cmd_start)
+
+    sub.add_parser("shellinit", help="print the `gc` shell function to add to ~/.zshrc").set_defaults(fn=cmd_shellinit)
+
+    s = sub.add_parser("reap", help="close empty shells — the fastest way to actually get control")
+    s.add_argument("--older-than", type=float, default=4.0, help="minimum idle hours (default 4)")
+    s.add_argument("--apply", action="store_true")
+    s.add_argument("--signed", action="store_true", help="this run is coming through hancock")
+    s.set_defaults(fn=cmd_reap)
+
+    s = sub.add_parser("account", help="record a decision about a pane you are NOT adopting")
+    s.add_argument("tty")
+    s.add_argument("--reason", required=True, help="why this pane stays as it is — required")
+    g = s.add_mutually_exclusive_group(required=True)
+    g.add_argument("--hold", action="store_true", help="must keep running where it is")
+    g.add_argument("--unmanaged-ok", action="store_true", help="deliberately outside the system")
+    s.set_defaults(fn=cmd_account)
+
+    s = sub.add_parser("status", help="is every pane accounted for? exits 1 if any are loose")
+    s.add_argument("--limit", type=int, default=10)
+    s.set_defaults(fn=cmd_status)
+
+    s = sub.add_parser("explode", help="move iTerm2 splits/tabs into their own windows")
+    s.add_argument("--times", type=int, default=1)
+    s.add_argument("--apply", action="store_true")
+    s.set_defaults(fn=cmd_explode)
+
+    sub.add_parser("doctor", help="which inventory and control paths actually work here").set_defaults(fn=cmd_doctor)
+    sub.add_parser("selfcheck", help="assert the classification logic").set_defaults(fn=cmd_selfcheck)
+
+    args = ap.parse_args()
+    return args.fn(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
