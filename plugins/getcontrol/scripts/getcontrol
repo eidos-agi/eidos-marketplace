@@ -20,7 +20,11 @@ import subprocess
 import sys
 import time
 
-REGISTRY = os.path.expanduser("~/.config/emux/registry.json")
+# Overridable so behaviour can be tested against a mock fleet instead of the live
+# one. fleet-testing/fleet-mock-up.sh sets EMUX_REGISTRY=/tmp/mock-emux-registry.json
+# and spins fake claudes in tmux; without this, every test of pull/reap/recover had
+# to run against real sessions, which is how a working service got killed today.
+REGISTRY = os.environ.get("EMUX_REGISTRY") or os.path.expanduser("~/.config/emux/registry.json")
 LEDGER = os.path.expanduser("~/.config/getcontrol/ledger.json")
 HISTORY = os.path.expanduser("~/.config/getcontrol/history.jsonl")
 SHELLS = {"login", "zsh", "-zsh", "bash", "-bash", "sh", "-sh", "fish", "-fish", "tmux", "screen"}
