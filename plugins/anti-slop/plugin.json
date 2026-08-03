@@ -1,0 +1,21 @@
+{
+  "name": "anti-slop",
+  "version": "0.1.0",
+  "description": "Continuous anti-AI-slop for prose plus world-class case-study gates. Write constraints, audit punch lists, case-study prose contract.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "hello@eidosagi.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/eidos-agi/anti-slop",
+  "repository": "https://github.com/eidos-agi/anti-slop",
+  "keywords": [
+    "anti-slop",
+    "prose",
+    "writing",
+    "case-study",
+    "ai-isms",
+    "grok"
+  ],
+  "skills": "./skills/"
+}

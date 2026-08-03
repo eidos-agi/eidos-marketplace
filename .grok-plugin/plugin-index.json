@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "plugins": {
+    "anti-slop": {
+      "components": {
+        "skills": [
+          {
+            "name": "anti-slop",
+            "description": "Write under anti-AI-slop constraints"
+          },
+          {
+            "name": "anti-slop-audit",
+            "description": "Post-draft punch list for AI prose tells"
+          },
+          {
+            "name": "world-class-case-study",
+            "description": "Northstar case-study prose gate"
+          }
+        ]
+      }
+    }
+  }
+}

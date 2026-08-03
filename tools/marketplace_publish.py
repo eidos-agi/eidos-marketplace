@@ -414,18 +414,23 @@ def upsert_grok_marketplace_entry(
     grok_manifest = load_json(grok_manifest_path) if grok_manifest_path.exists() else {}
     interface = grok_manifest.get("interface", {}) or manifest.get("interface", {})
     category = interface.get("category") or entry.get("category", "Developer Tools")
+    # Grok marketplace schema (user-guide 09-plugins): description + source.type=local.
     grok_entry = {
         "name": entry["name"],
+        "description": entry.get("description") or manifest.get("description") or entry["name"],
+        "category": category if isinstance(category, str) else "development",
         "source": {
-            "source": "local",
-            "path": entry["source"],
+            "type": "local",
+            "path": entry["source"] if isinstance(entry.get("source"), str) else f"./plugins/{entry['name']}",
         },
-        "policy": {
-            "installation": "AVAILABLE",
-            "authentication": "ON_INSTALL",
-        },
-        "category": category,
     }
+    if entry.get("homepage") or manifest.get("homepage"):
+        grok_entry["homepage"] = entry.get("homepage") or manifest.get("homepage")
+    if entry.get("version") or manifest.get("version"):
+        grok_entry["version"] = entry.get("version") or manifest.get("version")
+    keywords = entry.get("tags") or manifest.get("keywords")
+    if keywords:
+        grok_entry["keywords"] = keywords
     data = load_json(path)
     plugins = data.setdefault("plugins", [])
     plugins[:] = [plugin for plugin in plugins if plugin.get("name") != entry["name"]]
