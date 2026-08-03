@@ -1,0 +1,38 @@
+{
+  "name": "anti-slop",
+  "version": "0.1.0",
+  "description": "Continuous anti-AI-slop for prose plus world-class case-study gates. Write constraints, audit punch lists, case-study prose contract.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "hello@eidosagi.com"
+  },
+  "license": "MIT",
+  "category": "productivity",
+  "keywords": [
+    "anti-slop",
+    "prose",
+    "writing",
+    "case-study",
+    "ai-isms",
+    "grok"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Anti-Slop",
+    "shortDescription": "Human prose gates for Grok: ban LLM tells, audit drafts, case-study craft.",
+    "longDescription": "Eidos anti-slop plugin. Skills: anti-slop (write), anti-slop-audit (punch list), world-class-case-study (Northstar shelf prose). Continuous upstream sync via vendor submodules and weekly CI PRs.",
+    "developerName": "Eidos AGI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Anti-AI writing constraints",
+      "Prose audit punch lists",
+      "Case study prose contract",
+      "Upstream lexicon merge"
+    ],
+    "defaultPrompt": [
+      "Audit this markdown for AI slop.",
+      "Rewrite this section under anti-slop constraints.",
+      "Apply the world-class case study gate before shipping shelf HTML."
+    ]
+  }
+}

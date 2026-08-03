@@ -1,7 +1,10 @@
 {
   "name": "eidos-agi",
-  "interface": {
-    "displayName": "Eidos AGI"
+  "description": "The plugin marketplace for Grok Build, by Eidos AGI. Curated agent-first plugins, audited to a public standard.",
+  "owner": {
+    "name": "Eidos AGI",
+    "email": "hello@eidosagi.com",
+    "url": "https://eidosagi.com"
   },
   "plugins": [
     {
@@ -38,7 +41,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "canon",
@@ -62,7 +65,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "cept",
@@ -122,7 +125,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "eidos-mail",
@@ -134,25 +137,13 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "eidos-plugin-store",
       "source": {
         "source": "local",
         "path": "./plugins/eidos-plugin-store"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Productivity"
-    },
-    {
-      "name": "eidos-skills-hub",
-      "source": {
-        "source": "local",
-        "path": "./plugins/eidos-skills-hub"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -194,7 +185,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "foreman",
@@ -218,7 +209,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "ike",
@@ -230,7 +221,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "kai",
@@ -242,7 +233,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "knox",
@@ -266,7 +257,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "linearplus",
@@ -281,18 +272,6 @@
       "category": "Developer Tools"
     },
     {
-      "name": "meeting2action",
-      "source": {
-        "source": "local",
-        "path": "./plugins/meeting2action"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Productivity"
-    },
-    {
       "name": "pavo",
       "source": {
         "source": "local",
@@ -302,7 +281,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "probe-forge",
@@ -326,7 +305,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "resume-resume",
@@ -338,7 +317,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "rhea",
@@ -350,7 +329,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "scridos",
@@ -362,7 +341,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "shipr",
@@ -398,7 +377,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     },
     {
       "name": "zoltar",
@@ -410,7 +389,7 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Developer Tools"
     }
   ]
 }
