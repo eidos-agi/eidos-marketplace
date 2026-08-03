@@ -9,387 +9,561 @@
   "plugins": [
     {
       "name": "anti-slop",
+      "description": "Continuous anti-AI-slop for prose plus world-class case-study gates. Pulls community upstreams; ships write + audit skills.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/anti-slop"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/anti-slop",
+      "version": "0.1.0",
+      "keywords": [
+        "anti-slop",
+        "prose",
+        "writing",
+        "case-study",
+        "ai-isms",
+        "claude-code",
+        "agent-skill"
+      ]
     },
     {
       "name": "apple-a-day",
+      "description": "Agent-native Mac health toolkit for read-only diagnostics, vitals monitoring, and cleanup recommendations.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/apple-a-day"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/apple-a-day",
+      "version": "0.3.1",
+      "keywords": [
+        "macos",
+        "diagnostics",
+        "health",
+        "monitoring",
+        "cleanup",
+        "agent-native",
+        "claude-code"
+      ]
     },
     {
       "name": "browser-autonomy",
+      "description": "Makes Codex more self-reliant for browser work, including safe use of existing sessions, autofill, and login flows.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/browser-autonomy"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/browser-autonomy",
+      "version": "0.1.0"
     },
     {
       "name": "canon",
+      "description": "Canonical agent standards, verification gates, and repo contracts for durable software work.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/canon"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/canon",
+      "version": "0.1.0",
+      "keywords": [
+        "agents",
+        "standards",
+        "verification",
+        "codex"
+      ]
     },
     {
       "name": "cartwright",
+      "description": "A personal shopping assistant for finding, comparing, and recommending products.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/cartwright"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/cartwright",
+      "version": "0.2.2",
+      "keywords": [
+        "shopping",
+        "personal-shopper",
+        "commerce",
+        "comparison",
+        "research"
+      ]
     },
     {
       "name": "cept",
+      "description": "Proprioception for coding agents: slice recent Claude Code transcript, redact it, and ask for outside-in steering.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/cept"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/cept",
+      "version": "0.4.1",
+      "keywords": [
+        "mcp",
+        "claude-code",
+        "agent",
+        "proprioception",
+        "openrouter",
+        "steering"
+      ]
     },
     {
       "name": "clawdflare",
+      "description": "Opinionated Cloudflare management CLI and MCP server for auditing and fixing zones.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/clawdflare"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/clawdflare",
+      "version": "0.1.0",
+      "keywords": [
+        "cloudflare",
+        "mcp",
+        "dns",
+        "security",
+        "tls",
+        "cache",
+        "eidos-agi"
+      ]
     },
     {
       "name": "conduit",
+      "description": "Registry-backed CLI for reaching personal-infrastructure machines: model machines, access paths, workloads, and append-only reachability proofs.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/conduit"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/dshanklin-bv/conduit",
+      "version": "0.1.0",
+      "keywords": [
+        "ssh",
+        "tailscale",
+        "infrastructure",
+        "registry",
+        "claude-code",
+        "cli-first",
+        "machine-mesh"
+      ]
     },
     {
       "name": "converge",
+      "description": "Target tables, drift monitors, regression memory, and repair loops that help AI agents converge on software goals.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/converge"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/converge",
+      "version": "0.1.0",
+      "keywords": [
+        "convergence",
+        "agent",
+        "testing",
+        "scoreboard",
+        "drift",
+        "regression",
+        "eidos"
+      ]
     },
     {
       "name": "eidos",
+      "description": "Turn docket tasks into tracked, evidenced Eidos loops with `eidos do`, then verify, learn, and close out cleanly.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/eidos"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/eidos-cli",
+      "version": "0.1.0",
+      "keywords": [
+        "eidos",
+        "cli",
+        "task-loop",
+        "evidence",
+        "closeout",
+        "praxis",
+        "routing",
+        "progressive-reveal"
+      ]
     },
     {
       "name": "eidos-mail",
+      "description": "Email for Claude Code - read, search, send, reply, forward, and manage your inbox.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/eidos-mail"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/eidos-mail"
     },
     {
       "name": "eidos-plugin-store",
+      "description": "Discover and bootstrap Eidos Codex plugins from the Eidos AGI catalog.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/eidos-plugin-store"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://eidosagi.com/plugins",
+      "version": "0.1.0",
+      "keywords": [
+        "eidos",
+        "plugin-store",
+        "codex",
+        "plugins",
+        "discovery",
+        "bootstrap",
+        "eidos-agi"
+      ]
     },
     {
       "name": "eidos-storemetheus",
+      "description": "Build and maintain governed Claude Code and Codex plugin stores for companies that need trusted AI operating layers.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/eidos-storemetheus"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/eidos-storemetheus",
+      "version": "0.1.1",
+      "keywords": [
+        "eidos",
+        "plugin-store",
+        "codex",
+        "claude-code",
+        "dual-host",
+        "marketplace",
+        "governance"
+      ]
     },
     {
       "name": "emux",
+      "description": "Eidos mux: TUI picker and MCP server for named tmux sessions.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/emux"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/emux",
+      "version": "0.67.0",
+      "keywords": [
+        "mcp",
+        "tmux",
+        "claude-code",
+        "terminal",
+        "session-control",
+        "automation"
+      ]
     },
     {
       "name": "felix",
+      "description": "Use the live Felix CLI to build, assess, and maintain agent ecosystems.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/felix"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/felix",
+      "version": "0.1.0",
+      "keywords": [
+        "felix",
+        "cli",
+        "agent-builder",
+        "agent-maintainer",
+        "scaffolding",
+        "eidos-agi",
+        "progressive-reveal"
+      ]
     },
     {
       "name": "foreman",
+      "description": "Delegate scoped coding work to AI engineer workers in isolated git worktrees, including Emux-headed interactive Claude Code workers.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/foreman"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/foreman",
+      "version": "0.3.1",
+      "keywords": [
+        "emux",
+        "codex",
+        "worktrees",
+        "delegation",
+        "parallel-agents",
+        "ai-fleet"
+      ]
     },
     {
       "name": "forge-forge",
+      "description": "Route agents to the right Eidos forge and use forge-forge as the source of truth for forge discovery.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/forge-forge"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/forge-forge",
+      "version": "0.2.0",
+      "keywords": [
+        "forge-forge",
+        "forges",
+        "registry",
+        "skills",
+        "templates",
+        "routing",
+        "mcp"
+      ]
     },
     {
       "name": "ike",
+      "description": "Task and project management \u2014 create tasks, track milestones, manage documents, and execute within visionlog contracts",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/ike"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/ike.md"
     },
     {
       "name": "kai",
+      "description": "Route Eidos founder-ops and company-building work through the local Kai CLI.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/kai"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/kai",
+      "version": "0.1.0",
+      "keywords": [
+        "kai",
+        "founder-ops",
+        "company-building",
+        "slack",
+        "deploy",
+        "ideas",
+        "eidos-agi",
+        "progressive-reveal"
+      ]
     },
     {
       "name": "knox",
+      "description": "Knox local MCP secret broker with capability-scoped sessions and proxy tokens.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/knox"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/knox",
+      "version": "0.2.0",
+      "keywords": [
+        "mcp",
+        "agent",
+        "secret-management",
+        "session-scoping",
+        "macos",
+        "biometric"
+      ]
     },
     {
       "name": "lever",
+      "description": "Self-learning leverage agent that finds constraints, kills weak loops, and turns durable corrections into better agent behavior.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/lever"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/lever",
+      "version": "0.1.0",
+      "keywords": [
+        "leverage",
+        "agent",
+        "self-learning",
+        "decision-framing",
+        "eidos"
+      ]
     },
     {
       "name": "linearplus",
+      "description": "Use the LinearPlus CLI for Linear GraphQL initiative workflows missing from connector surfaces.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/linearplus"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/linearplus",
+      "version": "0.1.0",
+      "keywords": [
+        "linear",
+        "graphql",
+        "initiatives",
+        "projects",
+        "cli",
+        "eidos-agi"
+      ]
     },
     {
       "name": "pavo",
+      "description": "Manifest Anything: data-science-led transcription for real audio, speaker identification, dictionaries, routing, and tasks.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/pavo"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/pavo",
+      "version": "0.1.0",
+      "keywords": [
+        "audio",
+        "codex",
+        "recordings",
+        "plaud",
+        "transcription"
+      ]
     },
     {
       "name": "probe-forge",
+      "description": "Agentic testing forge \u2014 point at anything, say test this. Runs THE-LOOP to investigate targets intelligently",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/probe-forge"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/test-forge"
     },
     {
       "name": "research-md",
+      "description": "Evidence-graded, phase-gated research decisions \u2014 candidates, findings, scoring matrices, and peer review",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/research-md"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/research.md"
     },
     {
       "name": "resume-resume",
+      "description": "Post-crash session recovery, dirty repos inventory, and session search across your full Claude Code history",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/resume-resume"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/resume-resume"
     },
     {
       "name": "rhea",
+      "description": "Rhea workflow guidance for sovereign model routing, Socratic debate, sessions, pairing, and image generation.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/rhea"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/rhea",
+      "version": "0.1.0",
+      "keywords": [
+        "rhea",
+        "mcp",
+        "debate",
+        "reasoning",
+        "socratic",
+        "orchestration",
+        "model-routing"
+      ]
     },
     {
       "name": "scridos",
+      "description": "The Eidos scribe \u2014 persistent, compounding knowledge bases using the Karpathy LLM Wiki pattern. Ingest sources, query synthesized knowledge, lint for gaps. Fork of ekadetov/llm-wiki under Eidos AGI maintenance, rebrand-in-progress.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/scridos"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/scridos",
+      "keywords": [
+        "knowledge-base",
+        "obsidian",
+        "wiki",
+        "karpathy",
+        "rag-alternative",
+        "memex",
+        "scribe"
+      ]
     },
     {
       "name": "shipr",
+      "description": "Persistent Eidos shipping operator that learns how each product ships.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/shipr"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/shipr",
+      "version": "0.2.0",
+      "keywords": [
+        "shipping",
+        "release",
+        "proof",
+        "learning",
+        "eidos",
+        "claude-code"
+      ]
     },
     {
       "name": "skillopt",
+      "description": "Use Microsoft SkillOpt to train reusable agent skill documents from scored rollouts.",
+      "category": "development",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/skillopt"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/microsoft/SkillOpt",
+      "version": "0.1.0",
+      "keywords": [
+        "skillopt",
+        "agent-skills",
+        "skill-optimization",
+        "token-cost",
+        "tokut",
+        "eidos",
+        "claude-code"
+      ]
     },
     {
       "name": "visionlog",
+      "description": "Vision, goals, guardrails, SOPs, and ADRs \u2014 the contracts all execution must honor",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/visionlog"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/visionlog.md"
     },
     {
       "name": "zoltar",
+      "description": "An Eidos foresight research subagent that investigates current context, predicts likely outcomes and objections, challenges market overfit, and emits concrete changes for doer/checker agents.",
+      "category": "productivity",
       "source": {
-        "source": "local",
+        "type": "local",
         "path": "./plugins/zoltar"
       },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/zoltar",
+      "version": "0.3.0",
+      "keywords": [
+        "future-prediction",
+        "foresight-research",
+        "second-order-effects",
+        "product-strategy",
+        "complaint-prediction",
+        "market-overfit",
+        "claude-code",
+        "eidos"
+      ]
     }
   ]
 }
