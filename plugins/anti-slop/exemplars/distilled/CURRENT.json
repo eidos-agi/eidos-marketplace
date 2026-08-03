@@ -1,0 +1,10 @@
+{
+  "version": 0,
+  "status": "empty",
+  "note": "Populate via M3 ingest. Until then world-class-case-study uses intent lock + anti-slop only.",
+  "metrics": {
+    "min_sentence_length_variance": null,
+    "target_metrics_per_100_words": null
+  },
+  "updated_at": null
+}

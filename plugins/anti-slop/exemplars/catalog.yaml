@@ -1,0 +1,17 @@
+# Elite exemplar catalog (M3+)
+# Start with public eng writing + in-house gold. No unlicensed scrape dumps.
+
+version: 1
+policy: curated-pr-only  # never silent overwrite of distilled bar
+
+sources: []
+  # - id: stripe-eng-example
+  #   url: https://stripe.com/blog/...
+  #   license: public-web
+  #   why: density + concrete trade-offs
+  # - id: northstar-gold-atoms
+  #   path: local  # path under raw/ after manual add
+  #   why: house gold after human rewrite
+
+refresh: weekly
+distill_output: distilled/CURRENT.json

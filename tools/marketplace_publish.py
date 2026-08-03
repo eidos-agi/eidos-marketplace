@@ -16,11 +16,15 @@ from typing import Any
 MARKETPLACE_ROOT = Path(__file__).resolve().parents[1]
 MARKETPLACE_JSON = Path(".claude-plugin/marketplace.json")
 CODEX_MARKETPLACE_JSON = Path(".agents/plugins/marketplace.json")
+GROK_MARKETPLACE_JSON = Path(".grok-plugin/marketplace.json")
 BUNDLE_ITEMS = (
     ".claude-plugin",
     ".codex-plugin",
+    ".grok-plugin",
     ".mcp.json",
     "skills",
+    "references",
+    "exemplars",
     "commands",
     "hooks",
     "scripts",
@@ -80,10 +84,11 @@ def source_manifest_path(source: Path) -> Path:
     for candidate in (
         source / ".claude-plugin" / "plugin.json",
         source / ".codex-plugin" / "plugin.json",
+        source / ".grok-plugin" / "plugin.json",
     ):
         if candidate.exists():
             return candidate
-    raise FileNotFoundError("source repo must contain .claude-plugin/plugin.json or .codex-plugin/plugin.json")
+    raise FileNotFoundError("source repo must contain .claude-plugin/plugin.json, .codex-plugin/plugin.json, or .grok-plugin/plugin.json")
 
 
 def public_plugin_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
@@ -192,6 +197,10 @@ def render_bundle(source: Path, marketplace: Path, manifest: dict[str, Any]) -> 
     claude_manifest = bundle / ".claude-plugin" / "plugin.json"
     if not claude_manifest.exists():
         write_json(claude_manifest, public_plugin_manifest(manifest))
+
+    grok_manifest = bundle / ".grok-plugin" / "plugin.json"
+    if not grok_manifest.exists():
+        write_json(grok_manifest, public_plugin_manifest(manifest))
 
     return bundle
 
@@ -390,6 +399,41 @@ def upsert_codex_marketplace_entry(
     write_json(path, data)
 
 
+
+def upsert_grok_marketplace_entry(
+    source: Path,
+    marketplace: Path,
+    manifest: dict[str, Any],
+    entry: dict[str, Any],
+) -> None:
+    path = marketplace / GROK_MARKETPLACE_JSON
+    if not path.exists():
+        return
+
+    grok_manifest_path = source / ".grok-plugin" / "plugin.json"
+    grok_manifest = load_json(grok_manifest_path) if grok_manifest_path.exists() else {}
+    interface = grok_manifest.get("interface", {}) or manifest.get("interface", {})
+    category = interface.get("category") or entry.get("category", "Developer Tools")
+    grok_entry = {
+        "name": entry["name"],
+        "source": {
+            "source": "local",
+            "path": entry["source"],
+        },
+        "policy": {
+            "installation": "AVAILABLE",
+            "authentication": "ON_INSTALL",
+        },
+        "category": category,
+    }
+    data = load_json(path)
+    plugins = data.setdefault("plugins", [])
+    plugins[:] = [plugin for plugin in plugins if plugin.get("name") != entry["name"]]
+    plugins.append(grok_entry)
+    plugins.sort(key=lambda plugin: plugin.get("name", ""))
+    write_json(path, data)
+
+
 def ensure_audit(marketplace: Path, entry: dict[str, Any], audit_date: str) -> Path:
     audit_path = marketplace / entry["x-eidos"]["audit"]["audit_doc"]
     if audit_path.exists():
@@ -423,6 +467,7 @@ def publish(source: Path, marketplace: Path = MARKETPLACE_ROOT, audit_date: str 
     bundle = render_bundle(source, marketplace, manifest)
     upsert_marketplace_entry(marketplace, entry)
     upsert_codex_marketplace_entry(source, marketplace, manifest, entry)
+    upsert_grok_marketplace_entry(source, marketplace, manifest, entry)
     audit_path = ensure_audit(marketplace, entry, audit_date)
     return PublishReport(entry["name"], bundle, entry, audit_path)
 

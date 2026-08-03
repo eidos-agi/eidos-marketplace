@@ -116,6 +116,7 @@ Keep descriptions, versions, authority boundaries, and skill paths aligned acros
 
 | Plugin | What it does | Quality |
 |--------|-------------|---------|
+| **anti-slop** | Continuous anti-AI-slop for prose + world-class case-study gates (Claude + Grok) | PENDING |
 | **cept** | Proprioception for coding agents — slice recent Claude Code transcript, redact, ask a model for steering | A *(2026-04-28, by-hand)* |
 | **rhea** | Adversarial sparring partner — challenge, debate, simplify, unstick. Sibling to cept; the outside-perspective mirror to cept's self-perspective | (Phase 3c) |
 | **emux** | Eidos mux — pick up where you left off in tmux. TUI session picker for humans (`emux`) + MCP server for agents (`emux mcp`). One shared registry of named sessions; works with any tmux session — Claude Code, shells, long-running services | (Phase 3d) |

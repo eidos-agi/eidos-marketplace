@@ -1,0 +1,6 @@
+{
+  "kind": {
+    "type": "tool",
+    "signals": ["ships_skills", "skill_only", "opinionated_workflow"]
+  }
+}
