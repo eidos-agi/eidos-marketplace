@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "shipr"
-version = "0.2.0"
+version = "0.2.1"
 description = "Persistent Eidos shipping operator that learns how each product ships."
 readme = "README.md"
 license = "MIT"
@@ -42,3 +42,6 @@ packages = ["src/shipr"]
 [tool.ruff]
 target-version = "py311"
 line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

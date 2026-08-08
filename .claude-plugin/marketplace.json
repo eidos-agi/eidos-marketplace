@@ -9,13 +9,12 @@
   },
   "plugins": [
     {
-      "name": "anti-slop",
-      "description": "Continuous anti-AI-slop for prose plus world-class case-study gates. Pulls community upstreams; ships write + audit skills.",
-      "source": "./plugins/anti-slop",
       "category": "productivity",
+      "description": "Continuous anti-AI-slop for prose plus world-class case-study gates. Pulls community upstreams; ships write + audit skills.",
       "homepage": "https://github.com/eidos-agi/anti-slop",
       "license": "MIT",
-      "version": "0.1.0",
+      "name": "anti-slop",
+      "source": "./plugins/anti-slop",
       "tags": [
         "anti-slop",
         "prose",
@@ -25,21 +24,22 @@
         "claude-code",
         "agent-skill"
       ],
+      "version": "0.1.0",
       "x-eidos": {
+        "audit": {
+          "audit_date": "2026-08-03",
+          "audit_doc": "AUDITS/anti-slop.md",
+          "audit_version": "STANDARD.md",
+          "audited_by": "pending",
+          "grade": "PENDING"
+        },
         "kind": {
-          "type": "tool",
           "signals": [
             "ships_skills",
             "skill_only",
             "opinionated_workflow"
-          ]
-        },
-        "audit": {
-          "audited_by": "pending",
-          "audit_version": "STANDARD.md",
-          "audit_date": "2026-08-03",
-          "grade": "PENDING",
-          "audit_doc": "AUDITS/anti-slop.md"
+          ],
+          "type": "tool"
         }
       }
     },
@@ -1118,7 +1118,7 @@
         "eidos",
         "claude-code"
       ],
-      "version": "0.2.0",
+      "version": "0.2.1",
       "x-eidos": {
         "audit": {
           "audit_date": "2026-06-15",
