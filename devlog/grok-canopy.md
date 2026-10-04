@@ -11,4 +11,5 @@
 - [x] `python tools/marketplace_publish.py publish /tmp/grok-canopy-src --audit-date 2026-10-04` printed `published grok-canopy`.
 - [x] `python tools/marketplace_publish.py check grok-canopy --source /tmp/grok-canopy-src` reported OK.
 - [x] `cmp` of `plugins/grok-canopy/scripts/check.py` and `plugins/grok-canopy/scripts/store/botscore.json` against the attachments matched.
-- [ ] Marketplace pytest after the pre-test commit.
+- [x] `python3 -m pytest tests/test_marketplace_publish.py tests/test_plugin_tester.py` — 21 passed.
+- [x] `python3 tools/test_plugins.py grok-canopy` — SKIP, no `.mcp.json`. The canopy ships a check and a store.
