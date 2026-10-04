@@ -322,6 +322,23 @@
       ]
     },
     {
+      "name": "grok-canopy",
+      "description": "Parent-pointer check and BotScore store for the Grok bot canopy.",
+      "category": "agent-tools",
+      "source": {
+        "type": "local",
+        "path": "./plugins/grok-canopy"
+      },
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/grok-canopy",
+      "version": "0.1.0",
+      "keywords": [
+        "canopy",
+        "parents",
+        "botscore",
+        "grok"
+      ]
+    },
+    {
       "name": "grok-goals",
       "description": "Durable Goal store and MCP for Grok Bot. Storage and validation only.",
       "category": "agent-tools",

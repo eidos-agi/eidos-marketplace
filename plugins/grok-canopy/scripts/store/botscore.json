@@ -1,0 +1,3162 @@
+{
+  "store": "grok-canopy-botscore",
+  "format": "json",
+  "version": 1,
+  "scored_at": "2026-10-04T17:15:12-05:00",
+  "bot_count": 124,
+  "algorithm": {
+    "base": 100,
+    "floor": 0,
+    "unfinished_work_penalties": {
+      "no_profile_name": 40,
+      "not_loaded": 40,
+      "no_description": 30,
+      "fewer_than_3_notes": 30
+    },
+    "checks": {
+      "no_profile_name": "Name missing, or the placeholder New Agent.",
+      "not_loaded": "No transcript entries and no memory notes.",
+      "no_description": "Profile description is empty.",
+      "fewer_than_3_notes": "Fewer than 3 markdown memory notes in the bot's own memory files."
+    },
+    "wake_correction": {
+      "method": "Confirmed lean schedules only. On-disk routine files were not read and were not scored.",
+      "token_burn": "excluded",
+      "reason": "No per-bot token numbers exist.",
+      "penalty": 0,
+      "confirmed_lean_schedules": [
+        {
+          "bot": "Tokut",
+          "schedule": "Cursor spending once a day at 8:29am CT",
+          "lock": "2026-10-04"
+        },
+        {
+          "bot": "CorrespondenceBot",
+          "schedule": "Shared check weekdays at 9:29am CT, quiet when nothing actionable",
+          "lock": "2026-10-04"
+        },
+        {
+          "bot": "ZiggyBot",
+          "schedule": "Angela/Ziggy text watch stays deleted",
+          "lock": "2026-10-04"
+        }
+      ]
+    },
+    "bands": [
+      "0",
+      "1-39",
+      "40-69",
+      "70-99",
+      "100"
+    ]
+  },
+  "distribution": {
+    "0": 18,
+    "1-39": 31,
+    "40-69": 4,
+    "70-99": 11,
+    "100": 60
+  },
+  "bots": [
+    {
+      "id": "e7f9145c-dffa-4925-9667-faf5de84d4b0",
+      "name": "AdrienBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "8717f845-11ea-403e-a07e-7772fbf52ffb",
+      "name": "AICDirectorData",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "2ffbaad1-8d78-4a5d-83bd-2e99b8f98dd5",
+      "name": "AWSBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "7af086d2-2caa-4e2b-a6a0-160091194f2d",
+      "name": "BackupBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "6c22505c-8839-4102-96aa-34642653dce8",
+      "name": "BirthdayBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "c872f98b-2f73-4511-8cb9-3cea4324bb6d",
+      "name": "Browsers",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "ad1ca656-ae12-4764-a7f7-e818853eda9d",
+      "name": "ChatGPTBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "77c7b3e1-7d44-47b5-b9e2-74b81b14f80b",
+      "name": "DockerBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "f6205226-da60-4020-b257-403303165ca8",
+      "name": "EJ Bartolomei Bot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "f5ac2a84-2e72-45c8-911b-bddf771b93ff",
+      "name": "IdentityBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "6ffcf17b-f259-4f70-b413-a301a0f7869d",
+      "name": "JacobBarefootBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "241813dc-64d6-4cf4-bec5-0b6f3168853f",
+      "name": "JeffBurrowsBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "788405f6-d076-4453-8b9c-0170a5280616",
+      "name": "MichaelShanklinBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "*",
+      "name": "New Agent",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 40,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": false,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "c0355764-2383-4d87-bdf5-328e2a23958f",
+      "name": "SpamBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "993aab5b-e779-4182-9667-dc590ddd166f",
+      "name": "SubscriptionsBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "063d807a-df65-49cc-816a-937587aef37c",
+      "name": "TravelBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "2724f2bd-6c62-4351-b43b-25393b98d6de",
+      "name": "TVBot",
+      "score": 0,
+      "band": "0",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "baa3ebb5-46e6-4cb4-ad9d-d5b5487d0cb4",
+      "name": "1PasswordBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 117,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "9843a1e9-af8b-4e55-8c15-140d0d5b7f4b",
+      "name": "AICEmail",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 802,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "6a4365af-d4a1-4c09-9d95-4dee205e49d5",
+      "name": "BooneFinanceMercuryBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 532,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "430cd955-bc62-438a-8062-cffceb4117e9",
+      "name": "BrowserOSBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 291,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "a9776810-d9d0-4e75-b0ac-4f76c85e11c5",
+      "name": "CalendarAndTaskBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 96,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "5e5f5b38-ef1b-4a62-ab33-0cbc214d54e4",
+      "name": "Colin Christian Bot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 495,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "921a9efc-ae65-4c2a-8fba-13bb1a840126",
+      "name": "EidosEmail",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 463,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "501ee53e-c9f0-43c6-a609-f1b32b1ceb76",
+      "name": "EidosFinanceMercuryBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 584,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "74a64205-4d72-4f6c-82fe-73132561ac4f",
+      "name": "EidosInfra",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 769,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "111097e2-b5e8-4886-ae6b-4c0a54fe4dd4",
+      "name": "EmailBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 157,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "cf036748-2ba3-4b74-b1ab-e2f2a573b58a",
+      "name": "ExpenseBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 267,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "c05271c2-c057-41ae-9a28-0f7b3f1c6fb5",
+      "name": "FleetBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 193,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "42d96502-e8a2-48a1-8139-affd8c25962a",
+      "name": "Grok Bot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 235,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "eb67c2d5-501f-454f-9e96-7d905638b780",
+      "name": "GrokGoals",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 154,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "2d30629c-cff1-4df1-a5c8-88525e94a9c8",
+      "name": "HealthBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 491,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "eb4f0883-f2f0-47ea-9c91-6bed23a01182",
+      "name": "HondaPilotBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 697,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "9117bf35-77be-4cac-a9e5-293e3c6aaf7b",
+      "name": "JevBrowsing",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 317,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "779bd8d4-ba89-49d3-8dc6-722f45fa0ebc",
+      "name": "JevDesktopBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 71,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "4ff0bf34-3355-4696-8988-f4db1263c85d",
+      "name": "JevmailBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 724,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "367bd4d9-7a31-4e75-9251-f0e216d7b981",
+      "name": "Overheard",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 224,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "13e134f3-a805-47fe-b75e-c65f3fd51077",
+      "name": "PhotosBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 116,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "90e52702-6aa3-4f8a-ba6e-5d6976ed3b07",
+      "name": "PlaidBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 189,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "e8308241-7a30-46ec-bc01-0958227968ab",
+      "name": "QA bot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 104,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "cd647500-eb2c-4013-9c58-9621de88c179",
+      "name": "ReevesEmailBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 592,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "4369483a-e67c-4650-a53b-b12510a03578",
+      "name": "ReevesFinanceMercuryBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 540,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "8707f1e2-084a-4bf6-ae2b-6340b92cb9cd",
+      "name": "ReevesInfra",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 1089,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "e8e8de78-f0fe-4d29-96af-209ead7d6090",
+      "name": "ShanklinFamilyTrustBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 163,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "2da62610-0176-4d38-86e0-d344d90461f1",
+      "name": "SubscriptionsBooneVoyageBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 1652,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "d321e844-5e4d-4f4a-987e-d36f0c2ba8a0",
+      "name": "SubscriptionsEidosBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 587,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "285de845-f315-4ddf-b21a-7f71d9edd5b4",
+      "name": "TahoeBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 56,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "3be67ada-0204-4582-b1e5-16f6fa0c0124",
+      "name": "TVForEmilyBot",
+      "score": 30,
+      "band": "1-39",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 40,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": false,
+        "has_description": true,
+        "description_length": 151,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 0
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "49fb75e9-93a7-4e15-aacf-9b3efb86ae19",
+      "name": "Eidos Company",
+      "score": 40,
+      "band": "40-69",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 7
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "35ea3c04-1ed8-40ee-935d-80acc62dbdec",
+      "name": "EmuxBot, ShowMeee",
+      "score": 40,
+      "band": "40-69",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 20
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "c83f57ad-c2fd-43cf-b89b-67280383d92b",
+      "name": "GrokBotBot, Fort Knox",
+      "score": 40,
+      "band": "40-69",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 22
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "cd858729-c304-405b-854a-6cc9b3f9530c",
+      "name": "ReevesClaw, Reeves, 239Eagle",
+      "score": 40,
+      "band": "40-69",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 0,
+        "transcript_entries": 8
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "18479493-c6b4-4dce-9340-eba0bd04341b",
+      "name": "ASMPBot",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 3,
+        "transcript_entries": 24
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "c9f561d2-48c3-40f7-a815-305fbb58cf4e",
+      "name": "CockpitBot",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 3,
+        "transcript_entries": 19
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "46c9aae5-6c78-4221-89c7-f31b74e986f2",
+      "name": "Eidos3D",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 129,
+        "has_title": false,
+        "memory_note_count": 2,
+        "transcript_entries": 10
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "502ba08c-dcc5-4ba5-8b5d-5643d65b6ec4",
+      "name": "EidosDeck",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 285,
+        "has_title": false,
+        "memory_note_count": 2,
+        "transcript_entries": 13
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "ca563465-7a70-47e8-94f2-d0714f7a95d1",
+      "name": "EidosFinance",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 137,
+        "has_title": false,
+        "memory_note_count": 2,
+        "transcript_entries": 12
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "16877af3-fc73-4c41-9edb-eb4e453949f3",
+      "name": "ManyHatsBot",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 30
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 179,
+        "has_title": true,
+        "memory_note_count": 0,
+        "transcript_entries": 1
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "210797b5-34bb-4712-b946-6a7643a8959a",
+      "name": "MFilesBot",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 18,
+        "transcript_entries": 61
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "4ea6e05d-bdd2-4e81-b27f-ae349bd662b2",
+      "name": "PotBellyBot",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 3,
+        "transcript_entries": 22
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "2b2882e5-e766-47c2-b0cc-a709f729c1c5",
+      "name": "RheaAIIncorporatedBot",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 6,
+        "transcript_entries": 34
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "e7500af7-992f-4c8a-92cb-dcfa4ff8a9e2",
+      "name": "ScannerBot",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 45,
+        "transcript_entries": 232
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "41b917a3-9370-4d84-bb10-dc3a0edc9769",
+      "name": "WebinarBot",
+      "score": 70,
+      "band": "70-99",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 30,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": false,
+        "description_length": 0,
+        "has_title": false,
+        "memory_note_count": 3,
+        "transcript_entries": 17
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "68782092-5617-420b-98f9-9135d16fb971",
+      "name": "239Eagle",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 238,
+        "has_title": false,
+        "memory_note_count": 26,
+        "transcript_entries": 107
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "9fcbe5fa-55bd-4686-b0e5-566338b00a2a",
+      "name": "AAD",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 217,
+        "has_title": false,
+        "memory_note_count": 78,
+        "transcript_entries": 570
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "7c063159-f3d5-496f-a683-a91703360e75",
+      "name": "AISEE",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 42,
+        "has_title": false,
+        "memory_note_count": 46,
+        "transcript_entries": 399
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "f0785cf9-84fc-43ca-82b5-34215a91b26c",
+      "name": "AlhanaBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 492,
+        "has_title": false,
+        "memory_note_count": 18,
+        "transcript_entries": 106
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "a4c279c2-7773-4345-a861-833ae3e26b2f",
+      "name": "ApartmentBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 891,
+        "has_title": false,
+        "memory_note_count": 21,
+        "transcript_entries": 135
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "dac56520-ffa1-4a58-bbb0-a866b0288c93",
+      "name": "Arparp",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 97,
+        "has_title": false,
+        "memory_note_count": 46,
+        "transcript_entries": 273
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "25209658-711c-4bb5-b6a3-5a42c218cfbf",
+      "name": "Cerebroski",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 175,
+        "has_title": false,
+        "memory_note_count": 154,
+        "transcript_entries": 1338
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "39b21f15-d1b7-400c-b8c4-6eb398032ba7",
+      "name": "ColleenBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 174,
+        "has_title": false,
+        "memory_note_count": 43,
+        "transcript_entries": 184
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "dd5daeb5-2303-4f78-9b5a-f074fe9d738d",
+      "name": "CorrespondenceBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 178,
+        "has_title": false,
+        "memory_note_count": 156,
+        "transcript_entries": 608
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "f5dfcfce-5fc5-440a-befa-963d5ea35f2b",
+      "name": "CrunchBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 404,
+        "has_title": false,
+        "memory_note_count": 26,
+        "transcript_entries": 112
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "d21b292f-bbe4-42b1-a72f-ba0ca496b00b",
+      "name": "DanBoone",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 119,
+        "has_title": false,
+        "memory_note_count": 29,
+        "transcript_entries": 134
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "780adf1d-c7ad-4683-a0af-ee629bda21eb",
+      "name": "DeepSeekHarnessBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 108,
+        "has_title": false,
+        "memory_note_count": 58,
+        "transcript_entries": 422
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "1227fde8-bb12-4651-b0e3-79edc4f78766",
+      "name": "DeepSeekResearch",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 685,
+        "has_title": false,
+        "memory_note_count": 19,
+        "transcript_entries": 151
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "8eddde5a-af20-4991-a437-2ca7d7ca567a",
+      "name": "DesignBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 61,
+        "has_title": false,
+        "memory_note_count": 16,
+        "transcript_entries": 96
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "21bbcd99-4777-48c5-8a08-791e07c92aea",
+      "name": "dr eggbot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 392,
+        "has_title": false,
+        "memory_note_count": 11,
+        "transcript_entries": 14
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "8c0e4659-01fa-4a80-b8d9-037ae0b53636",
+      "name": "EAM (Eidos Agent Manager)",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 140,
+        "has_title": false,
+        "memory_note_count": 28,
+        "transcript_entries": 179
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "5f4a303a-403c-4745-9c1c-eafe6404c1cb",
+      "name": "Eidos Brand",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 126,
+        "has_title": false,
+        "memory_note_count": 16,
+        "transcript_entries": 235
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "1ca27b54-cef3-49a6-bfd4-b18cdf11c89a",
+      "name": "Eidos Browsing Grok Plugin",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 135,
+        "has_title": false,
+        "memory_note_count": 6,
+        "transcript_entries": 69
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "bed35102-08dc-4631-9c88-4b9bb19b7d3a",
+      "name": "EidosDNSAndCloudflare",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 161,
+        "has_title": false,
+        "memory_note_count": 34,
+        "transcript_entries": 541
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "016d45f7-6fd2-4715-80b2-2566bd77fdab",
+      "name": "EidosDocs",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 185,
+        "has_title": false,
+        "memory_note_count": 5,
+        "transcript_entries": 7
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "f656a10f-3a85-4ec5-ac56-d46b78ebcf53",
+      "name": "EmilyRothrockBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 567,
+        "has_title": false,
+        "memory_note_count": 12,
+        "transcript_entries": 56
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "3c3ded6d-8993-4617-97fe-1d1d9741e83f",
+      "name": "EmuxBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 124,
+        "has_title": false,
+        "memory_note_count": 64,
+        "transcript_entries": 345
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "264106a5-7ddd-460d-9b0b-b9c41e4adb96",
+      "name": "Fort Knox",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 177,
+        "has_title": false,
+        "memory_note_count": 115,
+        "transcript_entries": 1188
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "c15bc8a5-06c0-487d-a22c-9e9405b61312",
+      "name": "GrokBotBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 130,
+        "has_title": true,
+        "memory_note_count": 162,
+        "transcript_entries": 571
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "27bc7790-8d18-4c8a-83b4-29c9cfc0c411",
+      "name": "GrokKnox",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 760,
+        "has_title": false,
+        "memory_note_count": 7,
+        "transcript_entries": 14
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "04de3f32-6ec4-4850-b1a3-d16873e42233",
+      "name": "GrokTuah",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 171,
+        "has_title": false,
+        "memory_note_count": 239,
+        "transcript_entries": 1070
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "48a0ec65-9f1e-47b6-a5fb-c5571938ea90",
+      "name": "Hancock",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 165,
+        "has_title": false,
+        "memory_note_count": 6,
+        "transcript_entries": 197
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "99f26dc5-e3d2-4d9d-b2d1-ef143ff951e5",
+      "name": "JoanneBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 596,
+        "has_title": false,
+        "memory_note_count": 13,
+        "transcript_entries": 36
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "8f46dcc9-4f48-45b8-bfe3-bfd53786ddfb",
+      "name": "JoshBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 157,
+        "has_title": false,
+        "memory_note_count": 44,
+        "transcript_entries": 246
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "1b74ada7-d00d-4673-b060-2d4670ab29e3",
+      "name": "Kai",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 108,
+        "has_title": false,
+        "memory_note_count": 143,
+        "transcript_entries": 1349
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "18cc31ee-1025-4ffc-9542-04eb6a0bf8f9",
+      "name": "KaiEngineering",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 358,
+        "has_title": false,
+        "memory_note_count": 14,
+        "transcript_entries": 37
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "d1a4bfdb-986d-4835-9a7e-ccb9e9f30cba",
+      "name": "KidsBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 274,
+        "has_title": false,
+        "memory_note_count": 7,
+        "transcript_entries": 30
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "14e6bd6f-d4c6-43b6-b4f5-bf7f00432a79",
+      "name": "KnoxDrive",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 403,
+        "has_title": false,
+        "memory_note_count": 6,
+        "transcript_entries": 531
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "d14b8975-6fc0-4bb9-a4ea-568d8f10b544",
+      "name": "LinkedInBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 59,
+        "has_title": false,
+        "memory_note_count": 251,
+        "transcript_entries": 166
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "d06831af-d046-4597-813d-679f27e7d3e7",
+      "name": "MeridianBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 106,
+        "has_title": false,
+        "memory_note_count": 5,
+        "transcript_entries": 18
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "54bc37ee-0efc-4577-b888-bbafb3f631a3",
+      "name": "MockupBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 155,
+        "has_title": false,
+        "memory_note_count": 21,
+        "transcript_entries": 136
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "2285d283-234c-4c35-aa3d-e2f34b08e5e1",
+      "name": "Ollie",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 355,
+        "has_title": false,
+        "memory_note_count": 13,
+        "transcript_entries": 122
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "68f969b8-877e-4cab-bcb8-03bf2d231e38",
+      "name": "Omni",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 66,
+        "has_title": false,
+        "memory_note_count": 78,
+        "transcript_entries": 475
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "6d1384f9-f6d7-41e9-ab2a-10dcb161904b",
+      "name": "PaseoBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 151,
+        "has_title": false,
+        "memory_note_count": 53,
+        "transcript_entries": 425
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "4afc8f22-bee4-483b-b2d0-b47caf414ec2",
+      "name": "PavoBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 172,
+        "has_title": false,
+        "memory_note_count": 48,
+        "transcript_entries": 306
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "4395b42e-d608-43f3-a55e-34e80f7a3599",
+      "name": "Prims",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 169,
+        "has_title": false,
+        "memory_note_count": 128,
+        "transcript_entries": 1438
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "71b1f402-5036-417c-8610-4b0ffa753ecb",
+      "name": "PrimsBrowsers",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 236,
+        "has_title": false,
+        "memory_note_count": 67,
+        "transcript_entries": 900
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "30aa5286-b685-44e8-821c-5de15dbfc370",
+      "name": "PrimsDesktop",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 333,
+        "has_title": false,
+        "memory_note_count": 137,
+        "transcript_entries": 1031
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "b4ba7bc1-8109-4eb8-ba7d-4d1d71308ecc",
+      "name": "PrimsDrive",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 552,
+        "has_title": false,
+        "memory_note_count": 26,
+        "transcript_entries": 219
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "28fe47ce-86f9-4de4-a632-013da4514200",
+      "name": "ProductBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 225,
+        "has_title": false,
+        "memory_note_count": 26,
+        "transcript_entries": 61
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "ada7a68a-a119-403b-a812-5d7553d23da3",
+      "name": "Reeves",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 135,
+        "has_title": false,
+        "memory_note_count": 167,
+        "transcript_entries": 959
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "488bf712-bb9f-43e2-bc25-72c9be24c187",
+      "name": "ReevesCreekside",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 292,
+        "has_title": false,
+        "memory_note_count": 5,
+        "transcript_entries": 22
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "8cef4ae0-3126-4e46-a340-5a1148d927c9",
+      "name": "ReevesFinance",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 293,
+        "has_title": false,
+        "memory_note_count": 73,
+        "transcript_entries": 415
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "57b86d50-2d0b-4206-8525-2f88a139e441",
+      "name": "ReevesMacbook",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 128,
+        "has_title": false,
+        "memory_note_count": 12,
+        "transcript_entries": 87
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "48c26be5-f2c6-4713-83e5-83935dfd4690",
+      "name": "RentAMacBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 154,
+        "has_title": false,
+        "memory_note_count": 38,
+        "transcript_entries": 142
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "446b84f0-c203-466e-aaf3-1463382a862a",
+      "name": "Rolodex",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 159,
+        "has_title": false,
+        "memory_note_count": 121,
+        "transcript_entries": 359
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "02cacb36-6e8f-4566-9e99-f176c1ea7bb6",
+      "name": "SaraVinsonBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 459,
+        "has_title": false,
+        "memory_note_count": 15,
+        "transcript_entries": 92
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "7143f22a-5962-4e8a-b5ff-872652306858",
+      "name": "TaylorBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 571,
+        "has_title": false,
+        "memory_note_count": 35,
+        "transcript_entries": 160
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "b873eb96-ed59-4060-b754-fae6b6544412",
+      "name": "TestingBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 245,
+        "has_title": false,
+        "memory_note_count": 12,
+        "transcript_entries": 26
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "bb8de50d-eae2-43bf-8950-fe2fc5a8a219",
+      "name": "TimOConnorBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 316,
+        "has_title": false,
+        "memory_note_count": 9,
+        "transcript_entries": 72
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "8e912e6b-45b2-4022-91a0-aede5d56849d",
+      "name": "Tokut",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 146,
+        "has_title": false,
+        "memory_note_count": 299,
+        "transcript_entries": 581
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "40bc7590-926a-406c-b651-27776fe33784",
+      "name": "TokutOptimizer",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 164,
+        "has_title": false,
+        "memory_note_count": 5,
+        "transcript_entries": 18
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "1ad6b971-f5d0-4ae3-a01a-7e75c05d1313",
+      "name": "Volta",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 152,
+        "has_title": false,
+        "memory_note_count": 16,
+        "transcript_entries": 89
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "14b0fd7f-d4d0-4df4-a7be-c79f72b36c13",
+      "name": "WyattBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 176,
+        "has_title": false,
+        "memory_note_count": 49,
+        "transcript_entries": 353
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    },
+    {
+      "id": "e7c90390-64b0-4ed4-afd8-26146d4a1d4e",
+      "name": "ZiggyBot",
+      "score": 100,
+      "band": "100",
+      "penalties": {
+        "no_profile_name": 0,
+        "not_loaded": 0,
+        "no_description": 0,
+        "fewer_than_3_notes": 0
+      },
+      "inputs": {
+        "has_profile_name": true,
+        "loaded": true,
+        "has_description": true,
+        "description_length": 171,
+        "has_title": false,
+        "memory_note_count": 30,
+        "transcript_entries": 89
+      },
+      "wake": {
+        "penalty": 0,
+        "token_burn": "excluded"
+      }
+    }
+  ]
+}
