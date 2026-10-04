@@ -71,5 +71,18 @@ def test_resume_resume_marketplace_declares_runtime_extras() -> None:
     ]
 
 
+def test_grok_goals_node_entry_needs_a_build_until_dist_exists(tmp_path: Path) -> None:
+    plugin_dir = tmp_path / "grok-goals"
+    plugin_dir.mkdir()
+    (plugin_dir / "package.json").write_text("{}\n")
+    entry = plugin_dir / "dist" / "index.js"
+    args = [str(entry)]
+
+    assert test_plugins.needs_node_build(plugin_dir, "node", args)
+    entry.parent.mkdir()
+    entry.write_text("console.log('ok')\n")
+    assert not test_plugins.needs_node_build(plugin_dir, "node", args)
+
+
 def test_knox_keychain_unavailable_is_skippable_platform_error() -> None:
     assert "Knox keychain backend unavailable" in test_plugins.SKIPPABLE_PLATFORM_ERRORS

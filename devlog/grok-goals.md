@@ -11,3 +11,10 @@
 - [x] `python tools/marketplace_publish.py check grok-goals --source <source>` reported OK after the whitelist change.
 - [x] `pytest tests/test_marketplace_publish.py` — 14 passed.
 - [x] Copied `plugins/grok-goals` to a temp directory: `npm ci`, `npm test` (7 passed), `npm run build`. `dist/` stayed out of git.
+- [x] `python tools/test_plugins.py grok-goals` passed after the smoke tester builds a missing Node entry and points `GROK_GOALS_PACK` at an empty temp directory.
+
+## 2026-10-04 Function length
+
+- **What changed:** `smoke_plugin` in `tools/test_plugins.py` stays one function.
+- **Why:** It was already longer than 50 lines. The Node build and empty-pack env are separate helpers. Splitting the handshake further can wait for a tester cleanup.
+- **Supporting Research:** Local smoke passed: `grok-goals v0.1.0`.

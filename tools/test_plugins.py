@@ -16,6 +16,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -104,6 +105,38 @@ def read_mcp_response(proc, timeout: float) -> dict | None:
     return None
 
 
+def needs_node_build(plugin_dir: Path, command: str, args: list[str]) -> bool:
+    """True when a Node plugin's stdio entry is produced by npm run build."""
+    if command != "node" or not (plugin_dir / "package.json").is_file():
+        return False
+    entries = [Path(arg) for arg in args if arg.endswith(".js")]
+    return bool(entries) and any(not path.is_file() for path in entries)
+
+
+def build_node_plugin(plugin_dir: Path) -> str | None:
+    """Install and compile a Node plugin. Returns an error string on failure."""
+    for args in (["npm", "ci"], ["npm", "run", "build"]):
+        completed = subprocess.run(
+            args,
+            cwd=plugin_dir,
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+        if completed.returncode != 0:
+            detail = (completed.stderr or completed.stdout or "npm failed").strip()
+            return detail[-500:]
+    return None
+
+
+def smoke_env(name: str, config: dict, plugin_dir: Path) -> dict[str, str]:
+    """Environment for a smoke launch. Grok Goals gets an empty temp pack."""
+    env = expanded_env(config, plugin_dir)
+    if name == "grok-goals" and not env.get("GROK_GOALS_PACK", "").strip():
+        env["GROK_GOALS_PACK"] = tempfile.mkdtemp(prefix="grok-goals-empty-")
+    return env
+
+
 def smoke_plugin(plugin_dir: Path) -> dict:
     """Test a single plugin. Returns result dict."""
     name = plugin_dir.name
@@ -129,6 +162,13 @@ def smoke_plugin(plugin_dir: Path) -> dict:
 
     result = {"name": name, "command": " ".join(full_cmd), "status": "fail"}
 
+    if needs_node_build(plugin_dir, command, args):
+        build_error = build_node_plugin(plugin_dir)
+        if build_error:
+            result["reason"] = "node build failed"
+            result["stderr"] = build_error
+            return result
+
     # Start the server
     try:
         proc = subprocess.Popen(
@@ -136,7 +176,7 @@ def smoke_plugin(plugin_dir: Path) -> dict:
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            env=expanded_env(config, plugin_dir),
+            env=smoke_env(name, config, plugin_dir),
         )
     except FileNotFoundError:
         result["reason"] = f"command not found: {command}"
