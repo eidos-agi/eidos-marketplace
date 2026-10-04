@@ -1,0 +1,33 @@
+{
+  "name": "grok-goals",
+  "version": "0.1.0",
+  "description": "Durable Goal store and MCP for Grok Bot. Storage and validation only.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "grok-goals-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "demo": "tsx scripts/demo.ts",
+    "validate-pack": "tsx scripts/validate-pack.ts",
+    "reindex": "tsx scripts/reindex.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.1",
+    "ajv": "8.20.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.0",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

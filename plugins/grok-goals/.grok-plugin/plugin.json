@@ -1,0 +1,21 @@
+{
+  "name": "grok-goals",
+  "version": "0.1.0",
+  "description": "Durable Goal store and MCP for Grok Bot. Storage and validation only.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/grok-goals",
+  "repository": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/grok-goals",
+  "license": "MIT",
+  "keywords": [
+    "goals",
+    "mcp",
+    "planning",
+    "progress"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}

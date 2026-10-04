@@ -1,0 +1,24 @@
+{
+  "name": "grok-goals",
+  "version": "0.1.0",
+  "owner_bot": "GrokGoals",
+  "description": "Durable goals: plan, progress, next action, and approval policy. Storage and validation only.",
+  "packaging": "Sketch for a later Grok Bot plugin. This file is not a live manifest format.",
+  "transport": {
+    "type": "stdio",
+    "command": "node",
+    "args": ["dist/index.js"],
+    "env": ["GROK_GOALS_PACK"]
+  },
+  "tools_doc": "docs/tools.md",
+  "openapi": "docs/tools.openapi.json",
+  "schemas": ["schema/goal.schema.json", "schema/plan-step.schema.json"],
+  "tools": [
+    "goals_list",
+    "goals_get",
+    "goals_create",
+    "goals_update",
+    "goals_record_progress",
+    "goals_set_approval_policy"
+  ]
+}

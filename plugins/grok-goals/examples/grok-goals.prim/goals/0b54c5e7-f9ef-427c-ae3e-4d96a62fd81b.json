@@ -1,0 +1,54 @@
+{
+  "id": "0b54c5e7-f9ef-427c-ae3e-4d96a62fd81b",
+  "title": "Ship quarterly invoice export",
+  "objective": "A customer admin can download last quarter's invoices as a CSV from the billing page, without filing a ticket.",
+  "acceptance_criteria": [
+    "CSV totals match the ledger for the fixture account",
+    "The route uses the same auth check as the billing page",
+    "The support note tells people where the button is"
+  ],
+  "category": "shipping",
+  "plan_steps": [
+    {
+      "id": "7ed20b18-b5ad-4d00-952e-d1d8ef83668f",
+      "title": "Confirm the columns with finance",
+      "owner": "user",
+      "status": "done",
+      "notes": "Columns: invoice number, issued date, amount, currency, status."
+    },
+    {
+      "id": "16a9be2c-6b99-46b7-967e-f0de63b59205",
+      "title": "Add the export route and the billing-page button",
+      "owner": "agent",
+      "status": "doing",
+      "notes": "Use the billing page auth check. The fixture account is the acceptance test."
+    },
+    {
+      "id": "d514b0af-5544-49d1-8519-7a3b52ac8b9f",
+      "title": "Turn the flag on and publish the support note",
+      "owner": "agent",
+      "status": "todo"
+    }
+  ],
+  "status": "active",
+  "last_progress": {
+    "at": "2026-09-26T18:05:00.000Z",
+    "summary": "Finance confirmed the columns: invoice number, issued date, amount, currency, status."
+  },
+  "next_action": {
+    "summary": "Implement the export route against the fixture account and put the button on the billing page.",
+    "owner": "agent",
+    "due": "2026-09-30"
+  },
+  "approval_policy": {
+    "send": "ask",
+    "spend": "deny",
+    "post": "ask",
+    "delete": "ask"
+  },
+  "linked_routines": ["weekday-shipping-check"],
+  "memory_refs": ["mem_invoice_export_columns"],
+  "created_at": "2026-09-18T16:30:00.000Z",
+  "updated_at": "2026-09-26T18:05:00.000Z",
+  "owner_bot": "GrokGoals"
+}

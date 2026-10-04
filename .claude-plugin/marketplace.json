@@ -714,6 +714,37 @@
       }
     },
     {
+      "name": "grok-goals",
+      "description": "Durable Goal store and MCP for Grok Bot. Storage and validation only.",
+      "source": "./plugins/grok-goals",
+      "category": "agent-tools",
+      "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/grok-goals",
+      "license": "MIT",
+      "version": "0.1.0",
+      "tags": [
+        "goals",
+        "mcp",
+        "planning",
+        "progress"
+      ],
+      "x-eidos": {
+        "kind": {
+          "type": "tool",
+          "signals": [
+            "single_capability",
+            "mcp_server"
+          ]
+        },
+        "audit": {
+          "audited_by": "pending",
+          "audit_version": "STANDARD.md",
+          "audit_date": "2026-10-04",
+          "grade": "PENDING",
+          "audit_doc": "AUDITS/grok-goals.md"
+        }
+      }
+    },
+    {
       "category": "productivity",
       "description": "Task and project management \u2014 create tasks, track milestones, manage documents, and execute within visionlog contracts",
       "homepage": "https://github.com/eidos-agi/ike.md",

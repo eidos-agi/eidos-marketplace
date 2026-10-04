@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://grok-goals.local/schema/index.schema.json",
+  "title": "GrokGoalsPackIndex",
+  "description": "Status rollup. Goal files are the source of truth; this index is refreshed on each write.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["updated_at", "goals"],
+  "properties": {
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "status", "updated_at"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string", "minLength": 1 },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "active", "paused", "blocked", "completed", "abandoned"]
+          },
+          "category": {
+            "type": "string",
+            "enum": ["health", "finance", "career", "shipping", "other"]
+          },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

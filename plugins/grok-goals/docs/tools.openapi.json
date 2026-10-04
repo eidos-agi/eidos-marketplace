@@ -1,0 +1,313 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Grok Goals tools",
+    "version": "0.1.0",
+    "description": "OpenAPI-shaped catalog of the Grok Goals MCP tools for later Grok Bot plugin packaging. These are not HTTP routes. Goal and PlanStep field meaning lives in schema/goal.schema.json and schema/plan-step.schema.json."
+  },
+  "paths": {
+    "/tools/goals_list": {
+      "post": {
+        "operationId": "goals_list",
+        "summary": "List goals",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/ListGoals" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Matching goals",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/GoalListEnvelope" } }
+            }
+          }
+        }
+      }
+    },
+    "/tools/goals_get": {
+      "post": {
+        "operationId": "goals_get",
+        "summary": "Get one goal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/GoalId" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The goal",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/GoalEnvelope" } }
+            }
+          }
+        }
+      }
+    },
+    "/tools/goals_create": {
+      "post": {
+        "operationId": "goals_create",
+        "summary": "Create a draft or active goal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreateGoal" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stored goal",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/GoalEnvelope" } }
+            }
+          }
+        }
+      }
+    },
+    "/tools/goals_update": {
+      "post": {
+        "operationId": "goals_update",
+        "summary": "Patch a goal, including pause and complete",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateGoal" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated goal",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/GoalEnvelope" } }
+            }
+          }
+        }
+      }
+    },
+    "/tools/goals_record_progress": {
+      "post": {
+        "operationId": "goals_record_progress",
+        "summary": "Record progress and optional next action",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/RecordProgress" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Goal plus the journal line",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProgressEnvelope" } }
+            }
+          }
+        }
+      }
+    },
+    "/tools/goals_set_approval_policy": {
+      "post": {
+        "operationId": "goals_set_approval_policy",
+        "summary": "Update send, spend, post, and delete gates",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/SetApprovalPolicy" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Goal with the stored policy",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/GoalEnvelope" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Goal": { "$ref": "../schema/goal.schema.json" },
+      "PlanStep": { "$ref": "../schema/plan-step.schema.json" },
+      "GoalStatus": {
+        "type": "string",
+        "enum": ["draft", "active", "paused", "blocked", "completed", "abandoned"]
+      },
+      "CreateStatus": { "type": "string", "enum": ["draft", "active"] },
+      "Category": {
+        "type": "string",
+        "enum": ["health", "finance", "career", "shipping", "other"]
+      },
+      "Owner": { "type": "string", "enum": ["user", "agent"] },
+      "StepStatus": { "type": "string", "enum": ["todo", "doing", "done", "skipped"] },
+      "Gate": { "type": "string", "enum": ["auto", "ask", "deny"] },
+      "NextAction": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["summary", "owner"],
+        "properties": {
+          "summary": { "type": "string" },
+          "owner": { "$ref": "#/components/schemas/Owner" },
+          "due": { "type": "string", "description": "YYYY-MM-DD or ISO-8601 date-time." }
+        }
+      },
+      "PlanStepInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "owner"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "owner": { "$ref": "#/components/schemas/Owner" },
+          "status": { "$ref": "#/components/schemas/StepStatus" },
+          "notes": { "type": "string" }
+        }
+      },
+      "GoalId": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id"],
+        "properties": { "id": { "type": "string", "format": "uuid" } }
+      },
+      "ListGoals": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": { "$ref": "#/components/schemas/GoalStatus" },
+          "category": { "$ref": "#/components/schemas/Category" }
+        }
+      },
+      "CreateGoal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "objective"],
+        "properties": {
+          "title": { "type": "string" },
+          "objective": { "type": "string" },
+          "acceptance_criteria": { "type": "array", "items": { "type": "string" } },
+          "category": { "$ref": "#/components/schemas/Category" },
+          "plan_steps": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PlanStepInput" }
+          },
+          "status": { "$ref": "#/components/schemas/CreateStatus" },
+          "approval_policy": { "$ref": "#/components/schemas/ApprovalPolicyPatch" },
+          "linked_routines": { "type": "array", "items": { "type": "string" } },
+          "memory_refs": { "type": "array", "items": { "type": "string" } },
+          "owner_bot": { "type": "string" },
+          "next_action": { "$ref": "#/components/schemas/NextAction" }
+        }
+      },
+      "UpdateGoal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "objective": { "type": "string" },
+          "acceptance_criteria": { "type": "array", "items": { "type": "string" } },
+          "category": { "anyOf": [{ "$ref": "#/components/schemas/Category" }, { "type": "null" }] },
+          "plan_steps": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PlanStepInput" }
+          },
+          "status": { "$ref": "#/components/schemas/GoalStatus" },
+          "next_action": { "anyOf": [{ "$ref": "#/components/schemas/NextAction" }, { "type": "null" }] },
+          "linked_routines": { "type": "array", "items": { "type": "string" } },
+          "memory_refs": { "type": "array", "items": { "type": "string" } },
+          "owner_bot": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+        }
+      },
+      "RecordProgress": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "summary"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "summary": { "type": "string" },
+          "at": { "type": "string", "format": "date-time" },
+          "next_action": { "anyOf": [{ "$ref": "#/components/schemas/NextAction" }, { "type": "null" }] },
+          "step_updates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "status"],
+              "properties": {
+                "id": { "type": "string", "format": "uuid" },
+                "status": { "$ref": "#/components/schemas/StepStatus" },
+                "notes": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+              }
+            }
+          }
+        }
+      },
+      "ApprovalPolicyPatch": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "send": { "$ref": "#/components/schemas/Gate" },
+          "spend": { "$ref": "#/components/schemas/Gate" },
+          "post": { "$ref": "#/components/schemas/Gate" },
+          "delete": { "$ref": "#/components/schemas/Gate" }
+        }
+      },
+      "SetApprovalPolicy": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "send": { "$ref": "#/components/schemas/Gate" },
+          "spend": { "$ref": "#/components/schemas/Gate" },
+          "post": { "$ref": "#/components/schemas/Gate" },
+          "delete": { "$ref": "#/components/schemas/Gate" }
+        }
+      },
+      "GoalEnvelope": {
+        "type": "object",
+        "required": ["ok", "goal"],
+        "properties": {
+          "ok": { "const": true },
+          "goal": { "$ref": "#/components/schemas/Goal" }
+        }
+      },
+      "GoalListEnvelope": {
+        "type": "object",
+        "required": ["ok", "goals"],
+        "properties": {
+          "ok": { "const": true },
+          "goals": { "type": "array", "items": { "$ref": "#/components/schemas/Goal" } }
+        }
+      },
+      "ProgressEnvelope": {
+        "type": "object",
+        "required": ["ok", "goal", "progress_entry"],
+        "properties": {
+          "ok": { "const": true },
+          "goal": { "$ref": "#/components/schemas/Goal" },
+          "progress_entry": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "required": ["ok", "error"],
+        "properties": {
+          "ok": { "const": false },
+          "error": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": {
+              "code": { "type": "string", "enum": ["not_found", "validation", "io", "internal"] },
+              "message": { "type": "string" },
+              "details": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

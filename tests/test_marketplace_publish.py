@@ -155,7 +155,8 @@ def test_published_bundles_do_not_include_runtime_or_proof_noise() -> None:
     for tracked_path in tracked:
         path = Path(tracked_path)
         assert not (blocked_parts & set(path.parts)), f"runtime artifact in bundle: {path}"
-        assert not path.name.endswith(".jsonl"), f"proof log in bundle: {path}"
+        if path.name.endswith(".jsonl"):
+            assert "examples" in path.parts, f"proof log in bundle: {path}"
 
 
 def test_publish_renders_plugin_bundle_and_marketplace_entry(tmp_path: Path) -> None:
@@ -368,3 +369,38 @@ def test_check_with_source_ignores_python_cache_files(tmp_path: Path) -> None:
     report = marketplace_publish.check("foreman", marketplace, source=source)
 
     assert report.ok
+
+
+def test_publish_keeps_node_plugin_install_files(tmp_path: Path) -> None:
+    marketplace = tmp_path / "marketplace"
+    source = tmp_path / "source" / "grok-goals"
+    write_json(marketplace / ".claude-plugin" / "marketplace.json", {"plugins": []})
+    write_json(
+        source / ".claude-plugin" / "plugin.json",
+        {"name": "grok-goals", "version": "0.1.0", "description": "Durable Goal store.", "license": "MIT"},
+    )
+    (source / "package.json").write_text('{"name":"grok-goals","license":"MIT"}\n')
+    (source / "package-lock.json").write_text('{"lockfileVersion":3}\n')
+    (source / "tsconfig.json").write_text("{}\n")
+    (source / "schema").mkdir()
+    (source / "schema" / "goal.schema.json").write_text("{}\n")
+    journal = source / "examples" / "pack" / "progress"
+    journal.mkdir(parents=True)
+    (journal / "goal.jsonl").write_text('{"summary":"sample"}\n')
+    (source / "schema" / "node_modules").mkdir()
+    (source / "schema" / "node_modules" / "left-behind.js").write_text("nope\n")
+    (source / "examples" / "dist").mkdir()
+    (source / "examples" / "dist" / "index.js").write_text("nope\n")
+    marketplace_publish.publish(source, marketplace, audit_date="2026-10-04")
+    bundle = marketplace / "plugins" / "grok-goals"
+    kept = (
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "schema/goal.schema.json",
+        "examples/pack/progress/goal.jsonl",
+    )
+    assert all((bundle / rel).is_file() for rel in kept)
+    assert not (bundle / "schema" / "node_modules").exists()
+    assert not (bundle / "examples" / "dist").exists()
+    assert marketplace_publish.check("grok-goals", marketplace, source=source).ok

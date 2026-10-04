@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://grok-goals.local/schema/product.schema.json",
+  "title": "GrokGoalsPackProduct",
+  "description": "Identity file for a Grok Goals Prim-style directory pack.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "title",
+    "kind",
+    "profile",
+    "profile_status",
+    "schema_version",
+    "description"
+  ],
+  "properties": {
+    "name": { "const": "grok-goals" },
+    "title": { "type": "string", "minLength": 1 },
+    "kind": { "const": "prim-directory-pack" },
+    "profile": { "type": "string", "minLength": 1 },
+    "profile_status": { "const": "in-repo-schema" },
+    "schema_version": { "const": 1 },
+    "description": { "type": "string", "minLength": 1 }
+  }
+}

@@ -221,6 +221,18 @@
       "category": "Productivity"
     },
     {
+      "name": "grok-goals",
+      "source": {
+        "source": "local",
+        "path": "./plugins/grok-goals"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "agent-tools"
+    },
+    {
       "name": "ike",
       "source": {
         "source": "local",

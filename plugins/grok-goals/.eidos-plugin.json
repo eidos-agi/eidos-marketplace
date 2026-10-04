@@ -1,0 +1,9 @@
+{
+  "kind": {
+    "type": "tool",
+    "signals": [
+      "single_capability",
+      "mcp_server"
+    ]
+  }
+}

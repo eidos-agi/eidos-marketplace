@@ -43,6 +43,13 @@ BUNDLE_ITEMS = (
     "verify.py",
     "pyproject.toml",
     "uv.lock",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    ".gitignore",
+    "DESIGN.md",
+    "schema",
+    "examples",
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
@@ -116,6 +123,8 @@ def copy_item(source: Path, destination: Path) -> None:
         base_ignore = shutil.ignore_patterns(
             ".git",
             ".venv",
+            "node_modules",
+            "dist",
             "__pycache__",
             ".pytest_cache",
             ".ruff_cache",
@@ -127,7 +136,9 @@ def copy_item(source: Path, destination: Path) -> None:
 
         def ignore(directory: str, names: list[str]) -> set[str]:
             ignored = set(base_ignore(directory, names))
-            ignored.update(name for name in names if name.endswith(".jsonl"))
+            # Proof logs stay out of the bundle. Example-pack journals are content.
+            if "examples" not in Path(directory).parts:
+                ignored.update(name for name in names if name.endswith(".jsonl"))
             return ignored
 
         shutil.copytree(source, destination, ignore=ignore)
@@ -214,9 +225,11 @@ def ignored_path(path: Path) -> bool:
         or path.name in {".DS_Store"}
         or ".git" in path.parts
         or ".venv" in path.parts
+        or "node_modules" in path.parts
+        or "dist" in path.parts
         or ".pytest_cache" in path.parts
         or ".ruff_cache" in path.parts
-        or path.name.endswith(".jsonl")
+        or (path.name.endswith(".jsonl") and "examples" not in path.parts)
     )
 
 

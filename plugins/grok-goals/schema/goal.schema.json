@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://grok-goals.local/schema/goal.schema.json",
+  "title": "Goal",
+  "description": "A durable outcome a Grok Bot can own across chats: intent, plan, latest progress, next action, and approval gates.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "objective",
+    "acceptance_criteria",
+    "plan_steps",
+    "status",
+    "approval_policy",
+    "linked_routines",
+    "memory_refs",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Stable goal id."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Short name."
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000,
+      "description": "Durable intent in plain language."
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      },
+      "description": "Soft or hard success signals."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["health", "finance", "career", "shipping", "other"],
+      "description": "Optional grouping. Free-form categories are rejected so filters stay honest."
+    },
+    "plan_steps": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$ref": "https://grok-goals.local/schema/plan-step.schema.json"
+      },
+      "description": "Ordered steps. Adaptive in the sense that the bot may replace or update them; the store keeps the current list."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "paused", "blocked", "completed", "abandoned"],
+      "description": "Lifecycle. Pause and abandon keep the document."
+    },
+    "last_progress": {
+      "$ref": "#/$defs/lastProgress"
+    },
+    "next_action": {
+      "$ref": "#/$defs/nextAction"
+    },
+    "approval_policy": {
+      "$ref": "#/$defs/approvalPolicy"
+    },
+    "linked_routines": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "description": "Routine ids when known. The store does not run them."
+    },
+    "memory_refs": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "description": "Optional pointers to facts in memory. Not the facts themselves."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 creation time."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 time of the last stored change."
+    },
+    "owner_bot": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Bot id or name that owns the goal, when known."
+    }
+  },
+  "$defs": {
+    "lastProgress": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Latest meaningful advance. Earlier summaries live in progress/<id>.jsonl.",
+      "required": ["at", "summary"],
+      "properties": {
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    },
+    "nextAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The concrete next step. Due is a date or a date-time.",
+      "required": ["summary", "owner"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "owner": {
+          "type": "string",
+          "enum": ["user", "agent"]
+        },
+        "due": {
+          "type": "string",
+          "format": "iso-date",
+          "description": "YYYY-MM-DD or an ISO-8601 date-time."
+        }
+      }
+    },
+    "approvalPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What the bot may do without asking. auto proceeds, ask stops for confirmation, deny refuses. The store records the gate and does not perform the action.",
+      "required": ["send", "spend", "post", "delete"],
+      "properties": {
+        "send": { "$ref": "#/$defs/gate" },
+        "spend": { "$ref": "#/$defs/gate" },
+        "post": { "$ref": "#/$defs/gate" },
+        "delete": { "$ref": "#/$defs/gate" }
+      }
+    },
+    "gate": {
+      "type": "string",
+      "enum": ["auto", "ask", "deny"]
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "4c5a472d-4011-4dff-8503-15d051397901",
+  "title": "Train for a half marathon by March",
+  "objective": "Finish a half marathon in March. Build the mileage, keep the long run, and show up on race day.",
+  "acceptance_criteria": [
+    "Long run reaches 13.1 miles at least once before race week",
+    "Finish the March half marathon",
+    "No two consecutive weeks skip the long run"
+  ],
+  "category": "health",
+  "plan_steps": [
+    {
+      "id": "acf47b10-58ad-43d5-a09e-38ea9b44b0c8",
+      "title": "Pick the March race and write the weekly mileage",
+      "owner": "user",
+      "status": "done",
+      "notes": "Registration can wait until the plan is written down."
+    },
+    {
+      "id": "ca06de51-0678-4f66-9ff1-8964c6482f51",
+      "title": "Build the long run to 10 miles",
+      "owner": "user",
+      "status": "doing",
+      "notes": "Keep it conversational. Walk breaks count."
+    },
+    {
+      "id": "336e4ff4-c320-4ae8-9b53-1fe7e420620f",
+      "title": "Taper for two weeks and run the race",
+      "owner": "user",
+      "status": "todo"
+    }
+  ],
+  "status": "active",
+  "last_progress": {
+    "at": "2026-09-21T14:10:00.000Z",
+    "summary": "Week 4 long run was 7 miles. Pace stayed easy."
+  },
+  "next_action": {
+    "summary": "Run 8 miles on Sunday. Keep it conversational.",
+    "owner": "user",
+    "due": "2026-10-04"
+  },
+  "approval_policy": {
+    "send": "ask",
+    "spend": "ask",
+    "post": "deny",
+    "delete": "ask"
+  },
+  "linked_routines": ["sunday-long-run-check"],
+  "memory_refs": ["mem_march_half_race"],
+  "created_at": "2026-09-01T15:00:00.000Z",
+  "updated_at": "2026-09-21T14:10:00.000Z",
+  "owner_bot": "GrokGoals"
+}

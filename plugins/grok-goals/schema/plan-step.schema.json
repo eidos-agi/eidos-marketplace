@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://grok-goals.local/schema/plan-step.schema.json",
+  "title": "PlanStep",
+  "description": "One ordered step in a goal plan. The bot does not invent steps; it stores the ones it was given.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "owner", "status"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Stable id for this step."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "What this step is."
+    },
+    "owner": {
+      "type": "string",
+      "enum": ["user", "agent"],
+      "description": "Who does the step."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["todo", "doing", "done", "skipped"],
+      "description": "Where the step stands."
+    },
+    "notes": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "description": "Optional constraint or context for the step."
+    }
+  }
+}
