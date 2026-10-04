@@ -9,3 +9,5 @@
 ## 2026-10-04 Check
 
 - [x] `python tools/marketplace_publish.py check grok-goals --source <source>` reported OK after the whitelist change.
+- [x] `pytest tests/test_marketplace_publish.py` — 14 passed.
+- [x] Copied `plugins/grok-goals` to a temp directory: `npm ci`, `npm test` (7 passed), `npm run build`. `dist/` stayed out of git.

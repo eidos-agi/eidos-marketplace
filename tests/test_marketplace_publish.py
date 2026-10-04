@@ -155,8 +155,8 @@ def test_published_bundles_do_not_include_runtime_or_proof_noise() -> None:
     for tracked_path in tracked:
         path = Path(tracked_path)
         assert not (blocked_parts & set(path.parts)), f"runtime artifact in bundle: {path}"
-        if path.name.endswith(".jsonl"):
-            assert "examples" in path.parts, f"proof log in bundle: {path}"
+        allowed_jsonl = ("plugins/emux/", "plugins/grok-goals/examples/")
+        assert path.suffix != ".jsonl" or tracked_path.startswith(allowed_jsonl), f"proof log in bundle: {path}"
 
 
 def test_publish_renders_plugin_bundle_and_marketplace_entry(tmp_path: Path) -> None:
