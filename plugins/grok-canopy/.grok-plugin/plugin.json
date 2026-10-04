@@ -1,0 +1,19 @@
+{
+  "name": "grok-canopy",
+  "version": "0.1.0",
+  "description": "Parent-pointer check and BotScore store for the Grok bot canopy.",
+  "author": {
+    "name": "Eidos AGI",
+    "email": "daniel@eidosagi.com",
+    "url": "https://github.com/eidos-agi"
+  },
+  "homepage": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/grok-canopy",
+  "repository": "https://github.com/eidos-agi/eidos-marketplace/tree/main/plugins/grok-canopy",
+  "license": "MIT",
+  "keywords": [
+    "canopy",
+    "parents",
+    "botscore",
+    "grok"
+  ]
+}

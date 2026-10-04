@@ -1,0 +1,8 @@
+{
+  "kind": {
+    "type": "tool",
+    "signals": [
+      "single_capability"
+    ]
+  }
+}

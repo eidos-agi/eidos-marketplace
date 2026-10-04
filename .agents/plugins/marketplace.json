@@ -221,6 +221,18 @@
       "category": "Productivity"
     },
     {
+      "name": "grok-canopy",
+      "source": {
+        "source": "local",
+        "path": "./plugins/grok-canopy"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "agent-tools"
+    },
+    {
       "name": "grok-goals",
       "source": {
         "source": "local",
